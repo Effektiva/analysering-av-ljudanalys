@@ -1,6 +1,6 @@
 # Analysering av Ljudanalys TDDD96
 
-
+Detta är en quick guide till att installera detta git repo på din dator
 
 ## Getting started
 
