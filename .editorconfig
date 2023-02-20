@@ -1,0 +1,44 @@
+# EditorConfig is used to get code that looks the same throughout the
+# project.
+#
+# How to use:
+#   VS Code: Install extension "EditorConfig for VS Code"
+#   Emacs: Follow instructions on https://github.com/editorconfig/editorconfig-emacs
+#   Doom Emacs: See https://docs.doomemacs.org/latest/modules/tools/editorconfig/
+#
+#
+# Docs: https://spec.editorconfig.org/
+#
+# Inspirations:
+# https://raw.githubusercontent.com/django/django/main/.editorconfig
+# https://raw.githubusercontent.com/angular/angular.js/master/.editorconfig
+# https://raw.githubusercontent.com/babel/babel/master/.editorconfig
+
+# top-most editorconfig file
+root = true
+
+# Global settings
+[*]
+# https://utf8everywhere.org/
+charset = utf-8
+# Unix-style newlines with a newline ending every file
+end_of_line = lf
+insert_final_newline = true
+# self-explanatory (used widely)
+trim_trailing_whitespace = true
+# VSCode doesn't like varied tab sizes when using spaces
+indent_style = space
+indent_size = 4
+
+# Separate for html files
+[*.html]
+indent_size = 2
+
+# Minified JavaScript files shouldn't be changed
+[**.min.js]
+indent_style = ignore
+insert_final_newline = ignore
+
+# Trailing spaces in Markdown have special meaning (forces newlines)
+[*.md]
+trim_trailing_whitespace = false
