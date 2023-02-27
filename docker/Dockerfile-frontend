@@ -1,0 +1,11 @@
+FROM node:18-alpine
+
+# I'm following this: https://stackoverflow.com/a/33106611
+WORKDIR /modules
+COPY package.json ./
+RUN npm install
+ENV PATH /modules/node_modules/.bin:$PATH
+
+WORKDIR /modules/app
+
+CMD [ "npm", "run", "dev" ]

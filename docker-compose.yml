@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  backend:
+    container_name: ljud-backend
+    build:
+      context: "./backend"
+      dockerfile: "../docker/Dockerfile-backend"
+    image: "ljud-backend"
+    volumes:
+      - ./backend/:/usr/src/app
+    environment:
+      - PYTHONUNBUFFERED=1 # don't wait for output to be flushed to stdout
+    ports:
+      - "8000:8000"
+
+  frontend:
+    container_name: ljud-frontend
+    build:
+      context: "./frontend"
+      dockerfile: "../docker/Dockerfile-frontend"
+    image: "ljud-frontend"
+    environment:
+      - NODE_ENV=development # more debug info
+    volumes:
+      - ./frontend/:/modules/app
+    ports:
+     - "3000:3000"

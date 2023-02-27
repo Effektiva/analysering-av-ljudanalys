@@ -30,10 +30,6 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
-# Separate for html files
-[*.html]
-indent_size = 2
-
 # Minified JavaScript files shouldn't be changed
 [**.min.js]
 indent_style = ignore
@@ -42,3 +38,9 @@ insert_final_newline = ignore
 # Trailing spaces in Markdown have special meaning (forces newlines)
 [*.md]
 trim_trailing_whitespace = false
+
+[docker-compose.yml]
+indent_size = 2
+
+[*.tsx]
+indent_size = 2
