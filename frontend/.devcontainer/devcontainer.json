@@ -1,0 +1,12 @@
+{
+  "dockerComposeFile": "../../docker-compose.yml",
+  "service": "frontend",
+"workspaceFolder": "/modules/app",
+"customizations": {
+	"vscode": {
+		"extensions": [
+			"dbaeumer.vscode-eslint"
+		]
+	}
+}
+}
