@@ -1,4 +1,4 @@
-import { ListEvent as LEvent } from "../ListMenu/ListMenu"
+import { ListEvent as LEvent } from "../LeftMenu/ListMenu/ListMenu"
 
 type Props = {
   id: number,

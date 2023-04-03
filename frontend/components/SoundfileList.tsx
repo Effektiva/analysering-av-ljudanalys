@@ -1,13 +1,14 @@
 import { ReactElement, useState } from "react";
-import ListMenu, { ListEvent, ListEventResponse } from "./ListMenu/ListMenu";
+import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
 import { ListItem } from "@/components/ListMenu/ListItem";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import { DUMMY_DOSSIER_LIST_NOCHILD } from "@/modules/DummyData";
-import Popup from "./Popup";
+import Popup from "@/components/Popup";
 import { LOG as log } from "@/pages/_app";
 
 type Props = {
+  header: string,
   soundfiles: Array<ListItem>,
 }
 
@@ -26,7 +27,6 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 
 const SoundfileList = (props: Props) => {
   const [items] = useState<Array<ListItem>>(props.soundfiles);
-  const [menuVisible, setMenuVisible] = useState<boolean>(true);
   const [currentParentID, setCurrentParentID] = useState<number>(-1);
   const [currentPopup, setCurrentPopup] = useState<number>(-1);
 
@@ -127,10 +127,6 @@ const SoundfileList = (props: Props) => {
     }
   }
 
-  const toggleVisibility = () => {
-    setMenuVisible(!menuVisible);
-  }
-
   const statusPopupComponent: ReactElement = <ListMenu
                                                key={statusPopupContents.length}
                                                items={statusPopupContents}
@@ -145,20 +141,17 @@ const SoundfileList = (props: Props) => {
    */
   return (
     <>
-      <span
+      <div
         className="listMenuHeader"
-        onClick={toggleVisibility}
       >
-        Samtliga ljudklipp
-      </span>
-      { menuVisible &&
-        <ListMenu
-          key={items.length}
-          items={items}
-          contextMenus={CONTEXT_MENUS}
-          eventHandler={eventHandler}
-        />
-      }
+        {props.header}
+      </div>
+      <ListMenu
+        key={items.length}
+        items={items}
+        contextMenus={CONTEXT_MENUS}
+        eventHandler={eventHandler}
+      />
       { isPopupVisible &&
       <>
         { currentPopup ?

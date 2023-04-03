@@ -1,27 +1,88 @@
+/* Each list should have a describing header with this class */
 .listMenuHeader {
     font-weight: bold;
 }
 
+/* The actual list is contained within a ul with this class  */
 .listMenu {
     list-style: none;
     padding: 0;
     display: inline-block;
 }
-
 .listMenu ul {
     list-style: none;
 }
 
-.listMenuItem:hover {
-    text-decoration: underline;
+/* ListItem is a root */
+.listItemRoot {
 }
 
-.listMenuItemRoot {
+/* ListItem is a child */
+.listItemChild {
 }
 
-.listMenuItemChild {
+/* ListItem is a subroot */
+.listItemSubroot {
 }
 
-.listMenuItemSubroot {
+/* When a ListItem is collapsed */
+.listItemCollapsed::after {
+    content: "[C]"
 }
 
+/* When input is empty/invalid while changing a ListItem's text */
+.listItemInputInvalid {
+    border: 2px solid red;
+}
+
+/*
+ * Icon/tags
+ *
+ * .tag is the container for all tags
+ * Beneath it there's an individual div for each tag the listItem
+ * contains with the corresponding class below.
+ */
+
+.tag {
+    float: right;
+}
+
+.analysisOngoing::after {
+    content: "[P]"
+}
+
+.analysisUnstarted::after {
+    content: "[E]"
+}
+
+.analysisFinished::after {
+    content: "[K]"
+}
+
+.analysisFailed::after {
+    content: "[M]"
+}
+
+.soundchainAnalysed::after {
+    content: "[A]"
+}
+
+.soundchainRejected::after {
+    content: "[R]"
+}
+
+.fileReceived::after {
+    content: "[M]"
+}
+
+.analysisSucceeded::after {
+    content: "[S]"
+}
+
+.soundfileProcessed::after {
+    content: "[P]"
+}
+
+.soundfileRejected::after {
+    content: "[R]"
+}

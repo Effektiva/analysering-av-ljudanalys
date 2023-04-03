@@ -12,11 +12,33 @@ type Props = {
   toggleable?: boolean,
 }
 
+/*
+ * The CSS classes used for the Tags a ListItem may contain.
+ */
+export enum Tag {
+  // Files only
+  FileReceived = "fileReceived",
+  AnalysisSucceeded = "analysisSucceeded",
+  SoundfileProcessed = "soundfileProcessed",
+  SoundfileRejected = "soundfileRejected",
+
+  // Soundchains only
+  SoundchainAnalysed = "soundchainAnalysed",
+  SoundchainRejected = "soundchainRejected",
+
+  // Shared
+  AnalysisUnstarted = "analysisUnstarted",
+  AnalysisOngoing = "analysisOngoing",
+  AnalysisFinished = "analysisFinished",
+  AnalysisFailed = "analysisFailed",
+}
+
 export type ListItem = {
   id: number,
   text: string,
   children?: Array<ListItem>,
   subroots?: Array<ListItem>,
+  tags?: Array<Tag>,
 }
 
 /**
@@ -33,6 +55,7 @@ export type ListItem = {
  * - changeTextID?: If we're changing the text of a ListItem within the ListMenu (ex. a dossiers name)
  *   then this is the ID of that ListItem. Otherwise undefined.
  * - toggleable?: If this ListItem's visibility is toggleable by clicking it (false by default)
+ * - tags?: If the item has any tags, empty by default. Fill with the enum Tag.
  */
 export const ListItem = (props: Props) => {
   const [hidden, setHidden] = useState(false);
@@ -100,6 +123,19 @@ export const ListItem = (props: Props) => {
   }
 
   /*
+   * Returns the wanted css classes for the current ListItem.
+   */
+  const getStyleClasses = (mainClass: string, hidden: boolean) => {
+    let classes = "";
+    if (hidden) {
+      classes += LM.StyleClass.Collapsed + " ";
+    }
+
+    classes += " " + mainClass;
+    return classes;
+  }
+
+  /*
    * We render the current ListItem and eventual children/subroots to this item.
    * Also if this item is the one that should have it's text changed, we exchange
    * with a ListItemInput.
@@ -109,11 +145,15 @@ export const ListItem = (props: Props) => {
       <li>
         { props.item.id != props.changeTextID ?
             <div
-              className={props.class}
+              className={getStyleClasses(props.class, hidden)}
               onClick={() => clickHandler()}
               onContextMenu={contextClickHandler}
             >
               {props.item.text}
+
+              { props.item.tags?.map((i, tag) => {
+                return <div key={i} className={tag + " tag"}></div>
+              })}
             </div>
           :
             <ListItemInput
@@ -133,7 +173,7 @@ export const ListItem = (props: Props) => {
             {
               props.item.subroots.map((subroot: ListItem) => {
                 return <ListItem
-                          class={"listMenuItemSubroot"}
+                          class={LM.StyleClass.Subroot}
                           key={subroot.id}
                           itemType={LM.ItemType.Subroot}
                           parentID={props.item.id}
@@ -151,7 +191,7 @@ export const ListItem = (props: Props) => {
             {
               props.item.children.map((child: ListItem) => {
                 return <ListItem
-                          class={"listMenuItemChild"}
+                          class={LM.StyleClass.Child}
                           itemType={LM.ItemType.Child}
                           key={child.id}
                           item={child}

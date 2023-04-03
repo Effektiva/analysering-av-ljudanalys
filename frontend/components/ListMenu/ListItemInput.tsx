@@ -1,4 +1,5 @@
-import { ListEvent, ItemType, ListEventResponse } from "./ListMenu";
+import { useState } from "react";
+import { ListEvent, ItemType, ListEventResponse, StyleClass } from "./ListMenu";
 
 type Props = {
   id: number,
@@ -13,15 +14,24 @@ type Props = {
  * text of an item in the list.
  */
 export const ListItemInput = (props: Props) => {
+  const [state, setState] = useState("");
+
   const onChangeHandler = (event: React.KeyboardEvent) => {
+    const inputValue = (event.target as HTMLInputElement).value;
+
     let response: ListEventResponse = {
       event: ListEvent.UndefinedEvent,
-      value: (event.target as HTMLInputElement).value,
+      value: inputValue,
       id: props.id,
       parentID: props.parent,
     }
 
     if (event.key == "Enter") {
+      if (inputValue == "") {
+        setState(StyleClass.Invalid);
+        return;
+      }
+
       if (props.itemType == ItemType.Root) {
         response.event = ListEvent.ChangeTextOfRoot;
       } else {
@@ -36,7 +46,7 @@ export const ListItemInput = (props: Props) => {
     <>
       <input
         autoFocus
-        className="listItemInput"
+        className={"listItemInput " + state}
         type="text"
         defaultValue={props.text}
         onKeyDown={onChangeHandler}
