@@ -1,10 +1,11 @@
 import { useState } from "react";
-import ListMenu, { ListEvent, ListEventResponse } from "./ListMenu/ListMenu";
+import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
 import ListItem from "@/components/ListMenu/ListItem";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 
 type Props = {
+  selected: Function,
   dossiers: Array<ListItem>,
 }
 
@@ -56,6 +57,7 @@ const DossierList = (props: Props) => {
     switch(response.event) {
       case ListEvent.ClickOnChild:
         log.debug("Goto soundfile:", response.id);
+        props.selected(response.id);
         break;
 
       case ListEvent.ChangeTextOfRoot:
@@ -112,8 +114,6 @@ const DossierList = (props: Props) => {
     setItems(prev => [...prev, {
       id: id,
       text: "Dossier " + id,
-      children: [],
-      subroots: [],
     }]);
     setID(prev => prev + 1);
   }

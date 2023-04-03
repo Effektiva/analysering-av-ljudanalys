@@ -1,6 +1,5 @@
 import Head from "next/head"
-import styles from "@/styles/Home.module.css"
-import LeftMenu from "@/components/LeftMenu"
+import MainView from "@/components/MainView"
 
 export default function Home() {
   return (
@@ -10,10 +9,7 @@ export default function Home() {
       </Head>
       <main>
         <div className="container">
-          <div className="row">
-            <h1>Welcome to the frontend!</h1>
-            <LeftMenu />
-          </div>
+          <MainView />
         </div>
       </main>
     </>

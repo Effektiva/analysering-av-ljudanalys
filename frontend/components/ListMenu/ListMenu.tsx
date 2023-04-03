@@ -60,6 +60,17 @@ export enum ItemType {
 }
 
 /*
+ * The available CSS classes used throghout a ListMenu.
+ */
+export enum StyleClass {
+  Root = "listItemRoot",
+  Child = "listItemChild",
+  Subroot = "listItemSubroot",
+  Collapsed = "listItemCollapsed",
+  Invalid = "listItemInputInvalid",
+}
+
+/*
  * An EventResponse is given to the eventHandler passed to this component whenever something
  * happens within the list (left-click, context menu choicen, et.c.).
  *
@@ -208,7 +219,7 @@ const ListMenu = (props: Props) => {
            items.map((item) => {
             return <ListItem
                       key={item.id}
-                      class="listMenuItemRoot"
+                      class={StyleClass.Root}
                       itemType={ItemType.Root}
                       changeTextID={changeTextID}
                       item={item}

@@ -1,0 +1,13 @@
+.main-view {
+    display: flex;
+    background-color: rgb(151, 151, 151);
+}
+
+.main-view__description {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    flex: 1;
+}

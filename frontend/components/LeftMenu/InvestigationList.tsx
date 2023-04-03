@@ -1,10 +1,11 @@
 import { useState } from "react";
-import ListMenu, { ListEvent, ListEventResponse } from "./ListMenu/ListMenu";
+import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
 import { ListItem } from "@/components/ListMenu/ListItem";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 
 type Props = {
+  selected: Function,
   investigations: Array<ListItem>,
 }
 
@@ -32,6 +33,7 @@ const InvestigationList = (props: Props) => {
     switch(response.event) {
       case ListEvent.ClickOnRoot:
         log.debug("Goto investigation:", response.id);
+        props.selected(response.id);
         break;
 
       case ListEvent.ChangeTextOfRoot:
@@ -70,8 +72,6 @@ const InvestigationList = (props: Props) => {
     setItems(prev => [...prev, {
       id: id,
       text: "Ny utredning " + id,
-      children: [],
-      subroots: [],
     }]);
     setID(prev => prev + 1);
   }
