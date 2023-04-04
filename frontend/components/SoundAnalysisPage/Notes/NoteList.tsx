@@ -1,8 +1,9 @@
-import { useState } from "react";
 import Note from "@/models/SoundAnalysis/Note";
+import { LOG as log } from "@/pages/_app";
 
 type Props = {
   notes: Array<Note>,
+  deleteNote: (noteId: number | undefined) => void
 }
 
 const STYLE_NAMESPACE = "notes__list__";
@@ -16,17 +17,17 @@ enum Style {
 }
 
 const NotesList = (props: Props) => {
-  const [notes, setNotes] = useState(props.notes)
 
   return (
     <div className={Style.Container}>
       {
-        notes.map(note => {
+        props.notes.map(note => {
           return <div key={note.id} className={Style.Note}>
                   <div>
                     <div className={Style.Header}>
                       <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
-                      <span className={Style.Time}>Tid i klipp: {note.timeInClip}</span>
+                      <span className={Style.Time}>Tid i klipp: {note.timeInClip.formattedString()}</span>
+                      <button onClick={() => props.deleteNote(note.id)}>Delete blyat</button>
                     </div>
                   </div>
                   <div className={Style.Text}>
