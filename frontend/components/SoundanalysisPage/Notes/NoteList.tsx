@@ -1,7 +1,8 @@
 import { useState } from "react";
+import Note from "@/models/SoundAnalysis/Note";
 
 type Props = {
-  notes: Array<any>,
+  notes: Array<Note>,
 }
 
 const STYLE_NAMESPACE = "notes__list__";
@@ -24,8 +25,8 @@ const NotesList = (props: Props) => {
           return <div key={note.id} className={Style.Note}>
                   <div>
                     <div className={Style.Header}>
-                      <span className={Style.Date}>Skriven {note.date}</span>
-                      <span className={Style.Time}>Tid i klipp: {note.time}</span>
+                      <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
+                      <span className={Style.Time}>Tid i klipp: {note.timeInClip}</span>
                     </div>
                   </div>
                   <div className={Style.Text}>
