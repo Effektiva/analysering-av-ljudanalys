@@ -22,7 +22,9 @@ services:
     image: "ljud-frontend"
     environment:
       - NODE_ENV=development # more debug info
+      - "NEXT_WEBPACK_USEPOLLING=1"
     volumes:
       - ./frontend/:/modules/app
     ports:
      - "3000:3000"
+
