@@ -15,6 +15,9 @@ enum Style {
   Text = STYLE_NAMESPACE + "text",
 }
 
+const deleteButtonStyle = { width: '20px', height: '20px', padding: '0' }
+const deleteImageStyle = { width: '100%', height: '100%', marginTop: '-12px', padding: '1px' };
+
 const NotesList = (props: Props) => {
 
   return (
@@ -26,7 +29,12 @@ const NotesList = (props: Props) => {
                     <div className={Style.Header}>
                       <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
                       <span className={Style.Time}>Tid i klipp: {note.timeInClip.formattedString()}</span>
-                      <button onClick={() => props.deleteNote(note.id)}>Delete blyat</button>
+                      <button
+                        onClick={() => props.deleteNote(note.id)}
+                        style={deleteButtonStyle}
+                      >
+                        <img src="/delete.png" alt="Delete" style={deleteImageStyle}/>
+                      </button>
                     </div>
                   </div>
                   <div className={Style.Text}>
