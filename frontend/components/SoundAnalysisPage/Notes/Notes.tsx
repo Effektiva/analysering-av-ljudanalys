@@ -1,5 +1,5 @@
 import { DUMMY_NOTES } from "@/modules/DummyData";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NotesList from "./NoteList";
 import { LOG as log } from "@/pages/_app";
 import Note from "@/models/SoundAnalysis/Note";
@@ -26,7 +26,7 @@ const Notes = () => {
     setId(id + 1);
     try {
       let note = new Note(id + 1, new Date(), TimeInClip.fromTimeString(timeElement!.value), textAreaElement!.value); // Dont care about id since we should not set it here... TODO: Fix this...
-      setNotes([...notes, note]);
+      setNotes([...notes, note].sort((a, b) => a.timeInClip.getTime() - b.timeInClip.getTime()));
     } catch (error) {
       log.warning("Got error: " + error);
     }

@@ -1,5 +1,4 @@
 import Note from "@/models/SoundAnalysis/Note";
-import { LOG as log } from "@/pages/_app";
 
 type Props = {
   notes: Array<Note>,

@@ -2,7 +2,9 @@ class TimeInClip {
     date: Date;
 
     constructor(minute: number, second: number) {
-        this.date = new Date(0, 1, 1, 0, minute, second);
+      let date = new Date(0);
+      date.setUTCMinutes(minute, second);
+      this.date = date;
     }
 
     public static fromTimeString(timeString: string): TimeInClip {
@@ -21,6 +23,11 @@ class TimeInClip {
     public formattedString(): string {
         return this.date.getMinutes() + ":" + this.date.getSeconds();
     }
+
+    public getTime() : number {
+      return this.date.getTime();
+    }
+
 
 }
 
