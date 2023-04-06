@@ -40,11 +40,16 @@ const Notes = () => {
     setNotes(newNotes);
   };
 
+  const saveNewNoteText = (noteId: number | undefined, text: string) => {
+    log.debug("Editing note: " + noteId + "with text: " + text);
+    
+  }
+
   return (
     <div className={Style.Container}>
       <div className={Style.Header}>Anteckningar</div>
-      Tidpunkt: <input id="newNoteTime" placeholder="69:69" /><br />
-      Anteckning: <textarea id="newNoteText" placeholder="Daniel is noob" /><br />
+      Tidpunkt: <input id="newNoteTime" placeholder="12:34" /><br />
+      Anteckning: <textarea id="newNoteText" placeholder="Anteckningar" /><br />
       <button onClick={addNewNote}>Lägg till</button>
 
       <NotesList notes={notes} deleteNote={deleteNote} />

@@ -1,4 +1,6 @@
 import Note from "@/models/SoundAnalysis/Note";
+import { useState } from "react";
+import { LOG as log } from "@/pages/_app";
 
 type Props = {
   notes: Array<Note>,
@@ -15,10 +17,16 @@ enum Style {
   Text = STYLE_NAMESPACE + "text",
 }
 
-const deleteButtonStyle = { width: '20px', height: '20px', padding: '0' }
-const deleteImageStyle = { width: '100%', height: '100%', marginTop: '-12px', padding: '1px' };
+const buttonStyle = { width: '20px', height: '20px', padding: '0' }
+const imageStyle = { width: '100%', height: '100%', marginTop: '-12px', padding: '1px' };
 
 const NotesList = (props: Props) => {
+  const [editingNoteId, setEditingNote] = useState<number | undefined>(undefined);
+
+  const setEditingNoteId = (noteId: number | undefined) => {
+    log.debug("Editing note: " + noteId);
+    setEditingNote(noteId);
+  }
 
   return (
     <div className={Style.Container}>
@@ -29,16 +37,20 @@ const NotesList = (props: Props) => {
                     <div className={Style.Header}>
                       <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
                       <span className={Style.Time}>Tid i klipp: {note.timeInClip.formattedString()}</span>
+                      <button onClick={() => setEditingNoteId(note.id) } style={buttonStyle}>
+                      <img src="/edit.png" alt="Edit"  style={imageStyle}/>
+                      </button>
                       <button
                         onClick={() => props.deleteNote(note.id)}
-                        style={deleteButtonStyle}
+                        style={buttonStyle}
                       >
-                        <img src="/delete.png" alt="Delete" style={deleteImageStyle}/>
+                        <img src="/delete.png" alt="Delete" style={imageStyle}/>
                       </button>
+
                     </div>
                   </div>
                   <div className={Style.Text}>
-                    {note.text}
+                    <>{editingNoteId === note.id ? <textarea defaultValue={note.text}></textarea> : <>{note.text}</>}</>
                   </div>
                  </div>
         })
