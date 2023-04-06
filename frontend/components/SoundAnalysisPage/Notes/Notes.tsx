@@ -41,7 +41,7 @@ const Notes = () => {
   };
 
   const saveNewNoteText = (noteId: number | undefined, text: string) => {
-    log.debug("Editing note: " + noteId + "with text: " + text);
+    log.debug("saved note: " + noteId + " with text: " + text);
     
   }
 
@@ -52,7 +52,7 @@ const Notes = () => {
       Anteckning: <textarea id="newNoteText" placeholder="Anteckningar" /><br />
       <button onClick={addNewNote}>Lägg till</button>
 
-      <NotesList notes={notes} deleteNote={deleteNote} />
+      <NotesList notes={notes} deleteNote={deleteNote} setNoteText={saveNewNoteText} />
     </div>
   );
 }

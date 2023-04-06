@@ -1,10 +1,12 @@
 import Note from "@/models/SoundAnalysis/Note";
+import EditableTextField from "./EditableTextField";
 import { useState } from "react";
 import { LOG as log } from "@/pages/_app";
 
 type Props = {
   notes: Array<Note>,
-  deleteNote: (noteId: number | undefined) => void
+  deleteNote: (noteId: number | undefined) => void,
+  setNoteText: (noteId: number | undefined, text: string) => void
 }
 
 const STYLE_NAMESPACE = "notes__list__";
@@ -28,6 +30,21 @@ const NotesList = (props: Props) => {
     setEditingNote(noteId);
   }
 
+  const saveEditedText = (noteId: number | undefined) => {
+    // find element with id noteId
+    setEditingNoteId(undefined);
+    const divElement = document.getElementById(""+noteId) as HTMLDivElement | null;
+    // Get first child of divElement
+    const textArea = divElement?.firstChild as HTMLTextAreaElement | null;
+    if (textArea != null) {
+      log.debug("Editing note: " + noteId + " with text: " + textArea?.textContent);
+      // set text
+      props.setNoteText(noteId, textArea.textContent);
+    } else {
+      log.debug("Could not find textArea for note: " + noteId);
+    }
+  }
+
   return (
     <div className={Style.Container}>
       {
@@ -37,9 +54,7 @@ const NotesList = (props: Props) => {
                     <div className={Style.Header}>
                       <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
                       <span className={Style.Time}>Tid i klipp: {note.timeInClip.formattedString()}</span>
-                      <button onClick={() => setEditingNoteId(note.id) } style={buttonStyle}>
-                      <img src="/edit.png" alt="Edit"  style={imageStyle}/>
-                      </button>
+                      <>{editingNoteId === note.id ? <button onClick={() => saveEditedText(note.id) } style={buttonStyle}><img src="/save.png" alt="Save"  style={imageStyle}/></button> : <button onClick={() => setEditingNoteId(note.id) } style={buttonStyle}><img src="/edit.png" alt="Edit"  style={imageStyle}/></button> }</>
                       <button
                         onClick={() => props.deleteNote(note.id)}
                         style={buttonStyle}
@@ -49,8 +64,8 @@ const NotesList = (props: Props) => {
 
                     </div>
                   </div>
-                  <div className={Style.Text}>
-                    <>{editingNoteId === note.id ? <textarea defaultValue={note.text}></textarea> : <>{note.text}</>}</>
+                  <div id={note.id} className={Style.Text}>
+                   <EditableTextField defaultText={note.text} isEditing={editingNoteId === note.id}/>
                   </div>
                  </div>
         })
