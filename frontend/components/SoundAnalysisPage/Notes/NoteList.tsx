@@ -31,14 +31,11 @@ const NotesList = (props: Props) => {
   }
 
   const saveEditedText = (noteId: number | undefined) => {
-    // find element with id noteId
     setEditingNoteId(undefined);
     const divElement = document.getElementById(""+noteId) as HTMLDivElement | null;
-    // Get first child of divElement
     const textArea = divElement?.firstChild as HTMLTextAreaElement | null;
     if (textArea != null) {
       log.debug("Editing note: " + noteId + " with text: " + textArea?.textContent);
-      // set text
       props.setNoteText(noteId, textArea.textContent);
     } else {
       log.debug("Could not find textArea for note: " + noteId);

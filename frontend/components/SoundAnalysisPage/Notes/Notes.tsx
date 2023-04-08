@@ -42,7 +42,15 @@ const Notes = () => {
 
   const saveNewNoteText = (noteId: number | undefined, text: string) => {
     log.debug("saved note: " + noteId + " with text: " + text);
-    
+    let note = notes.find((note) => {
+      return note.id === noteId;
+    });
+    note?.setText(text);
+    // replace note in notes
+    let newNotes = notes.filter((note) => {
+      return note.id !== noteId
+    });
+    setNotes([...newNotes, note].sort((a, b) => a.timeInClip.getTime() - b.timeInClip.getTime()));
   }
 
   return (

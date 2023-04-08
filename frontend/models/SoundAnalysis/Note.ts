@@ -25,6 +25,10 @@ class Note {
   public getLocalDate(): string {
     return this.date.toLocaleDateString('sv-SE');
   }
+
+  public setText(text: string): void {
+    this.text = text;
+  }
 }
 
 export default Note;
