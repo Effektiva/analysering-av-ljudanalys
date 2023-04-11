@@ -19,9 +19,6 @@ enum Style {
   Text = STYLE_NAMESPACE + "text",
 }
 
-const buttonStyle = { width: '20px', height: '20px', padding: '0' }
-const imageStyle = { width: '100%', height: '100%', marginTop: '-12px', padding: '1px' };
-
 const NotesList = (props: Props) => {
   const [editingNoteId, setEditingNote] = useState<number | undefined>(undefined);
 
@@ -51,12 +48,11 @@ const NotesList = (props: Props) => {
                     <div className={Style.Header}>
                       <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
                       <span className={Style.Time}>Tid i klipp: {note.timeInClip.formattedString()}</span>
-                      <>{editingNoteId === note.id ? <button onClick={() => saveEditedText(note.id) } style={buttonStyle}><img src="/save.png" alt="Save"  style={imageStyle}/></button> : <button onClick={() => setEditingNoteId(note.id) } style={buttonStyle}><img src="/edit.png" alt="Edit"  style={imageStyle}/></button> }</>
+                      <>{editingNoteId === note.id ? <button onClick={() => saveEditedText(note.id) }><img src="/save.png" alt="Save"/></button> : <button onClick={() => setEditingNoteId(note.id) }><img src="/edit.png" alt="Edit"/></button> }</>
                       <button
                         onClick={() => props.deleteNote(note.id)}
-                        style={buttonStyle}
                       >
-                        <img src="/delete.png" alt="Delete" style={imageStyle}/>
+                        <img src="/delete.png" alt="Delete"/>
                       </button>
 
                     </div>
