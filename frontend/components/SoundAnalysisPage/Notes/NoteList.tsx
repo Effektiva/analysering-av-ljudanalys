@@ -19,14 +19,27 @@ enum Style {
   Text = STYLE_NAMESPACE + "text",
 }
 
+/**
+ * NotesList is a list of notes. It displays the date, time and text of the note. It also has buttons for editing and deleting the note.
+ * @param props - The notes to display, a function for deleting a note and a function for setting the text of a note.
+ * @returns A list of notes.
+ */
 const NotesList = (props: Props) => {
   const [editingNoteId, setEditingNote] = useState<number | undefined>(undefined);
 
+  /**
+   * Sets the id of the note that is being edited.
+   * @param noteId - The id of the note to edit.
+   */
   const setEditingNoteId = (noteId: number | undefined) => {
     log.debug("Editing note: " + noteId);
     setEditingNote(noteId);
   }
 
+  /**
+   * Saves the edited text of a note. The text is saved by calling the setNoteText function that is passed in as a prop.
+   * @param noteId - The id of the note to save the edited text of.
+   */
   const saveEditedText = (noteId: number | undefined) => {
     setEditingNoteId(undefined);
     const divElement = document.getElementById(""+noteId) as HTMLDivElement | null;

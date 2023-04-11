@@ -11,10 +11,17 @@ enum Style {
   Header = STYLE_NAMESPACE + "header",
 }
 
+/**
+ * Notes is a component that displays a list of notes. It also has a form for adding new notes.
+ * @returns A list of notes and a form for adding new notes.
+ */
 const Notes = () => {
   const [notes, setNotes] = useState(DUMMY_NOTES);
   const [id, setId] = useState(1); // TODO: Delete this..
 
+  /**
+   * Adds a new note to the list of notes. The note is created from the values in the form and then sent to the backend.
+   */
   const addNewNote = () => {
     const timeElement = document.getElementById('newNoteTime') as HTMLInputElement | null;
     const textAreaElement = document.getElementById('newNoteText') as HTMLTextAreaElement | null;
@@ -32,6 +39,10 @@ const Notes = () => {
     }
   };
 
+  /**
+   * Deletes a note from the list of notes.
+   * @param noteId - The id of the note to delete.
+   */
   const deleteNote = (noteId: number | undefined) => {
     log.debug("Delete note: " + noteId);
     let newNotes = notes.filter((note) => {
@@ -40,6 +51,11 @@ const Notes = () => {
     setNotes(newNotes);
   };
 
+  /**
+   * Saves the edited text of a note.
+   * @param noteId - The id of the note to save the edited text of.
+   * @param text - The text to save to the note.
+   */
   const saveNewNoteText = (noteId: number | undefined, text: string) => {
     log.debug("saved note: " + noteId + " with text: " + text);
     let note = notes.find((note) => {
