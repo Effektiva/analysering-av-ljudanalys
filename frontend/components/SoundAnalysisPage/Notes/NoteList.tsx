@@ -46,7 +46,7 @@ const NotesList = (props: Props) => {
     const textArea = divElement?.firstChild as HTMLTextAreaElement | null;
     if (textArea != null) {
       log.debug("Editing note: " + noteId + " with text: " + textArea?.textContent);
-      props.setNoteText(noteId, textArea.textContent);
+      props.setNoteText(noteId, textArea.textContent ?? "");
     } else {
       log.debug("Could not find textArea for note: " + noteId);
     }
@@ -70,7 +70,7 @@ const NotesList = (props: Props) => {
 
                     </div>
                   </div>
-                  <div id={note.id} className={Style.Text}>
+                  <div id={""+note.id} className={Style.Text}>
                    <EditableTextField defaultText={note.text} isEditing={editingNoteId === note.id}/>
                   </div>
                  </div>
