@@ -1,5 +1,6 @@
 import { Soundchain } from "@/components/MainView";
 import { ListItem, Tag } from "@/components/ListMenu/ListItem";
+import Note from "@/models/SoundAnalysis/Note";
 
 export const DUMMY_INVESTIGATION_LIST: Array<ListItem> = [
   {
@@ -161,17 +162,17 @@ export const DUMMY_SOUNDCHAIN: Soundchain = {
  * types that has to do with database models should be kept
  * in one and the same file or spread out where they fit
  */
-export const DUMMY_NOTES = [
-  {
+export const DUMMY_NOTES: Note[] = [
+  Note.fromJson({
     id: 0,
     date: "2021-03-15",
     time: "03:22",
-    text: "Ökad intensitet i konversationen."
-  },
-  {
+    text: "Ökad intensitet in your mom."
+  }),
+  Note.fromJson({
     id: 1,
     date: "2021-03-10",
     time: "01:42",
     text: "Mycket hundskall, är det ett kodord?"
-  }
+  })
 ]

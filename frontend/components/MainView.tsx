@@ -1,7 +1,7 @@
 import { DUMMY_INVESTIGATION_LIST, DUMMY_SOUNDCHAIN } from "@/modules/DummyData";
 import { useState } from "react";
 import LeftMenu, { Type } from "./LeftMenu/LeftMenu";
-import SoundanalysisPage from "./SoundanalysisPage/SoundanalysisPage";
+import SoundanalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
 import InvestigationPage from "./InvestigationPage/InvestigationPage";
 
 /*
