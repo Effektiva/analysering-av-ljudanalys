@@ -10,12 +10,8 @@ import Soundclip from "@/models/General/Soundclip";
 
 type Props = {
   header: string,
-<<<<<<< HEAD
-  soundfiles: Array<ListItem>,
-  clipSelected: Function,
-=======
   soundfiles: Array<Soundclip>,
->>>>>>> d2e4f05 (Created models for data. Refactored code according to models. Started refactor to use general lists. Structured metadata frame. Disabled delete button when editing note)
+  clipSelected: Function,
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
