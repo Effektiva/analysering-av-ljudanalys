@@ -1,6 +1,6 @@
 import Dossier from "../General/Dossier";
 
-class MetaData {
+class Metadata {
   name: string;
   belongingDossiers: Array<Dossier>;
 
@@ -16,6 +16,10 @@ class MetaData {
   public getDate(): string {
     return this.name.replace(/(\d{4})-(\d{2})-(\d{2})_(\d{2})(\d{2})_(\d{2})(\d{2})/, "$3-$2-$1");
   }
+
+  public getBelongingDossiers(): Array<Dossier> {
+    return this.belongingDossiers;
+  }
 }
 
-export default MetaData;
+export default Metadata;

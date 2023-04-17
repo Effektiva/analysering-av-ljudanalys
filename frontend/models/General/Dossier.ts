@@ -6,6 +6,10 @@ class Dossier {
     this.id = id;
     this.name = name;
   }
+
+  public getName(): string {
+    return this.name;
+  }
 }
 
 export default Dossier;
