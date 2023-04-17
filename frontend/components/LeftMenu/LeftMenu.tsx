@@ -1,7 +1,6 @@
 import InvestigationList from "./InvestigationList";
-import SoundchainList from "./SoundchainList";
 import DossierList from "./DossierList";
-import { DUMMY_DOSSIER_LIST, DUMMY_INVESTIGATION_LIST, DUMMY_SOUNDCHAINS_LIST } from "@/modules/DummyData";
+import { DUMMY_DOSSIER_LIST, DUMMY_INVESTIGATION_LIST } from "@/modules/DummyData";
 
 type Props = {
   selected: Function,

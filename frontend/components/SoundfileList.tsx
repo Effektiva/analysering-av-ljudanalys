@@ -10,6 +10,7 @@ import { LOG as log } from "@/pages/_app";
 type Props = {
   header: string,
   soundfiles: Array<ListItem>,
+  clipSelected: Function,
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -37,7 +38,7 @@ const SoundfileList = (props: Props) => {
   const eventHandler = (response: ListEventResponse) => {
     switch(response.event) {
       case ListEvent.ClickOnRoot:
-        log.debug("Goto point of:", response.id);
+        props.clipSelected(response.id);
         break;
 
       case ListEvent.ContextAddToDossier:
