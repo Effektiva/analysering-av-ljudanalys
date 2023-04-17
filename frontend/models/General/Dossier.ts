@@ -1,4 +1,7 @@
-class Dossier {
+import { ListItemType } from "@/components/ListMenu/ListItemType";
+import ListItemRepresentable from "./ListItemRepresentable";
+
+class Dossier implements ListItemRepresentable{
   id: number | undefined;
   name: string;
 
@@ -9,6 +12,13 @@ class Dossier {
 
   public getName(): string {
     return this.name;
+  }
+
+  asListItem(): ListItemType {
+    return {
+      id: this.id ?? -1,
+      text: this.name
+    }
   }
 }
 

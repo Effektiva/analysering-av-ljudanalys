@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
-import { ListItem } from "@/components/ListMenu/ListItem";
+import { ListItemType } from "@/components/ListMenu/ListItem";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 

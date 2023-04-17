@@ -2,11 +2,12 @@ import { useState } from "react";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import ContextMenu from "@/components/ContextMenu/ContextMenu";
 import ContextItem from "@/components/ContextMenu/ContextItem";
-import { ListItem } from "./ListItem";
+import { ListItemType } from "./ListItemType";
 import { LOG as log } from "@/pages/_app";
+import { ListItem } from "./ListItem";
 
 type Props = {
-  items: Array<ListItem>,
+  items: Array<ListItemType>,
   eventHandler: Function,
   contextMenus?: Array<ContextItem[]>,
   toggleableRoots?: boolean,
@@ -124,7 +125,7 @@ export type ContextMenuResponse = {
  * - toggleableRoots?: If Root and Subroots visibilty should be toggleable by clicking them.
  */
 const ListMenu = (props: Props) => {
-  const [items] = useState<ListItem[]>(props.items);
+  const [items] = useState<ListItemType[]>(props.items);
   const [contextMenuIndexOpen, setContextMenuIndexOpen] = useState<number>(-1);
   const [cursorPosition, setCursorPosition] = useState<number[]>([0, 0]);
   const [contextMenuOwnerID, setContextMenuOwnerID] = useState<number>(-1);

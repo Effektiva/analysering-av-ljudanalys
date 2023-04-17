@@ -4,20 +4,6 @@ import LeftMenu, { Type } from "./LeftMenu/LeftMenu";
 import SoundanalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
 import InvestigationPage from "./InvestigationPage/InvestigationPage";
 
-/*
- * This is the definition of a Soundchain, as it is saved in the database.
- */
-// TODO: move these? There'll be more than one of these, maybe save them all in a common file/folder
-// or just have all of the here?
-export type Soundchain = {
-  id: number,
-  name: string,
-  startTime: number,
-  endTime: number,
-  state: string, // TODO: should be an enum, the enum is defined in branch 41 beneath components/LeftMenu/ListMenu/ListItem.tsx currently
-  comments: Array<string> // TODO: should get its own struct, e.g. Array<comment>
-}
-
 /**
  * The MainView is the main component switching beteen pages (Investigations, Dossiers, etc)
  * and does this through passing a handler funktion through props to the LeftMenu component.

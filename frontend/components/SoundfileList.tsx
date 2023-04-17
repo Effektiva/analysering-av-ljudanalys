@@ -1,16 +1,21 @@
 import { ReactElement, useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
-import { ListItem } from "@/components/ListMenu/ListItem";
+import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import { DUMMY_DOSSIER_LIST_NOCHILD } from "@/modules/DummyData";
 import Popup from "@/components/Popup";
 import { LOG as log } from "@/pages/_app";
+import Soundclip from "@/models/General/Soundclip";
 
 type Props = {
   header: string,
+<<<<<<< HEAD
   soundfiles: Array<ListItem>,
   clipSelected: Function,
+=======
+  soundfiles: Array<Soundclip>,
+>>>>>>> d2e4f05 (Created models for data. Refactored code according to models. Started refactor to use general lists. Structured metadata frame. Disabled delete button when editing note)
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -27,7 +32,7 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundfileList = (props: Props) => {
-  const [items] = useState<Array<ListItem>>(props.soundfiles);
+  const [items] = useState<Array<Soundclip>>(props.soundfiles);
   const [currentParentID, setCurrentParentID] = useState<number>(-1);
   const [currentPopup, setCurrentPopup] = useState<number>(-1);
 
@@ -100,7 +105,7 @@ const SoundfileList = (props: Props) => {
    * Popoup for pressing status in context menu
    * ============================================
    */
-  const statusPopupContents: ListItem[] = [
+  const statusPopupContents: ListItemType[] = [
     {
       id: 0,
       text: "Ej behandlad",
@@ -149,7 +154,7 @@ const SoundfileList = (props: Props) => {
       </div>
       <ListMenu
         key={items.length}
-        items={items}
+        items={items.map((soundclip) => soundclip.asListItem())}
         contextMenus={CONTEXT_MENUS}
         eventHandler={eventHandler}
       />

@@ -1,17 +1,15 @@
 import SoundfileList from "@/components/SoundfileList";
-import { Soundchain } from "@/components/MainView";
 import SoundClassFilterInput from "@/components/SoundClassFilterInput";
-import { DUMMY_SOUNDFILES_FILTERED_LIST, DUMMY_SOUNDFILES_LIST } from "@/modules/DummyData";
+import { DUMMY_SOUNDFILES_LIST } from "@/modules/DummyData";
 import Graph from "./Graph";
 import MetadataView from "./MetaDataView";
 import Notes from "./Notes/Notes";
-import Metadata from "@/models/SoundAnalysis/Metadata";
-import Dossier from "@/models/General/Dossier";
 import { useState } from "react";
 import MediaControl from "./MediaControl/MediaControl";
+import SoundChain from "@/models/General/SoundChain";
 
 type Props = {
-  soundchain: Soundchain,
+  soundchain: SoundChain,
 }
 
 const STYLE_NAMESPACE = "soundAnalysisPage__";
@@ -78,7 +76,7 @@ const SoundAnalysisPage = (props: Props) => {
             <SoundfileList
               clipSelected={clipSelected}
               header="Filtrerade ljudklipp"
-              soundfiles={DUMMY_SOUNDFILES_FILTERED_LIST}
+              soundfiles={props.soundchain.soundClips}
             />
           </div>
 
@@ -115,7 +113,7 @@ const SoundAnalysisPage = (props: Props) => {
               Automagisk ljudsänkning
             </button>
           </div>
-          <MetadataView metaData={new Metadata("2020-03-12_0315_0722", [new Dossier(1, "jobany urod"), new Dossier(2, "your mother high")])}/>
+          <MetadataView metaData={props.soundchain.soundClips[0].metadata}/>
           <Notes />
         </div>
       </div>

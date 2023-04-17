@@ -1,44 +1,16 @@
 import { useState } from "react";
 import { ListItemInput } from "./ListItemInput";
 import * as LM from "./ListMenu";
+import { ListItemType } from "./ListItemType";
 
 type Props = {
   class: string,
-  item: ListItem,
+  item: ListItemType,
   eventHandler: Function,
   itemType?: LM.ItemType,
   parentID?: number,
   changeTextID?: number,
   toggleable?: boolean,
-}
-
-/*
- * The CSS classes used for the Tags a ListItem may contain.
- */
-export enum Tag {
-  // Files only
-  FileReceived = "fileReceived",
-  AnalysisSucceeded = "analysisSucceeded",
-  SoundfileProcessed = "soundfileProcessed",
-  SoundfileRejected = "soundfileRejected",
-
-  // Soundchains only
-  SoundchainAnalysed = "soundchainAnalysed",
-  SoundchainRejected = "soundchainRejected",
-
-  // Shared
-  AnalysisUnstarted = "analysisUnstarted",
-  AnalysisOngoing = "analysisOngoing",
-  AnalysisFinished = "analysisFinished",
-  AnalysisFailed = "analysisFailed",
-}
-
-export type ListItem = {
-  id: number,
-  text: string,
-  children?: Array<ListItem>,
-  subroots?: Array<ListItem>,
-  tags?: Array<Tag>,
 }
 
 /**
@@ -171,7 +143,7 @@ export const ListItem = (props: Props) => {
           { props.item.subroots &&
           <ul>
             {
-              props.item.subroots.map((subroot: ListItem) => {
+              props.item.subroots.map((subroot: ListItemType) => {
                 return <ListItem
                           class={LM.StyleClass.Subroot}
                           key={subroot.id}
@@ -189,7 +161,7 @@ export const ListItem = (props: Props) => {
           { props.item.children &&
           <ul>
             {
-              props.item.children.map((child: ListItem) => {
+              props.item.children.map((child: ListItemType) => {
                 return <ListItem
                           class={LM.StyleClass.Child}
                           itemType={LM.ItemType.Child}
@@ -208,4 +180,4 @@ export const ListItem = (props: Props) => {
   )
 }
 
-export default ListItem;
+export default ListItemType;
