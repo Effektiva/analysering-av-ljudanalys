@@ -158,10 +158,6 @@ export const DUMMY_SOUNDCHAIN: Soundchain = {
   comments: ["Aoeu", "ueoa"],
 }
 
-/* TODO: These should also have a type, but we should decide if
- * types that has to do with database models should be kept
- * in one and the same file or spread out where they fit
- */
 export const DUMMY_NOTES: Note[] = [
   Note.fromJson({
     id: 0,

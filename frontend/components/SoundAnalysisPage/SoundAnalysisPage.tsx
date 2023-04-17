@@ -3,9 +3,10 @@ import { Soundchain } from "@/components/MainView";
 import SoundClassFilterInput from "@/components/SoundClassFilterInput";
 import { DUMMY_SOUNDFILES_FILTERED_LIST, DUMMY_SOUNDFILES_LIST } from "@/modules/DummyData";
 import Graph from "./Graph";
-import ProgressBar from "./ProgressBar";
 import MetaData from "./MetaData";
 import Notes from "./Notes/Notes";
+import { useState } from "react";
+import MediaControl from "./MediaControl/MediaControl";
 
 type Props = {
   soundchain: Soundchain,
@@ -23,7 +24,36 @@ enum Style {
   SetStatus = STYLE_NAMESPACE + "setStatus",
 }
 
-const SoundanalysisPage = (props: Props) => {
+/*
+ * The component that contains the whole SoundanalysisPage.
+ *
+ * @param props - The soundchain that this page should display.
+ */
+const SoundAnalysisPage = (props: Props) => {
+  const [playing, setPlaying] = useState(false);
+  const [volumePercentage, setVolumePercentage] = useState(1);
+  const [progressPercentage, setProgressPercentage] = useState(0);
+  const [currentSoundClip, setCurrentSoundClip] = useState<undefined | HTMLAudioElement>(undefined);
+  const [currentClipID, setCurrentClipID] = useState<number>(-1);
+
+  const getSoundClipURL = (id: number) => {
+    return "clips/" + props.soundchain.id + "/SoundClips/" + id + ".mp3";
+  }
+
+  /*
+   * If a clip is selected in any of the soundfile lists this function is ran
+   * and given the ID of that soundfile.
+   */
+  const clipSelected = (id: number) => {
+    if (id != currentClipID) {
+      currentSoundClip?.pause();
+
+      const newClip = new Audio(getSoundClipURL(id));
+      setCurrentSoundClip(newClip);
+      setCurrentClipID(id);
+    }
+  }
+
   return (
     <div className={Style.Container}>
       <div className="row">
@@ -44,6 +74,7 @@ const SoundanalysisPage = (props: Props) => {
 
           <div className={Style.Filtered}>
             <SoundfileList
+              clipSelected={clipSelected}
               header="Filtrerade ljudklipp"
               soundfiles={DUMMY_SOUNDFILES_FILTERED_LIST}
             />
@@ -51,6 +82,7 @@ const SoundanalysisPage = (props: Props) => {
 
           <div className={Style.All}>
             <SoundfileList
+              clipSelected={clipSelected}
               header="Samtliga ljudklipp"
               soundfiles={DUMMY_SOUNDFILES_LIST}
             />
@@ -60,7 +92,17 @@ const SoundanalysisPage = (props: Props) => {
         {/* Right column */}
         <div className="col">
           <Graph />
-          <ProgressBar />
+          <MediaControl
+            key={currentClipID}
+            currentClipID={currentClipID}
+            playing={playing}
+            setPlaying={setPlaying}
+            audioElement={currentSoundClip}
+            progressPercentage={progressPercentage}
+            setProgressPercentage={setProgressPercentage}
+            volumePercentage={volumePercentage}
+            setVolumePercentage={setVolumePercentage}
+          />
           <div className={Style.Buttons}>
             <div className={Style.Zoom}>
               Zoom
@@ -79,4 +121,4 @@ const SoundanalysisPage = (props: Props) => {
   );
 }
 
-export default SoundanalysisPage;
+export default SoundAnalysisPage;

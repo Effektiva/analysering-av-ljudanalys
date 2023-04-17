@@ -1,0 +1,43 @@
+.mediaControl__container {
+    padding: 3px;
+    margin-top: 5px;
+    width: 100%;
+    background: white;
+    border-radius: 5px;
+}
+
+/*
+ * Buttons
+ */
+.mediaControl__buttonsContainer {
+    text-align: center;
+    margin-left: 18%;
+    margin-top: -3px;
+    margin-bottom: 5px;
+}
+
+.mediaControl__backwardsButton {
+    font-size: 18px;
+    margin-right: 14px;
+    display: inline-block;
+}
+.mediaControl__backwardsButton:hover {
+    color: lightslategray;
+}
+
+.mediaControl__stopPlayButton {
+    font-size: 22px;
+    display: inline-block;
+}
+.mediaControl__stopPlayButton:hover {
+    color: lightslategray;
+}
+
+.mediaControl__forwardButton {
+    font-size: 18px;
+    margin-left: 14px;
+    display: inline-block;
+}
+.mediaControl__forwardButton:hover {
+    color: lightslategray;
+}
