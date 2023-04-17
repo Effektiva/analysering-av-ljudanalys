@@ -3,8 +3,10 @@ import { Soundchain } from "@/components/MainView";
 import SoundClassFilterInput from "@/components/SoundClassFilterInput";
 import { DUMMY_SOUNDFILES_FILTERED_LIST, DUMMY_SOUNDFILES_LIST } from "@/modules/DummyData";
 import Graph from "./Graph";
-import MetaData from "./MetaData";
+import MetaDataView from "./MetaDataView";
 import Notes from "./Notes/Notes";
+import MetaData from "@/models/SoundAnalysis/MetaData";
+import Dossier from "@/models/General/Dossier";
 import { useState } from "react";
 import MediaControl from "./MediaControl/MediaControl";
 
@@ -113,7 +115,7 @@ const SoundAnalysisPage = (props: Props) => {
               Automagisk ljudsänkning
             </button>
           </div>
-          <MetaData />
+          <MetaDataView metaData={new MetaData("2020-03-12_0315_0722", [new Dossier(1, "jobany urod"), new Dossier(2, "your mother high")])}/>
           <Notes />
         </div>
       </div>
