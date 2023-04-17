@@ -1,11 +1,12 @@
 import SoundfileList from "@/components/SoundfileList";
 import { Soundchain } from "@/components/MainView";
-import SoundClassFilterInput from "@/components/SoundClassFilterInput";
+import SoundClassFilterInput from "@/components/Filter/SoundClassFilterInput";
 import { DUMMY_SOUNDFILES_FILTERED_LIST, DUMMY_SOUNDFILES_LIST } from "@/modules/DummyData";
 import Graph from "./Graph";
 import ProgressBar from "./ProgressBar";
 import MetaData from "./MetaData";
 import Notes from "./Notes/Notes";
+import { PassThrough } from "stream";
 
 type Props = {
   soundchain: Soundchain,
@@ -24,6 +25,9 @@ enum Style {
 }
 
 const SoundanalysisPage = (props: Props) => {
+  const categoryFilterHandler = (categories: Array<string>) => {
+    return;
+  }
   return (
     <div className={Style.Container}>
       <div className="row">
@@ -40,7 +44,7 @@ const SoundanalysisPage = (props: Props) => {
             </select>
           </div>
 
-          <SoundClassFilterInput />
+          <SoundClassFilterInput onChange={categoryFilterHandler} />
 
           <div className={Style.Filtered}>
             <SoundfileList

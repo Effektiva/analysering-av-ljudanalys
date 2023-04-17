@@ -13,62 +13,79 @@ enum Style {
   ListHeader = STYLE_NAMESPACE + "listHeader"
 }
 
+type Props = {
+  onChange: Function;
+}
+
 const CATEGORIES: Array<FilterItem> = [
   {
     id: 0,
-    category: "Hund",
+    name: "Hund",
     certaintyLevel: 40
   },
   {
     id: 1,
-    category: "Bil",
+    name: "Bil",
     certaintyLevel: 80
   },
   {
     id: 3,
-    category: "Kebab",
+    name: "Kebab",
     certaintyLevel: 85
   },
   {
     id: 4,
-    category: "Haj",
+    name: "Haj",
+    certaintyLevel: 60
+  },
+  {
+    id: 5,
+    name: "Haja",
     certaintyLevel: 60
   }
 ];
 
 // TODO: Ensure that casing isn´t a problem!
-const DICTIONARY: Array<string> = ["kebab", "bil", "hund", "haj"];
+const DICTIONARY: Array<string> = ["kebab", "bil", "hund", "haj", "haja"];
 
-const SoundClassFilterInput = () => {
+// Initial content of the categorylist showing, determined by relevans.
+const THRESHOLD = 80;
+const VALIDCATEGORIES = CATEGORIES.filter((category) => {
+  return category.certaintyLevel >= THRESHOLD;
+})
 
-  // Initial content of the categorylist showing, determined by relevans.
-  const threshold = 80;
-  const validCategories = CATEGORIES.filter((category) => {
-    return category.certaintyLevel >= threshold;
+const SoundClassFilterInput = (props: Props) => {
+
+  const [activatedCategories, setActivatedCategories] = useState(
+    VALIDCATEGORIES.map((category) => {
+      return category.name.toLowerCase();
+    })
+  )
+
+  const categories: Array<FilterItem> = CATEGORIES.filter((item) => {
+    return activatedCategories.includes(item.name.toLowerCase());
   })
 
-  const [categories, setCategories] = useState(validCategories);
-
   // When a category is deleted.
-  const deleteItemHandler = (id: number) => {
-    const newFilter = categories.filter((item) => {
-      return item.id !== id;
-    });
-    setCategories(newFilter)
+  const deleteItemHandler = (name: string) => {
+    const temp = activatedCategories.filter((elem) => {
+      return elem !== name.toLowerCase();
+    })
+    setActivatedCategories(temp);
+    props.onChange(temp);
   }
 
   // When a category is appended when the user presses enter.
-  const addCategoryHandler = (category: string) => {
-    const [categoryItem] = CATEGORIES.filter((item) => {
-      return item.category.toLowerCase() === category;
-    })
-    setCategories([...categories, categoryItem]);
+  const addCategoryHandler = (name: string) => {
+    const temp = [...activatedCategories, name];
+    setActivatedCategories(temp);
+    props.onChange(temp);
   }
 
   return (
     <div className={Style.Container}>
       <div className={Style.Header}>Filtrering</div>
-      <SearchBar dictionary={DICTIONARY} onSubmit={addCategoryHandler} />
+      <SearchBar dictionary={DICTIONARY} activatedCategories={activatedCategories} onSubmit={addCategoryHandler} />
       <div className={Style.ListContainer}>
         <div className={Style.ListHeader}>Aktiva filter</div>
         <div className={Style.List}>

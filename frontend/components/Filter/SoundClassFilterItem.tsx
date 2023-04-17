@@ -7,7 +7,7 @@ enum Style {
 
 export type FilterItem = {
   id: number,
-  category: string
+  name: string
   certaintyLevel: number
 }
 
@@ -18,12 +18,12 @@ export type Props = {
 
 const SoundClassFilterItem = (props: Props) => {
   const deleteHandler = () => {
-    props.onDeleteItemHandler(props.filterProperties.id);
+    props.onDeleteItemHandler(props.filterProperties.name);
   }
 
   return (
     <li key={props.filterProperties.id}>
-      {props.filterProperties.category}
+      {props.filterProperties.name}
       <div className={Style.ListRemove} onClick={deleteHandler}>X</div>
     </li>
   );
