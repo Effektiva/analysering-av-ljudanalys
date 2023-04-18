@@ -5,7 +5,7 @@ import SoundChainState from "./SoundChainState";
 import Soundclip from "./Soundclip";
 
 /**
- * TODO: Copilot this shit blyad
+ * A SoundChain is a collection of SoundClips that are played in a specific order.
  */
 class SoundChain implements ListItemRepresentable {
   id: number | undefined;
