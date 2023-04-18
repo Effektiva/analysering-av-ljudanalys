@@ -2,6 +2,9 @@ import Note from "@/models/SoundAnalysis/Note";
 import EditableTextField from "./EditableTextField";
 import { useState } from "react";
 import { LOG as log } from "@/pages/_app";
+import { FaSave as IconSave,
+         FaTrash as IconDelete,
+         FaEdit as IconEdit             } from "react-icons/fa";
 
 type Props = {
   notes: Array<Note>,
@@ -61,11 +64,20 @@ const NotesList = (props: Props) => {
                     <div className={Style.Header}>
                       <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
                       <span className={Style.Time}>Tid i klipp: {note.timeInClip.formattedString()}</span>
-                      <>{editingNoteId === note.id ? <button onClick={() => saveEditedText(note.id) }><img src="/save.png" alt="Save"/></button> : <button onClick={() => setEditingNoteId(note.id) }><img src="/edit.png" alt="Edit"/></button> }</>
-                      <button
-                        onClick={() => props.deleteNote(note.id)}
-                      >
-                        <img src="/delete.png" alt="Delete"/>
+                      <>
+                        {editingNoteId === note.id
+                          ?
+                            <button onClick={() => saveEditedText(note.id) }>
+                              <IconSave />
+                            </button>
+                          :
+                            <button onClick={() => setEditingNoteId(note.id) }>
+                              <IconEdit />
+                            </button>
+                        }
+                      </>
+                      <button onClick={() => props.deleteNote(note.id)}>
+                        <IconDelete />
                       </button>
 
                     </div>
