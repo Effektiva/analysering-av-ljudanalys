@@ -120,17 +120,6 @@ const DossierList = (props: Props) => {
     setMenuVisible(!menuVisible);
   }
 
-  const dossiersAsListItems = (): Array<ListItemType> => {
-    var doss: Array<ListItemType> = []
-    dossiers.forEach(dossier => {
-      doss.push({
-        id: dossier.id ?? -1,
-        text: dossier.name
-      });
-    });
-    return doss
-  }
-
   return (
     <>
       <span

@@ -1,6 +1,6 @@
 import { ListItemType } from "@/components/ListMenu/ListItemType";
 import Metadata from "../SoundAnalysis/Metadata";
-import ListItemRepresentable from "./ListItemRepresentable";
+import ListItemRepresentable from "../ListItemRepresentable";
 
 class Soundclip implements ListItemRepresentable {
   id: number | undefined;
@@ -23,7 +23,8 @@ class Soundclip implements ListItemRepresentable {
   asListItem(): ListItemType {
     return {
       id: this.id ?? -1,
-      text: this.metadata.fileName
+      text: this.metadata.fileName,
+      collapsable: false
     }
   }
 }

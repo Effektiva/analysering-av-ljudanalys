@@ -10,7 +10,6 @@ type Props = {
   itemType?: LM.ItemType,
   parentID?: number,
   changeTextID?: number,
-  toggleable?: boolean,
 }
 
 /**
@@ -26,7 +25,6 @@ type Props = {
  * - parentID?: If this is a nested ListItem, this will contain the parents ID, otherwise undefined.
  * - changeTextID?: If we're changing the text of a ListItem within the ListMenu (ex. a dossiers name)
  *   then this is the ID of that ListItem. Otherwise undefined.
- * - toggleable?: If this ListItem's visibility is toggleable by clicking it (false by default)
  * - tags?: If the item has any tags, empty by default. Fill with the enum Tag.
  */
 export const ListItem = (props: Props) => {
@@ -42,7 +40,7 @@ export const ListItem = (props: Props) => {
       nodeType: props.itemType,
     }
 
-    if (props.itemType != LM.ItemType.Child && props.toggleable) {
+    if (props.itemType != LM.ItemType.Child && props.item.collapsable === true) {
       setHidden(!hidden);
     }
 
@@ -152,7 +150,6 @@ export const ListItem = (props: Props) => {
                           item={subroot}
                           changeTextID={props.changeTextID}
                           eventHandler={props.eventHandler}
-                          toggleable={props.toggleable}
                         />
               })
             }

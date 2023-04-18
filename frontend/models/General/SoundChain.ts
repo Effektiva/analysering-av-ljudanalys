@@ -1,6 +1,6 @@
 import { ListItemType } from "@/components/ListMenu/ListItemType";
 import Note from "../SoundAnalysis/Note";
-import ListItemRepresentable from "./ListItemRepresentable";
+import ListItemRepresentable from "../ListItemRepresentable";
 import SoundChainState from "./SoundChainState";
 import Soundclip from "./Soundclip";
 
@@ -37,7 +37,8 @@ class SoundChain implements ListItemRepresentable {
   asListItem(): ListItemType {
     return {
       id: this.id ?? -1,
-      text: this.name
+      text: this.name,
+      collapsable: false
     }
   }
 }

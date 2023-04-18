@@ -1,5 +1,5 @@
 import { ListItemType } from "@/components/ListMenu/ListItemType";
-import ListItemRepresentable from "./ListItemRepresentable";
+import ListItemRepresentable from "../ListItemRepresentable";
 
 class Investigation implements ListItemRepresentable {
   id: number | undefined;
@@ -13,7 +13,8 @@ class Investigation implements ListItemRepresentable {
   asListItem(): ListItemType {
     return {
       id: this.id ?? -1,
-      text: this.name
+      text: this.name,
+      collapsable: false
     }
   }
 

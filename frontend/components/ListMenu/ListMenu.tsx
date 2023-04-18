@@ -225,7 +225,6 @@ const ListMenu = (props: Props) => {
                       changeTextID={changeTextID}
                       item={item}
                       eventHandler={eventHandler}
-                      toggleable={props.toggleableRoots}
                     />
            })
         }

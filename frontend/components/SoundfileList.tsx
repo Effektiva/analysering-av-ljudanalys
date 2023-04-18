@@ -105,14 +105,17 @@ const SoundfileList = (props: Props) => {
     {
       id: 0,
       text: "Ej behandlad",
+      collapsable: false
     },
     {
       id: 1,
       text: "Behandlad",
+      collapsable: false
     },
     {
       id: 2,
       text: "Avvisad",
+      collapsable: false
     },
   ]
 
