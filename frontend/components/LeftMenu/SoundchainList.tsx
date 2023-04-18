@@ -1,11 +1,11 @@
 import { useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
-import { ListItemType } from "@/components/ListMenu/ListItem";
+import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 
 type Props = {
-  soundchains: Array<ListItem>,
+  soundchains: Array<ListItemType>,
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -18,7 +18,7 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundchainList = (props: Props) => {
-  const [items] = useState<Array<ListItem>>(props.soundchains);
+  const [items] = useState<Array<ListItemType>>(props.soundchains);
   const [menuVisible, setMenuVisible] = useState<boolean>(true);
 
   const eventHandler = (response: ListEventResponse) => {

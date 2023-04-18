@@ -92,7 +92,7 @@ const SoundfileList = (props: Props) => {
 
   const dossierPopupComponent: ReactElement = <ListMenu
                                                 key={DUMMY_DOSSIER_LIST_NOCHILD.length}
-                                                items={DUMMY_DOSSIER_LIST_NOCHILD}
+                                                items={DUMMY_DOSSIER_LIST_NOCHILD.map(dossier => dossier.asListItem())}
                                                 eventHandler={dossierPopupHandler}
                                               />;
 

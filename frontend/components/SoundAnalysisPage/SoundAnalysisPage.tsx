@@ -1,12 +1,12 @@
 import SoundfileList from "@/components/SoundfileList";
 import SoundClassFilterInput from "@/components/SoundClassFilterInput";
-import { DUMMY_SOUNDFILES_LIST } from "@/modules/DummyData";
 import Graph from "./Graph";
 import MetadataView from "./MetaDataView";
-import Notes from "./Notes/Notes";
 import { useState } from "react";
 import MediaControl from "./MediaControl/MediaControl";
 import SoundChain from "@/models/General/SoundChain";
+import Note from "@/models/SoundAnalysis/Note";
+import Notes from "./Notes/Notes";
 
 type Props = {
   soundchain: SoundChain,
@@ -54,6 +54,12 @@ const SoundAnalysisPage = (props: Props) => {
     }
   }
 
+  const soundchainCommentsUpdated = (newNotes: Array<Note>) => {
+    props.soundchain.comments = newNotes;
+    console.log("Updated comments!");
+    // TODO: Send to backend
+  }
+
   return (
     <div className={Style.Container}>
       <div className="row">
@@ -76,7 +82,7 @@ const SoundAnalysisPage = (props: Props) => {
             <SoundfileList
               clipSelected={clipSelected}
               header="Filtrerade ljudklipp"
-              soundfiles={props.soundchain.soundClips}
+              soundfiles={props.soundchain.soundClips} // TODO: This should be filtered...
             />
           </div>
 
@@ -84,7 +90,7 @@ const SoundAnalysisPage = (props: Props) => {
             <SoundfileList
               clipSelected={clipSelected}
               header="Samtliga ljudklipp"
-              soundfiles={DUMMY_SOUNDFILES_LIST}
+              soundfiles={props.soundchain.soundClips}
             />
           </div>
         </div>
@@ -114,7 +120,7 @@ const SoundAnalysisPage = (props: Props) => {
             </button>
           </div>
           <MetadataView metaData={props.soundchain.soundClips[0].metadata}/>
-          <Notes />
+          <Notes soundchain={props.soundchain} soundchainCommentsUpdated={soundchainCommentsUpdated} />
         </div>
       </div>
     </div>

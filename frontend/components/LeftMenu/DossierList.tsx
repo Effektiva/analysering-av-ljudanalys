@@ -1,12 +1,13 @@
 import { useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
-import ListItem from "@/components/ListMenu/ListItem";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
+import Dossier from "@/models/General/Dossier";
+import { ListItemType } from "../ListMenu/ListItemType";
 
 type Props = {
   selected: Function,
-  dossiers: Array<ListItem>,
+  dossiers: Array<Dossier>,
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -47,7 +48,7 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ];
 
 const DossierList = (props: Props) => {
-  const [items, setItems] = useState<Array<ListItem>>(props.dossiers);
+  const [dossiers, setDossiers] = useState<Array<Dossier>>(props.dossiers);
   const [menuVisible, setMenuVisible] = useState<boolean>(true);
 
   // TODO: just for demonstration
@@ -65,10 +66,10 @@ const DossierList = (props: Props) => {
 
         // TODO: just for demonstration, otherwise cleanup !
         {
-          let newItems = [...items];
+          let newItems = [...dossiers];
           let index = newItems.findIndex((elem) => elem.id == response.id);
-          newItems[index].text = response.value!;
-          setItems(newItems);
+          newItems[index].name = response.value!;
+          setDossiers(newItems);
         }
         break;
 
@@ -77,12 +78,12 @@ const DossierList = (props: Props) => {
 
         // TODO: just for demonstration, otherwise cleanup !
         {
-          let newItems = [...items];
+          let newItems = [...dossiers];
           let parentIndex = newItems.findIndex((elem) => elem.id == response.parentID);
           let parent = newItems[parentIndex];
-          let childIndex = parent.subroots!.findIndex((elem) => elem.id == response.id);
-          parent.subroots![childIndex].text = response.value!;
-          setItems(newItems);
+          let childIndex = parent.subdossiers!.findIndex((elem) => elem.id == response.id);
+          parent.subdossiers![childIndex].name = response.value!;
+          setDossiers(newItems);
         }
         break;
 
@@ -111,15 +112,23 @@ const DossierList = (props: Props) => {
 
   const addNewItem = () => {
     log.debug("New item...")
-    setItems(prev => [...prev, {
-      id: id,
-      text: "Dossier " + id,
-    }]);
+    setDossiers(prev => [...prev, new Dossier(id, "Dossier " + id)]);
     setID(prev => prev + 1);
   }
 
   const toggleVisibility = () => {
     setMenuVisible(!menuVisible);
+  }
+
+  const dossiersAsListItems = (): Array<ListItemType> => {
+    var doss: Array<ListItemType> = []
+    dossiers.forEach(dossier => {
+      doss.push({
+        id: dossier.id ?? -1,
+        text: dossier.name
+      });
+    });
+    return doss
   }
 
   return (
@@ -132,8 +141,8 @@ const DossierList = (props: Props) => {
       </span>
       { menuVisible &&
         <ListMenu
-          key={items.length}
-          items={items}
+          key={dossiers.length}
+          items={dossiers.map((dossier) => dossier.asListItem())}
           contextMenus={CONTEXT_MENUS}
           eventHandler={eventHandler}
           toggleableRoots={true}

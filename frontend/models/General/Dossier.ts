@@ -1,13 +1,15 @@
 import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ListItemRepresentable from "./ListItemRepresentable";
 
-class Dossier implements ListItemRepresentable{
+class Dossier implements ListItemRepresentable {
   id: number | undefined;
   name: string;
+  subdossiers: Array<Dossier>
 
-  constructor(id: number | undefined, name: string) {
+  constructor(id: number | undefined, name: string, subdossiers: Array<Dossier> = []) {
     this.id = id;
     this.name = name;
+    this.subdossiers = subdossiers;
   }
 
   public getName(): string {
@@ -17,9 +19,12 @@ class Dossier implements ListItemRepresentable{
   asListItem(): ListItemType {
     return {
       id: this.id ?? -1,
-      text: this.name
+      text: this.name,
+      children: this.subdossiers.map(dossier => dossier.asListItem())
     }
   }
+
 }
 
 export default Dossier;
+

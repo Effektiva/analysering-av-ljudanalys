@@ -1,4 +1,4 @@
-import { ListEvent as LEvent } from "../LeftMenu/ListMenu/ListMenu"
+import { ListEvent } from "../ListMenu/ListMenu"
 
 type Props = {
   id: number,
@@ -7,7 +7,7 @@ type Props = {
 }
 
 export type ContextItem = {
-  id: number | LEvent,
+  id: number | ListEvent,
   text: string,
 }
 
