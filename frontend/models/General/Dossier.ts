@@ -37,6 +37,18 @@ class Dossier implements ListItemRepresentable {
     }
   }
 
+  addableListItems(): ListItemType {
+    let children = [
+      ...this.subdossiers.map(dossier => dossier.addableListItems())
+    ];
+    return {
+      id: this.id ?? -1,
+      text: this.name,
+      collapsable: children.length != 0,
+      children: children
+    }
+  }
+
 }
 
 export default Dossier;

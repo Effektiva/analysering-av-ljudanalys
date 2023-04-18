@@ -7,9 +7,12 @@ import MediaControl from "./MediaControl/MediaControl";
 import SoundChain from "@/models/General/SoundChain";
 import Note from "@/models/SoundAnalysis/Note";
 import Notes from "./Notes/Notes";
+import AppState from "@/state/AppState";
 
 type Props = {
   soundchain: SoundChain,
+  appState: AppState,
+  updateAppState: (appState: AppState) => void
 }
 
 const STYLE_NAMESPACE = "soundAnalysisPage__";
@@ -83,6 +86,8 @@ const SoundAnalysisPage = (props: Props) => {
               clipSelected={clipSelected}
               header="Filtrerade ljudklipp"
               soundfiles={props.soundchain.soundClips} // TODO: This should be filtered...
+              appState={props.appState}
+              updateAppState={props.updateAppState}
             />
           </div>
 
@@ -91,6 +96,8 @@ const SoundAnalysisPage = (props: Props) => {
               clipSelected={clipSelected}
               header="Samtliga ljudklipp"
               soundfiles={props.soundchain.soundClips}
+              appState={props.appState}
+              updateAppState={props.updateAppState}
             />
           </div>
         </div>

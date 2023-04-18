@@ -41,7 +41,7 @@ export const DUMMY_SOUNDFILE_LIST: Array<Soundclip> = [
 
 export const DUMMY_DOSSIER_LIST: Array<Dossier> = [
   new Dossier(
-    1,
+    0,
     "Favoriter",
     [
       new Dossier(10, "2223-33-21 1137"),
@@ -49,26 +49,13 @@ export const DUMMY_DOSSIER_LIST: Array<Dossier> = [
     ]
   ),
   new Dossier(
-    2,
+    1,
     "Suspekt snack",
     [
       new Dossier(20, "Kalle snackar", [], DUMMY_SOUNDFILE_LIST),
       new Dossier(21, "Länsman snackar", [], DUMMY_SOUNDFILE_LIST),
     ],
     DUMMY_SOUNDFILE_LIST
-  ),
-]
-
-export const DUMMY_DOSSIER_LIST_NOCHILD: Array<Dossier> = [
-  new Dossier(
-    1,
-    "Favoriter",
-    []
-  ),
-  new Dossier(
-    2,
-    "Suspekt snack",
-    []
   ),
 ]
 

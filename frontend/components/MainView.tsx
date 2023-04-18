@@ -1,8 +1,9 @@
-import { DUMMY_INVESTIGATION_LIST, DUMMY_SOUNDCHAIN } from "@/modules/DummyData";
+import { DUMMY_INVESTIGATION_LIST, DUMMY_SOUNDCHAIN, DUMMY_DOSSIER_LIST } from "@/modules/DummyData";
 import { useState } from "react";
 import LeftMenu, { Type } from "./LeftMenu/LeftMenu";
 import SoundanalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
 import InvestigationPage from "./InvestigationPage/InvestigationPage";
+import AppState from "@/state/AppState";
 
 /**
  * The MainView is the main component switching beteen pages (Investigations, Dossiers, etc)
@@ -12,48 +13,59 @@ import InvestigationPage from "./InvestigationPage/InvestigationPage";
  * and type of the list item and the page is updated accordingly.
  */
 const MainView = () => {
-    const [page, setPage] = useState(<SoundanalysisPage soundchain={DUMMY_SOUNDCHAIN} />);
+  const [appState, setAppState] = useState<AppState>({
+    dossierState: DUMMY_DOSSIER_LIST,
+    selectedSoundChain: DUMMY_SOUNDCHAIN,
+    selectedSoundclips: DUMMY_SOUNDCHAIN.soundClips
+  });
+  const [page, setPage] = useState(
+  <SoundanalysisPage
+    soundchain={appState.selectedSoundChain!}
+    appState={appState}
+    updateAppState={setAppState}
+  />
+  ); // TODO: Remove force
 
-    // Attempt to obtain the right path to dossier sub data.
-    const getSearchPath = (id: number) => {
-        let num = id;
-        let ids: number[] = [];
-        while (num) {
-            const remainder = num % 10;
-            num -= remainder;
-            num /= 10;
-            ids = [remainder, ...ids];         // Appending to the back of the array.
-        }
-        return ids;
+  // Attempt to obtain the right path to dossier sub data.
+  const getSearchPath = (id: number) => {
+    let num = id;
+    let ids: number[] = [];
+    while (num) {
+      const remainder = num % 10;
+      num -= remainder;
+      num /= 10;
+      ids = [remainder, ...ids];         // Appending to the back of the array.
     }
+    return ids;
+  }
 
-    const filterById = (dataList: Array<any>, id: number) => {
-        const [data] = dataList.filter((data) => {
-            return data.id === id;
-        })
-        return data;
+  const filterById = (dataList: Array<any>, id: number) => {
+    const [data] = dataList.filter((data) => {
+      return data.id === id;
+    })
+    return data;
+  }
+
+  const selectedHandler = (type: Type, id: number) => {
+    switch (type) {
+      case Type.INVESTIGATION:
+        const investigation = filterById(DUMMY_INVESTIGATION_LIST, id);
+        setPage(<InvestigationPage />);
+        break;
+      case Type.DOSSIER: // Todo: need to figure out a good way to structure dossier data so that its easy to extract.
+        setPage(<SoundanalysisPage soundchain={appState.selectedSoundChain!} appState={appState} updateAppState={setAppState} />);
+        break;
+      default:
+        break;
     }
+  }
 
-    const selectedHandler = (type: Type, id: number) => {
-        switch (type) {
-            case Type.INVESTIGATION:
-                const investigation = filterById(DUMMY_INVESTIGATION_LIST, id);
-                setPage(<InvestigationPage />);
-                break;
-            case Type.DOSSIER: // Todo: need to figure out a good way to structure dossier data so that its easy to extract.
-                setPage(<SoundanalysisPage soundchain={DUMMY_SOUNDCHAIN} />);
-                break;
-            default:
-                break;
-        }
-    }
-
-    return (
-        <div className="main-view">
-            <LeftMenu selected={selectedHandler}/>
-            {page}
-        </div>
-    )
+  return (
+    <div className="main-view">
+      <LeftMenu selected={selectedHandler} />
+      {page}
+    </div>
+  )
 }
 
 export default MainView;

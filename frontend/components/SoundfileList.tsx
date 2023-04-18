@@ -3,15 +3,17 @@ import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/Li
 import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import useComponentVisible from "@/hooks/useComponentVisible";
-import { DUMMY_DOSSIER_LIST_NOCHILD } from "@/modules/DummyData";
 import Popup from "@/components/Popup";
 import { LOG as log } from "@/pages/_app";
 import Soundclip from "@/models/General/Soundclip";
+import AppState from "@/state/AppState";
 
 type Props = {
   header: string,
   soundfiles: Array<Soundclip>,
   clipSelected: Function,
+  appState: AppState,
+  updateAppState: (appState: AppState) => void
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -91,8 +93,8 @@ const SoundfileList = (props: Props) => {
   }
 
   const dossierPopupComponent: ReactElement = <ListMenu
-                                                key={DUMMY_DOSSIER_LIST_NOCHILD.length}
-                                                items={DUMMY_DOSSIER_LIST_NOCHILD.map(dossier => dossier.asListItem())}
+                                                key={props.appState.dossierState.length}
+                                                items={props.appState.dossierState.map(dossier => dossier.addableListItems())}
                                                 eventHandler={dossierPopupHandler}
                                               />;
 
