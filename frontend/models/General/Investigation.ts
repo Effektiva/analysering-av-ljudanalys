@@ -1,5 +1,6 @@
 import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ListItemRepresentable from "../ListItemRepresentable";
+import SoundChain from "./SoundChain";
 
 /**
  * Represents an investigation that holds several soundchains.
@@ -7,10 +8,12 @@ import ListItemRepresentable from "../ListItemRepresentable";
 class Investigation implements ListItemRepresentable {
   id: number | undefined;
   name: string;
+  soundChains: Array<SoundChain>;
 
-  constructor(id: number | undefined, name: string) {
+  constructor(id: number | undefined, name: string, soundChains: Array<SoundChain>) {
     this.id = id;
     this.name = name;
+    this.soundChains = soundChains;
   }
 
   asListItem(): ListItemType {

@@ -11,6 +11,7 @@ type Props = {
   eventHandler: Function,
   contextMenus?: Array<ContextItem[]>,
   toggleableRoots?: boolean,
+  selectedId?: number
 }
 
 /**
@@ -225,6 +226,7 @@ const ListMenu = (props: Props) => {
                       changeTextID={changeTextID}
                       item={item}
                       eventHandler={eventHandler}
+                      selected={props.selectedId === item.id}
                     />
            })
         }

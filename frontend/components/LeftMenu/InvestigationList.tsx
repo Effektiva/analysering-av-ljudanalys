@@ -3,10 +3,12 @@ import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/Li
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 import Investigation from "@/models/General/Investigation";
+import AppState from "@/state/AppState";
 
 type Props = {
   selected: Function,
   investigations: Array<Investigation>,
+  appState: AppState
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -68,7 +70,7 @@ const InvestigationList = (props: Props) => {
   }
   const addNewItem = () => {
     log.debug("New item...")
-    setItems(prev => [...prev, new Investigation(id, "Ny utredning " + id)]);
+    setItems(prev => [...prev, new Investigation(id, "Ny utredning " + id, [])]);
     setID(prev => prev + 1);
   }
 
@@ -90,6 +92,7 @@ const InvestigationList = (props: Props) => {
           items={items.map(investigation => investigation.asListItem())}
           contextMenus={CONTEXT_MENUS}
           eventHandler={eventHandler}
+          selectedId={props.appState.selectedInvestigation?.id}
         />
       }
       <button className="listAddButton" onClick={addNewItem}>Ny utredning</button>
