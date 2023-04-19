@@ -6,6 +6,7 @@ import InvestigationPage from "./InvestigationPage/InvestigationPage";
 import AppState from "@/state/AppState";
 import SoundChain from "@/models/General/SoundChain";
 import Investigation from "@/models/General/Investigation";
+import { LOG as log } from "@/pages/_app";
 
 /**
  * The MainView is the main component switching beteen pages (Investigations, Dossiers, etc)
@@ -55,17 +56,16 @@ const MainView = () => {
   const selectedHandler = (type: Type, id: number) => {
     switch (type) {
       case Type.INVESTIGATION:
-        console.log("Selected investigation with id: " + id);
+        log.debug("Selected investigation with id: " + id);
         const investigation: Investigation = filterById(DUMMY_INVESTIGATION_LIST, id);
         var newState = appState;
         newState.selectedInvestigation = investigation;
         newState.selectedSoundChain = undefined;
-        console.log("Found inv id: " + investigation.id + ", chains: " + investigation.soundChains.length);
         setAppState(newState);
         setPage(<InvestigationPage key={appState.selectedInvestigation?.id} investigation={appState.selectedInvestigation!} soundChainSelected={soundChainSelectedHandler}/>);
         break;
       case Type.SOUNDCHAIN: // Todo: need to figure out a good way to structure dossier data so that its easy to extract.
-        console.log("Selected soundChain with id: " + id);
+        log.debug("Selected soundChain with id: " + id);
         const soundChain: SoundChain = filterById([...DUMMY_SOUNDCHAINS_LIST, ...DUMMY_SOUNDCHAINS_LIST2], id);
         var newState = appState;
         newState.selectedSoundChain = soundChain;
