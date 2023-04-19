@@ -38,9 +38,9 @@ class Dossier implements ListItemRepresentable {
     }
   }
 
-  addableListItems(): ListItemType {
+  topAndSubDossierListItems(): ListItemType {
     let children = [
-      ...this.subdossiers.map(dossier => dossier.addableListItems())
+      ...this.subdossiers.map(dossier => dossier.topAndSubDossierListItems())
     ];
     return {
       id: this.id ?? -1,

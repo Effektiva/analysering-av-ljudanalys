@@ -15,8 +15,7 @@ import AppState from "@/state/AppState";
 const MainView = () => {
   const [appState, setAppState] = useState<AppState>({
     dossierState: DUMMY_DOSSIER_LIST,
-    selectedSoundChain: DUMMY_SOUNDCHAIN,
-    selectedSoundclips: DUMMY_SOUNDCHAIN.soundClips
+    selectedSoundChain: DUMMY_SOUNDCHAIN
   });
   const [page, setPage] = useState(
   <SoundanalysisPage
