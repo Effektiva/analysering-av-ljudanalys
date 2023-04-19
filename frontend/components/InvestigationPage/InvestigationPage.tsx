@@ -17,7 +17,6 @@ enum Style {
 }
 
 const InvestigationPage = (props: Props) => {
-  console.log("Inv page for " + props.investigation.id);
   return <>
     <div className={Style.Container}>
       <div className="row">
