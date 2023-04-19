@@ -17,6 +17,8 @@ type Props = {
   setVolumePercentage: Function,
   progressPercentage: number,
   setProgressPercentage: Function,
+  muted: boolean,
+  setMuted: Function,
 }
 
 const STYLE_NAMESPACE = "mediaControl__";
@@ -30,7 +32,7 @@ enum Style {
 
 export enum Event {
   Backward = 0,
-  StopPlay,
+  TogglePlay,
   Forward,
   ProgressBar,
 }
@@ -58,8 +60,8 @@ const MediaControl = (props: Props) => {
   useEffect(() => {
     if (props.audioElement != undefined) {
       props.setProgressPercentage(0);
-      props.setPlaying(false);
       props.audioElement.volume = props.volumePercentage;
+      props.audioElement.muted = props.muted;
 
       // Wait until the audio element has loaded.
       props.audioElement.oncanplay = audioElementLoaded;
@@ -70,15 +72,16 @@ const MediaControl = (props: Props) => {
   }, [props.audioElement]); // ignore warning, we only want to run when audioElement changes
 
   /*
-   * Set visual things when a new audio element has finished loading.
+   * Set visual things when a new audio element has finished loadind and decide on playback.
    */
   const audioElementLoaded = () => {
     if (props.audioElement != undefined) {
       setCurrentTime(props.audioElement.currentTime);
       setDuration(props.audioElement.duration);
       setPlayable(true);
-      props.setPlaying(true);
-      props.audioElement.play();
+      if (props.playing) {
+        props.audioElement.play();
+      }
     }
   }
 
@@ -88,7 +91,7 @@ const MediaControl = (props: Props) => {
    */
   const onTimeUpdate = () => {
     if (props.audioElement) {
-      let progressPercentage = 100*props.audioElement?.currentTime/props.audioElement?.duration; 
+      let progressPercentage = 100*props.audioElement?.currentTime/props.audioElement?.duration;
       props.setProgressPercentage(Math.trunc(progressPercentage));
 
       setCurrentTime(props.audioElement?.currentTime);
@@ -104,31 +107,35 @@ const MediaControl = (props: Props) => {
    * Called on all button presses related to progress changes.
    */
   const buttonHandler = (event: Event) => {
-    if (playable) {
-      switch(event) {
-        case Event.Backward:
-          progressEventHandler(Event.Backward, 0);
-          break;
-        case Event.StopPlay:
-          if (props.audioElement != undefined) {
-            props.setPlaying(!props.playing);
+    if (!playable) {
+      log.error("audio element not playable");
+      return;
+    }
 
-            if (props.audioElement.paused) {
-              props.audioElement?.play();
-            } else {
-              props.audioElement?.pause();
-            }
-          } else {
-            log.error("audioElement is undefined");
-          }
-          break;
-        case Event.Forward:
-          progressEventHandler(Event.Forward, 0);
-          break;
-        default:
-          log.error("Event unhandled:", event);
-          break;
-      }
+    switch(event) {
+      case Event.Backward:
+        progressEventHandler(Event.Backward, 0);
+        break;
+      case Event.TogglePlay:
+        if (props.audioElement == undefined) {
+          log.error("audioElement is undefined");
+          return;
+        }
+
+        props.setPlaying(!props.playing);
+
+        if (props.audioElement.paused) {
+          props.audioElement?.play();
+        } else {
+          props.audioElement?.pause();
+        }
+        break;
+      case Event.Forward:
+        progressEventHandler(Event.Forward, 0);
+        break;
+      default:
+        log.error("Event unhandled:", event);
+        break;
     }
   }
 
@@ -143,6 +150,13 @@ const MediaControl = (props: Props) => {
     } else {
       log.error("audioElement is undefined");
     }
+  }
+
+  const muteHandler = (val: boolean) => {
+    if (props.audioElement) {
+      props.audioElement.muted = val;
+    }
+    props.setMuted(val);
   }
 
   /*
@@ -174,7 +188,7 @@ const MediaControl = (props: Props) => {
 
       props.setProgressPercentage(newPercent);
     } else {
-      log.error("audio element is undefined (or duration)");
+      log.error("audio element/duration is undefined");
     }
   }
 
@@ -191,7 +205,7 @@ const MediaControl = (props: Props) => {
         <div
           style={{color: playable ? "black" : "gray"}}
           className={Style.StopPlayButton}
-          onClick={() => buttonHandler(Event.StopPlay)}
+          onClick={() => buttonHandler(Event.TogglePlay)}
         >{props.playing ? <PauseIcon /> : <PlayIcon />}</div>
         <div
           style={{color: playable ? "black" : "gray"}}
@@ -200,14 +214,18 @@ const MediaControl = (props: Props) => {
         ><ForwardIcon /></div>
 
         <VolumeBar
+          key={props.currentClipID}
           playable={playable}
           volumePercentage={props.volumePercentage}
           setVolumePercentage={volumeEventHandler}
+          muted={props.muted}
+          setMuted={muteHandler}
         />
       </div>
 
       <ProgressBar
         key={props.currentClipID}
+        playable={playable}
         currentTime={currentTime}
         duration={duration}
         progressEventHandler={progressEventHandler}
