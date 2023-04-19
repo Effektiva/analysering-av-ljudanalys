@@ -1,9 +1,12 @@
-import { DUMMY_INVESTIGATION_LIST, DUMMY_SOUNDCHAIN, DUMMY_DOSSIER_LIST } from "@/modules/DummyData";
-import { useState } from "react";
+import { DUMMY_INVESTIGATION_LIST, DUMMY_INVESTIGATION, DUMMY_DOSSIER_LIST, DUMMY_SOUNDCHAINS_LIST, DUMMY_SOUNDCHAINS_LIST2 } from "@/modules/DummyData";
+import { useEffect, useState } from "react";
 import LeftMenu, { Type } from "./LeftMenu/LeftMenu";
 import SoundanalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
 import InvestigationPage from "./InvestigationPage/InvestigationPage";
 import AppState from "@/state/AppState";
+import SoundChain from "@/models/General/SoundChain";
+import Investigation from "@/models/General/Investigation";
+import { LOG as log } from "@/pages/_app";
 
 /**
  * The MainView is the main component switching beteen pages (Investigations, Dossiers, etc)
@@ -15,14 +18,19 @@ import AppState from "@/state/AppState";
 const MainView = () => {
   const [appState, setAppState] = useState<AppState>({
     dossierState: DUMMY_DOSSIER_LIST,
-    selectedSoundChain: DUMMY_SOUNDCHAIN
+    selectedSoundChain: undefined,
+    selectedInvestigation: DUMMY_INVESTIGATION
   });
+
+  const soundChainSelectedHandler = (id: number) => {
+    selectedHandler(Type.SOUNDCHAIN, id);
+  };
+
   const [page, setPage] = useState(
-  <SoundanalysisPage
-    soundchain={appState.selectedSoundChain!}
-    appState={appState}
-    updateAppState={setAppState}
-  />
+    <InvestigationPage
+      investigation={appState.selectedInvestigation!}
+      soundChainSelected={soundChainSelectedHandler}
+    />
   ); // TODO: Remove force
 
   // Attempt to obtain the right path to dossier sub data.
@@ -48,11 +56,21 @@ const MainView = () => {
   const selectedHandler = (type: Type, id: number) => {
     switch (type) {
       case Type.INVESTIGATION:
-        const investigation = filterById(DUMMY_INVESTIGATION_LIST, id);
-        setPage(<InvestigationPage />);
+        log.debug("Selected investigation with id: " + id);
+        const investigation: Investigation = filterById(DUMMY_INVESTIGATION_LIST, id);
+        var newState = appState;
+        newState.selectedInvestigation = investigation;
+        newState.selectedSoundChain = undefined;
+        setAppState(newState);
+        setPage(<InvestigationPage key={appState.selectedInvestigation?.id} investigation={appState.selectedInvestigation!} soundChainSelected={soundChainSelectedHandler}/>);
         break;
-      case Type.DOSSIER: // Todo: need to figure out a good way to structure dossier data so that its easy to extract.
-        setPage(<SoundanalysisPage soundchain={appState.selectedSoundChain!} appState={appState} updateAppState={setAppState} />);
+      case Type.SOUNDCHAIN: // Todo: need to figure out a good way to structure dossier data so that its easy to extract.
+        log.debug("Selected soundChain with id: " + id);
+        const soundChain: SoundChain = filterById([...DUMMY_SOUNDCHAINS_LIST, ...DUMMY_SOUNDCHAINS_LIST2], id);
+        var newState = appState;
+        newState.selectedSoundChain = soundChain;
+        setAppState(newState);
+        setPage(<SoundanalysisPage key={appState.selectedSoundChain?.id} soundchain={appState.selectedSoundChain!} appState={appState} updateAppState={setAppState} />);
         break;
       default:
         break;
@@ -61,7 +79,7 @@ const MainView = () => {
 
   return (
     <div className="main-view">
-      <LeftMenu selected={selectedHandler} />
+      <LeftMenu selected={selectedHandler} appState={appState} />
       {page}
     </div>
   )

@@ -6,6 +6,7 @@ import SoundChain from "@/models/General/SoundChain";
 
 type Props = {
   soundchains: Array<SoundChain>,
+  soundChainSelected: (id: number) => void
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -25,6 +26,7 @@ const SoundchainList = (props: Props) => {
     switch(response.event) {
       case ListEvent.ClickOnRoot:
         log.debug("Goto soundchain:", response.id);
+        props.soundChainSelected(response.id);
         break;
 
       case ListEvent.ContextDelete: {

@@ -1,9 +1,11 @@
 import InvestigationList from "./InvestigationList";
 import DossierList from "./DossierList";
 import { DUMMY_DOSSIER_LIST, DUMMY_INVESTIGATION_LIST } from "@/modules/DummyData";
+import AppState from "@/state/AppState";
 
 type Props = {
   selected: Function,
+  appState: AppState
 }
 
 export enum Type {
@@ -27,6 +29,7 @@ const LeftMenu = (props: Props) => {
       <InvestigationList
         selected={selectedInvestigationHandler}
         investigations={DUMMY_INVESTIGATION_LIST}
+        appState={props.appState}
       />
       <DossierList
         selected={selectedDossierHandler}

@@ -1,7 +1,22 @@
-.investigation-page {
+.investigationPage__container {
     display: flex;
     background-color: rgb(151, 151, 151);
     width: 200rem;
     border: 1px solid rgb(0, 0, 0);
-    color: white;
+    color: black;
+}
+
+.investigationPage__header {
+    font-size: 24px;
+}
+
+.investigationPage__filtered {
+    padding: 10px;
+    background: white;
+}
+
+.investigationPage__all {
+    margin-top: 10px;
+    padding: 10px;
+    background: white;
 }

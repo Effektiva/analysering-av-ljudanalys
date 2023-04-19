@@ -10,6 +10,7 @@ type Props = {
   itemType?: LM.ItemType,
   parentID?: number,
   changeTextID?: number,
+  selected?: boolean
 }
 
 /**
@@ -119,7 +120,7 @@ export const ListItem = (props: Props) => {
               onClick={() => clickHandler()}
               onContextMenu={contextClickHandler}
             >
-              {props.item.text}
+              { props.selected === true ? <b>{props.item.text}</b> : props.item.text }
 
               { props.item.tags?.map((i, tag) => {
                 return <div key={i} className={tag + " tag"}></div>
