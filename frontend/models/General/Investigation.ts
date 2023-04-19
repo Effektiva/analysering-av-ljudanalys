@@ -1,6 +1,9 @@
 import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ListItemRepresentable from "../ListItemRepresentable";
 
+/**
+ * Represents an investigation that holds several soundchains.
+ */
 class Investigation implements ListItemRepresentable {
   id: number | undefined;
   name: string;

@@ -28,7 +28,7 @@ const MetadataView = (props: Props) => {
           <span className={Style.MetadataDate}> <b>Datum:</b> {props.metaData.getDate()}</span>
         </div>
         <div className={Style.MetadataDossiersDiv}>
-          <span> <b>Dossiers:</b> {props.metaData.getBelongingDossiers().map(dossier => "'" + dossier.getName() + "'").join(", \n")}</span>
+          <span> <b>Dossiers:</b> {props.metaData.getBelongingDossiers().map(dossier => "'" + dossier.name + "'").join(", \n")}</span>
         </div>
     </div>
   );

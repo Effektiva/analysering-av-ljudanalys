@@ -2,6 +2,9 @@ import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ListItemRepresentable from "../ListItemRepresentable";
 import Soundclip from "./Soundclip";
 
+/**
+ * Represents a collection of soundclips. Can also store subdossiers, but with a maximum depth of 1.
+ */
 class Dossier implements ListItemRepresentable {
   id: number | undefined;
   name: string;
@@ -20,10 +23,6 @@ class Dossier implements ListItemRepresentable {
     this.soundfiles = soundfiles;
   }
 
-  public getName(): string {
-    return this.name;
-  }
-
   asListItem(): ListItemType {
     let children = [
       ...this.subdossiers.map(dossier => dossier.asListItem()),
@@ -38,6 +37,9 @@ class Dossier implements ListItemRepresentable {
     }
   }
 
+  /**
+   * Returns this dossier and it's subdossiers. These we can add soundclips to in a menu.
+   */
   topAndSubDossierListItems(): ListItemType {
     let children = [
       ...this.subdossiers.map(dossier => dossier.topAndSubDossierListItems())
