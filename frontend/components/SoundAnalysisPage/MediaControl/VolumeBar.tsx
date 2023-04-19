@@ -3,11 +3,13 @@ import { FaVolumeMute as IconMute,
          FaVolumeOff as IconOff,
          FaVolumeDown as IconDown,
          FaVolumeUp as IconUp } from "react-icons/fa";
+import { LOG as log } from "@/pages/_app";
 
 type Props = {
   volumePercentage: number,
   setVolumePercentage: Function,
   playable: boolean
+  audioElement: HTMLAudioElement | undefined,
 }
 
 const STYLE_NAMESPACE = "volumeBar__";
@@ -28,7 +30,7 @@ const MAX_VOLUME_PROGRESS_WIDTH = 100;
  * the media is ready to be played.
  */
 const VolumeBar = (props: Props) => {
-  const [mute, setMute] = useState(false);
+  const [muted, setMuted] = useState(false);
   const [volumeBeforeMute, setVolumeBeforeMute] = useState(0.0);
 
   /*
@@ -47,22 +49,24 @@ const VolumeBar = (props: Props) => {
       procentual = 0;
     }
 
-    if (mute) {
-      setMute(false);
+    if (props.audioElement?.muted) {
+      props.audioElement.muted = false;
+      setMuted(false);
     }
 
     props.setVolumePercentage(procentual);
   }
 
   const toggleMute = () => {
-    if (!mute) {
+    if (!muted) {
       setVolumeBeforeMute(props.volumePercentage);
       props.setVolumePercentage(0);
     } else {
       props.setVolumePercentage(volumeBeforeMute);
     }
 
-    setMute(!mute);
+    log.debug(muted, volumeBeforeMute);
+    setMuted(!muted);
   }
 
   /*
@@ -99,7 +103,7 @@ const VolumeBar = (props: Props) => {
           <div
             className={Style.BarFill}
             style={{
-              width: mute ? 0 : MAX_VOLUME_PROGRESS_WIDTH * Number(props.volumePercentage) + "%",
+              width: muted ? 0 : MAX_VOLUME_PROGRESS_WIDTH * Number(props.volumePercentage) + "%",
               background: props.playable ? "black" : "gray"
             }}
           ></div>
