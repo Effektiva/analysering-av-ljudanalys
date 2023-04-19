@@ -1,5 +1,6 @@
 import { useState } from "react";
 import SoundClassFilterItem, { FilterItem } from "./SoundClassFilterItem";
+export type { FilterItem } from "./SoundClassFilterItem";
 import SearchBar from "./SearchBar";
 import { log } from "console";
 

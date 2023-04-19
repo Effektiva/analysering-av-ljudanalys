@@ -7,46 +7,20 @@ type Props = {
   onSubmit: Function
 }
 
-class Suggestions {
-  elements: Array<string> = [];
-  index: number = 0;
-
-  setElements(input: Array<string>) {
-    this.elements = input;
-    this.index = 0;
-  }
-
-  getCurrentSuggestion() {
-    if (this.elements.length === 0) {
-      return "";
-    }
-    return this.elements[this.index];
-  }
-
-  getNextSuggestion() {
-    if (this.elements.length === 0) {
-      return "";
-    } else {
-      this.index++;
-      if (this.elements.length <= this.index) {
-        this.index = 0;
-      }
-      console.log(this.index);
-      return this.elements[this.index];
-    }
-  }
+type Suggestions = {
+  elements: Array<string>
+  currentIndex: number
 }
-
-let suggestions = new Suggestions();
 
 const SearchBar = (props: Props) => {
   const [prefix, setPrefix] = useState("");
-  const [suggestion, setSuggestion] = useState<string>();
   const [displayInvalidInput, setDisplayInvalidInput] = useState(false);
 
   const unusedCategories: Array<string> = props.dictionary.filter((elem) => {
     return !props.activatedCategories.includes(elem);
   })
+
+  const [suggestions, setSuggestions] = useState<Suggestions>({elements: ["", ...unusedCategories], currentIndex: 0});
 
   // Finds dictionary sentences matching with input string.
   const findPrefix = (input: string): Array<string> => {
@@ -63,9 +37,15 @@ const SearchBar = (props: Props) => {
   const changeHandler = (event: ChangeEvent<HTMLInputElement>): void => {
     var value = event.target.value;
     setPrefix(value);
-    if (value.length !== 0) {
-      suggestions.setElements(findPrefix(value));
+
+    let newElements: Array<string>;
+    if (value === "") {
+      newElements = ["", ...unusedCategories];
+    } else {
+      newElements =[...findPrefix(value), ""]; 
     }
+
+    setSuggestions({elements: newElements, currentIndex: 0});
     setDisplayInvalidInput(false);
   }
 
@@ -73,22 +53,24 @@ const SearchBar = (props: Props) => {
   const keyDownHandler = (event: KeyboardEvent<HTMLInputElement>): void => {
     switch (event.key) {
       case "ArrowDown":
-        setSuggestion(suggestions.getNextSuggestion())
+        const nextIndex = suggestions.currentIndex === suggestions.elements.length - 1 ? 0 : suggestions.currentIndex + 1;
+        setSuggestions({...suggestions, currentIndex: nextIndex});
         break;
       case "ArrowRight":
-        const value = suggestions.getCurrentSuggestion();
-        setPrefix(value);
+        const value = suggestions.elements.length === 0 ? "" : suggestions.elements[suggestions.currentIndex];
+        if (value !== "") {
+          setPrefix(value);
+        }
         setDisplayInvalidInput(false);
-        suggestions.setElements(findPrefix(value));
+        setSuggestions({elements: ["", ...findPrefix(value)], currentIndex: 0});
         break;
       case "Enter":
         const isValid = unusedCategories.includes(prefix.toLowerCase());
         if (isValid) {
           props.onSubmit(prefix.toLowerCase())
           setPrefix("");
-          setSuggestion("");
-          suggestions.setElements([]);
         }
+        setSuggestions({elements: ["", ...unusedCategories.filter((e) => {return e !== prefix;})], currentIndex: 0});
         setDisplayInvalidInput(!isValid);
         break;
     }
@@ -110,7 +92,7 @@ const SearchBar = (props: Props) => {
         type="text"
         name="search-bar"
         id="search-bar2"
-        value={suggestion}
+        value={suggestions.elements.length === 0 ? "" : suggestions.elements[suggestions.currentIndex]}
         readOnly={true}
         style={displayInvalidInput ? { borderColor: "red" } : { borderColor: 'transparent' }}
       />

@@ -1,6 +1,7 @@
+import { useState } from "react";
 import SoundfileList from "@/components/SoundfileList";
 import { Soundchain } from "@/components/MainView";
-import SoundClassFilterInput from "@/components/Filter/SoundClassFilterInput";
+import SoundClassFilterInput, { FilterItem } from "@/components/Filter/SoundClassFilterInput";
 import { DUMMY_SOUNDFILES_FILTERED_LIST, DUMMY_SOUNDFILES_LIST } from "@/modules/DummyData";
 import Graph from "./Graph";
 import ProgressBar from "./ProgressBar";
@@ -25,9 +26,16 @@ enum Style {
 }
 
 const SoundanalysisPage = (props: Props) => {
-  const categoryFilterHandler = (categories: Array<string>) => {
-    return;
-  }
+  const [activatedCategories, setActivatedCategories] = useState<Array<string>>([]);
+
+  const onAddCategoryHandler = (category: string) => {
+    setActivatedCategories([...activatedCategories, category]);
+  };
+
+  const onDeleteCategoryHandler = (category: string) => {
+    setActivatedCategories(activatedCategories.filter((elem) => {return elem !== category}));
+  };
+
   return (
     <div className={Style.Container}>
       <div className="row">
@@ -44,7 +52,7 @@ const SoundanalysisPage = (props: Props) => {
             </select>
           </div>
 
-          <SoundClassFilterInput onChange={categoryFilterHandler} />
+          <SoundClassFilterInput onChange={onAddCategoryHandler} />
 
           <div className={Style.Filtered}>
             <SoundfileList
