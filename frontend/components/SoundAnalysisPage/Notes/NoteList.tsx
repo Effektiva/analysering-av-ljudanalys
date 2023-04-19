@@ -76,7 +76,7 @@ const NotesList = (props: Props) => {
                             </button>
                         }
                       </>
-                      <button onClick={() => props.deleteNote(note.id)}>
+                      <button onClick={() => props.deleteNote(note.id)} disabled={editingNoteId === note.id}>
                         <IconDelete />
                       </button>
 

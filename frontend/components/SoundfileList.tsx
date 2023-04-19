@@ -1,16 +1,19 @@
 import { ReactElement, useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
-import { ListItem } from "@/components/ListMenu/ListItem";
+import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import useComponentVisible from "@/hooks/useComponentVisible";
-import { DUMMY_DOSSIER_LIST_NOCHILD } from "@/modules/DummyData";
 import Popup from "@/components/Popup";
 import { LOG as log } from "@/pages/_app";
+import Soundclip from "@/models/General/Soundclip";
+import AppState from "@/state/AppState";
 
 type Props = {
   header: string,
-  soundfiles: Array<ListItem>,
+  soundfiles: Array<Soundclip>,
   clipSelected: Function,
+  appState: AppState,
+  updateAppState: (appState: AppState) => void
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -27,38 +30,38 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundfileList = (props: Props) => {
-  const [items] = useState<Array<ListItem>>(props.soundfiles);
+  const [items] = useState<Array<Soundclip>>(props.soundfiles);
   const [currentParentID, setCurrentParentID] = useState<number>(-1);
   const [currentPopup, setCurrentPopup] = useState<number>(-1);
 
   const { ref: popupContainerReference,
-          isComponentVisible: isPopupVisible,
-          setIsComponentVisible: setIsPopupVisible } = useComponentVisible(false);
+    isComponentVisible: isPopupVisible,
+    setIsComponentVisible: setIsPopupVisible } = useComponentVisible(false);
 
   const eventHandler = (response: ListEventResponse) => {
-    switch(response.event) {
+    switch (response.event) {
       case ListEvent.ClickOnRoot:
         props.clipSelected(response.id);
         break;
 
       case ListEvent.ContextAddToDossier:
-          log.debug("Add to dossier popup on:", response.id);
-          setIsPopupVisible(true);
-          setCurrentPopup(0);
-          if (response.parentID != undefined) {
-            setCurrentParentID(response.parentID);
-          }
-          break;
+        log.debug("Add to dossier popup on:", response.id);
+        setIsPopupVisible(true);
+        setCurrentPopup(0);
+        if (response.parentID != undefined) {
+          setCurrentParentID(response.parentID);
+        }
+        break;
 
       case ListEvent.ContextSetStatus: {
-          log.debug("Set status of:", response.id);
-          setIsPopupVisible(true);
-          setCurrentPopup(1);
-          if (response.parentID != undefined) {
-            setCurrentParentID(response.parentID);
-          }
-          break;
+        log.debug("Set status of:", response.id);
+        setIsPopupVisible(true);
+        setCurrentPopup(1);
+        if (response.parentID != undefined) {
+          setCurrentParentID(response.parentID);
         }
+        break;
+      }
 
       default:
         log.error("Bad event: ", response.event)
@@ -77,7 +80,7 @@ const SoundfileList = (props: Props) => {
    * ============================================
    */
   const dossierPopupHandler = (response: ListEventResponse) => {
-    switch(response.event) {
+    switch (response.event) {
       case ListEvent.ClickOnSubroot:
       case ListEvent.ClickOnRoot:
         log.debug("Add clip", response.id, "to", currentParentID);
@@ -90,33 +93,36 @@ const SoundfileList = (props: Props) => {
   }
 
   const dossierPopupComponent: ReactElement = <ListMenu
-                                                key={DUMMY_DOSSIER_LIST_NOCHILD.length}
-                                                items={DUMMY_DOSSIER_LIST_NOCHILD}
-                                                eventHandler={dossierPopupHandler}
-                                              />;
+    key={props.appState.dossierState.length}
+    items={props.appState.dossierState.map(dossier => dossier.topAndSubDossierListItems())}
+    eventHandler={dossierPopupHandler}
+  />;
 
   /*
    * ============================================
    * Popoup for pressing status in context menu
    * ============================================
    */
-  const statusPopupContents: ListItem[] = [
+  const statusPopupContents: ListItemType[] = [
     {
       id: 0,
       text: "Ej behandlad",
+      collapsable: false
     },
     {
       id: 1,
       text: "Behandlad",
+      collapsable: false
     },
     {
       id: 2,
       text: "Avvisad",
+      collapsable: false
     },
   ]
 
   const statusPopupHandler = (response: ListEventResponse) => {
-    switch(response.event) {
+    switch (response.event) {
       case ListEvent.ClickOnSubroot:
       case ListEvent.ClickOnRoot:
         log.debug("Add status", statusPopupContents[response.id].text, "to", currentParentID);
@@ -129,10 +135,10 @@ const SoundfileList = (props: Props) => {
   }
 
   const statusPopupComponent: ReactElement = <ListMenu
-                                               key={statusPopupContents.length}
-                                               items={statusPopupContents}
-                                               eventHandler={statusPopupHandler}
-                                              />;
+    key={statusPopupContents.length}
+    items={statusPopupContents}
+    eventHandler={statusPopupHandler}
+  />;
 
 
   /*
@@ -149,25 +155,25 @@ const SoundfileList = (props: Props) => {
       </div>
       <ListMenu
         key={items.length}
-        items={items}
+        items={items.map((soundclip) => soundclip.asListItem())}
         contextMenus={CONTEXT_MENUS}
         eventHandler={eventHandler}
       />
-      { isPopupVisible &&
-      <>
-        { currentPopup ?
-          <Popup
-            component={statusPopupComponent}
-            reference={popupContainerReference}
-            closeHandler={closePopup}
-          />
-          :
-          <Popup
-            component={dossierPopupComponent}
-            reference={popupContainerReference}
-            closeHandler={closePopup}
-          />
-        }
+      {isPopupVisible &&
+        <>
+          {currentPopup ?
+            <Popup
+              component={statusPopupComponent}
+              reference={popupContainerReference}
+              closeHandler={closePopup}
+            />
+            :
+            <Popup
+              component={dossierPopupComponent}
+              reference={popupContainerReference}
+              closeHandler={closePopup}
+            />
+          }
         </>
       }
     </>

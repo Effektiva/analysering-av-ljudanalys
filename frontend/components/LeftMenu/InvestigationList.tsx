@@ -1,12 +1,12 @@
 import { useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
-import { ListItem } from "@/components/ListMenu/ListItem";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
+import Investigation from "@/models/General/Investigation";
 
 type Props = {
   selected: Function,
-  investigations: Array<ListItem>,
+  investigations: Array<Investigation>,
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -23,7 +23,7 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const InvestigationList = (props: Props) => {
-  const [items, setItems] = useState<Array<ListItem>>(props.investigations);
+  const [items, setItems] = useState<Array<Investigation>>(props.investigations);
   const [menuVisible, setMenuVisible] = useState<boolean>(true);
 
   // TODO: just for demonstration
@@ -43,7 +43,7 @@ const InvestigationList = (props: Props) => {
         {
           let newItems = [...items];
           let index = newItems.findIndex((elem) => elem.id == response.id);
-          newItems[index].text = response.value!;
+          newItems[index].name = response.value!;
           setItems(newItems);
         }
         break;
@@ -66,13 +66,9 @@ const InvestigationList = (props: Props) => {
         break;
     }
   }
-
   const addNewItem = () => {
     log.debug("New item...")
-    setItems(prev => [...prev, {
-      id: id,
-      text: "Ny utredning " + id,
-    }]);
+    setItems(prev => [...prev, new Investigation(id, "Ny utredning " + id)]);
     setID(prev => prev + 1);
   }
 
@@ -91,7 +87,7 @@ const InvestigationList = (props: Props) => {
       { menuVisible &&
         <ListMenu
           key={items.length}
-          items={items}
+          items={items.map(investigation => investigation.asListItem())}
           contextMenus={CONTEXT_MENUS}
           eventHandler={eventHandler}
         />

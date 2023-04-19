@@ -1,15 +1,18 @@
 import SoundfileList from "@/components/SoundfileList";
-import { Soundchain } from "@/components/MainView";
 import SoundClassFilterInput from "@/components/SoundClassFilterInput";
-import { DUMMY_SOUNDFILES_FILTERED_LIST, DUMMY_SOUNDFILES_LIST } from "@/modules/DummyData";
 import Graph from "./Graph";
-import MetaData from "./MetaData";
-import Notes from "./Notes/Notes";
+import MetadataView from "./MetaDataView";
 import { useState } from "react";
 import MediaControl from "./MediaControl/MediaControl";
+import SoundChain from "@/models/General/SoundChain";
+import Note from "@/models/SoundAnalysis/Note";
+import Notes from "./Notes/Notes";
+import AppState from "@/state/AppState";
 
 type Props = {
-  soundchain: Soundchain,
+  soundchain: SoundChain,
+  appState: AppState,
+  updateAppState: (appState: AppState) => void
 }
 
 const STYLE_NAMESPACE = "soundAnalysisPage__";
@@ -54,6 +57,12 @@ const SoundAnalysisPage = (props: Props) => {
     }
   }
 
+  const soundchainCommentsUpdated = (newNotes: Array<Note>) => {
+    props.soundchain.comments = newNotes;
+    console.log("Updated comments!");
+    // TODO: Send to backend
+  }
+
   return (
     <div className={Style.Container}>
       <div className="row">
@@ -76,7 +85,9 @@ const SoundAnalysisPage = (props: Props) => {
             <SoundfileList
               clipSelected={clipSelected}
               header="Filtrerade ljudklipp"
-              soundfiles={DUMMY_SOUNDFILES_FILTERED_LIST}
+              soundfiles={props.soundchain.soundClips} // TODO: This should be filtered...
+              appState={props.appState}
+              updateAppState={props.updateAppState}
             />
           </div>
 
@@ -84,7 +95,9 @@ const SoundAnalysisPage = (props: Props) => {
             <SoundfileList
               clipSelected={clipSelected}
               header="Samtliga ljudklipp"
-              soundfiles={DUMMY_SOUNDFILES_LIST}
+              soundfiles={props.soundchain.soundClips}
+              appState={props.appState}
+              updateAppState={props.updateAppState}
             />
           </div>
         </div>
@@ -113,8 +126,8 @@ const SoundAnalysisPage = (props: Props) => {
               Automagisk ljudsänkning
             </button>
           </div>
-          <MetaData />
-          <Notes />
+          <MetadataView metaData={props.soundchain.soundClips[0].metadata}/>
+          <Notes soundchain={props.soundchain} soundchainCommentsUpdated={soundchainCommentsUpdated} />
         </div>
       </div>
     </div>
