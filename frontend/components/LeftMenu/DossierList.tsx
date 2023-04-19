@@ -3,7 +3,6 @@ import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/Li
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 import Dossier from "@/models/General/Dossier";
-import { ListItemType } from "../ListMenu/ListItemType";
 
 type Props = {
   selected: Function,
@@ -33,6 +32,10 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
     {
       id: ListEvent.ContextChangeText,
       text: "Byt namn",
+    },
+    {
+      id: ListEvent.ContextExport,
+      text: "Exportera",
     },
     {
       id: ListEvent.ContextDelete,

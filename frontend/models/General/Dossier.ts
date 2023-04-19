@@ -33,7 +33,8 @@ class Dossier implements ListItemRepresentable {
       id: this.id ?? -1,
       text: this.name,
       collapsable: children.length != 0,
-      children: children
+      subroots: this.subdossiers.map(dossier => dossier.asListItem()),
+      children: this.soundfiles.map(soundfile => soundfile.asListItem())
     }
   }
 
@@ -45,7 +46,7 @@ class Dossier implements ListItemRepresentable {
       id: this.id ?? -1,
       text: this.name,
       collapsable: children.length != 0,
-      children: children
+      subroots: children
     }
   }
 

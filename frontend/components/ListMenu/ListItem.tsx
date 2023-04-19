@@ -138,10 +138,10 @@ export const ListItem = (props: Props) => {
 
         { !hidden &&
         <>
-          { props.item.children &&
+          { props.item.subroots &&
           <ul>
             {
-              props.item.children.map((subroot: ListItemType) => {
+              props.item.subroots.map((subroot: ListItemType) => {
                 return <ListItem
                           class={LM.StyleClass.Subroot}
                           key={subroot.id}
@@ -149,6 +149,21 @@ export const ListItem = (props: Props) => {
                           parentID={props.item.id}
                           item={subroot}
                           changeTextID={props.changeTextID}
+                          eventHandler={props.eventHandler}
+                        />
+              })
+            }
+          </ul>
+          }
+          { props.item.children &&
+          <ul>
+            {
+              props.item.children.map((child: ListItemType) => {
+                return <ListItem
+                          class={LM.StyleClass.Child}
+                          itemType={LM.ItemType.Child}
+                          key={child.id}
+                          item={child}
                           eventHandler={props.eventHandler}
                         />
               })
