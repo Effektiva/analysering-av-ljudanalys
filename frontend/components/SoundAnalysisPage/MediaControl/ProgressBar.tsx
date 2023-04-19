@@ -1,6 +1,7 @@
 import { Event } from "./MediaControl";
 
 type Props = {
+  playable: boolean,
   currentTime: number,
   duration: number,
   progressEventHandler: Function
@@ -67,7 +68,10 @@ const ProgressBar = (props: Props) => {
         >
           <div
             className={Style.Progress}
-            style={{width: 100*(props.currentTime/props.duration) + "%"}}
+            style={{
+              width: 100*(props.currentTime/props.duration) + "%",
+              background: props.playable ? "black" : "gray"
+            }}
           ></div>
         </div>
         <div className={Style.EndTime}>{secondsToTimeString(props.duration)}</div>

@@ -17,6 +17,8 @@ type Props = {
   setVolumePercentage: Function,
   progressPercentage: number,
   setProgressPercentage: Function,
+  muted: boolean,
+  setMuted: Function,
 }
 
 const STYLE_NAMESPACE = "mediaControl__";
@@ -58,8 +60,8 @@ const MediaControl = (props: Props) => {
   useEffect(() => {
     if (props.audioElement != undefined) {
       props.setProgressPercentage(0);
-      props.setPlaying(false);
       props.audioElement.volume = props.volumePercentage;
+      props.audioElement.muted = props.muted;
 
       // Wait until the audio element has loaded.
       props.audioElement.oncanplay = audioElementLoaded;
@@ -70,15 +72,16 @@ const MediaControl = (props: Props) => {
   }, [props.audioElement]); // ignore warning, we only want to run when audioElement changes
 
   /*
-   * Set visual things when a new audio element has finished loading and start playback.
+   * Set visual things when a new audio element has finished loadind and decide on playback.
    */
   const audioElementLoaded = () => {
     if (props.audioElement != undefined) {
       setCurrentTime(props.audioElement.currentTime);
       setDuration(props.audioElement.duration);
       setPlayable(true);
-      props.setPlaying(true);
-      props.audioElement.play();
+      if (props.playing) {
+        props.audioElement.play();
+      }
     }
   }
 
@@ -105,6 +108,7 @@ const MediaControl = (props: Props) => {
    */
   const buttonHandler = (event: Event) => {
     if (!playable) {
+      log.error("audio element not playable");
       return;
     }
 
@@ -146,6 +150,13 @@ const MediaControl = (props: Props) => {
     } else {
       log.error("audioElement is undefined");
     }
+  }
+
+  const muteHandler = (val: boolean) => {
+    if (props.audioElement) {
+      props.audioElement.muted = val;
+    }
+    props.setMuted(val);
   }
 
   /*
@@ -203,15 +214,18 @@ const MediaControl = (props: Props) => {
         ><ForwardIcon /></div>
 
         <VolumeBar
+          key={props.currentClipID}
           playable={playable}
           volumePercentage={props.volumePercentage}
           setVolumePercentage={volumeEventHandler}
-          audioElement={props.audioElement}
+          muted={props.muted}
+          setMuted={muteHandler}
         />
       </div>
 
       <ProgressBar
         key={props.currentClipID}
+        playable={playable}
         currentTime={currentTime}
         duration={duration}
         progressEventHandler={progressEventHandler}

@@ -35,6 +35,7 @@ const SoundAnalysisPage = (props: Props) => {
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [currentSoundClip, setCurrentSoundClip] = useState<undefined | HTMLAudioElement>(undefined);
   const [currentClipID, setCurrentClipID] = useState<number>(-1);
+  const [muted, setMuted] = useState<boolean>(false);
 
   const getSoundClipURL = (id: number) => {
     return "clips/" + props.soundchain.id + "/SoundClips/" + id + ".mp3";
@@ -102,6 +103,8 @@ const SoundAnalysisPage = (props: Props) => {
             setProgressPercentage={setProgressPercentage}
             volumePercentage={volumePercentage}
             setVolumePercentage={setVolumePercentage}
+            muted={muted}
+            setMuted={setMuted}
           />
           <div className={Style.Buttons}>
             <div className={Style.Zoom}>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { FaVolumeMute as IconMute,
          FaVolumeOff as IconOff,
          FaVolumeDown as IconDown,
@@ -6,10 +6,11 @@ import { FaVolumeMute as IconMute,
 import { LOG as log } from "@/pages/_app";
 
 type Props = {
+  playable: boolean,
   volumePercentage: number,
   setVolumePercentage: Function,
-  playable: boolean
-  audioElement: HTMLAudioElement | undefined,
+  muted: boolean | undefined,
+  setMuted: Function,
 }
 
 const STYLE_NAMESPACE = "volumeBar__";
@@ -30,9 +31,6 @@ const MAX_VOLUME_PROGRESS_WIDTH = 100;
  * the media is ready to be played.
  */
 const VolumeBar = (props: Props) => {
-  const [muted, setMuted] = useState(false);
-  const [volumeBeforeMute, setVolumeBeforeMute] = useState(0.0);
-
   /*
    * When the volume bar is pressed we calculate what percentage of the width
    * of the bar we pressed. We then set that percentage to the volume percentage.
@@ -49,33 +47,20 @@ const VolumeBar = (props: Props) => {
       procentual = 0;
     }
 
-    if (props.audioElement?.muted) {
-      props.audioElement.muted = false;
-      setMuted(false);
+    if (props.muted) {
+      props.setMuted(false);
     }
 
     props.setVolumePercentage(procentual);
-  }
-
-  const toggleMute = () => {
-    if (!muted) {
-      setVolumeBeforeMute(props.volumePercentage);
-      props.setVolumePercentage(0);
-    } else {
-      props.setVolumePercentage(volumeBeforeMute);
-    }
-
-    log.debug(muted, volumeBeforeMute);
-    setMuted(!muted);
   }
 
   /*
    * We display a different volume icon depending on what percentage
    * the volume is at.
    */
-  const getIcon = () => {
+  const getIcon = (): ReactNode => {
     let volume = props.volumePercentage;
-    if(volume == 0.0) {
+    if (props.muted) {
       return <IconMute />;
     } else if ((0.0 < volume) && (volume <= 0.10)) {
       return <IconOff />;
@@ -83,6 +68,20 @@ const VolumeBar = (props: Props) => {
       return <IconDown />;
     } else if ((0.50 < volume) && (volume <= 1)) {
       return <IconUp />;
+    } else {
+      return <IconUp />;
+    }
+  }
+
+  const getBarColor = (): string => {
+    if (props.playable) {
+      if (props.muted) {
+        return "white";
+      } else {
+        return "black";
+      }
+    } else {
+      return "gray";
     }
   }
 
@@ -92,19 +91,18 @@ const VolumeBar = (props: Props) => {
         <div
           style={{color: props.playable ? "black" : "gray"}}
           className={Style.Button}
-          onClick={toggleMute}
+          onClick={() => props.setMuted(!props.muted)}
         >{getIcon()}</div>
 
         <div
-          style={{color: props.playable ? "black" : "gray"}}
           className={Style.Bar}
           onClick={volumeBarClick}
         >
           <div
             className={Style.BarFill}
             style={{
-              width: muted ? 0 : MAX_VOLUME_PROGRESS_WIDTH * Number(props.volumePercentage) + "%",
-              background: props.playable ? "black" : "gray"
+              width: props.muted ? 0 : MAX_VOLUME_PROGRESS_WIDTH * Number(props.volumePercentage) + "%",
+              background: getBarColor()
             }}
           ></div>
         </div>
