@@ -55,6 +55,11 @@ const SoundAnalysisPage = (props: Props) => {
       const newClip = new Audio(getSoundClipURL(id));
       setCurrentSoundClip(newClip);
       setCurrentClipID(id);
+
+      var appState = props.appState;
+      let soundClip = appState.selectedSoundChain?.soundClips.find(soundClip => soundClip.id == id);
+      appState.currentlyPlayingSoundclip = soundClip;
+      props.updateAppState(appState);
     }
   }
 
@@ -129,8 +134,8 @@ const SoundAnalysisPage = (props: Props) => {
               Automagisk ljudsänkning
             </button>
           </div>
-          <MetadataView metaData={props.soundchain.soundClips[0].metadata}/>
-          <Notes soundchain={props.soundchain} soundchainCommentsUpdated={soundchainCommentsUpdated} />
+          <MetadataView metaData={props.appState.currentlyPlayingSoundclip?.metadata ?? props.appState.selectedSoundChain!.soundClips[0].metadata}/>
+          <Notes soundchain={props.appState.selectedSoundChain!} soundchainCommentsUpdated={soundchainCommentsUpdated} />
         </div>
       </div>
     </div>

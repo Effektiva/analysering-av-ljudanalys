@@ -34,6 +34,21 @@ export const DUMMY_SOUNDFILE_LIST: Array<Soundclip> = [
   ),
 ]
 
+export const KAROLINER_SOUNDFILE_LIST: Array<Soundclip> = [
+  new Soundclip(
+    0,
+    new Metadata("1700-11-20_0600_0900", [new Dossier(0, "Kalle hugger"), new Dossier(1, "Stefan rider")]),
+    new Date("1700-11-20 06:00"),
+    new Date("1700-11-20 09:00")
+  ),
+  new Soundclip(
+    1,
+    new Metadata("1700-11-20_1012_1130", [new Dossier(0, "Åke avrättar"), new Dossier(1, "Stefan begår krigsbrott")]),
+    new Date("1700-11-20 10:12"),
+    new Date("1700-11-20 11:30")
+  )
+]
+
 export const DUMMY_SOUNDFILE_LIST2: Array<Soundclip> = [
   new Soundclip(
     10,
@@ -83,22 +98,22 @@ export const DUMMY_SOUNDCHAINS_LIST: Array<SoundChain> = [
       new Date(),
       SoundChainState.Analysed,
       [
-        new Note(0, new Date("2020-03-18 06:00"), new TimeInClip(10, 10), "Här hör jag en hund"),
-        new Note(1, new Date("2020-03-18 07:00"), new TimeInClip(11, 0), "Här hör jag en get")
+        new Note(0, new Date("2020-03-18 06:00"), new TimeInClip(10, 10), "Här hör jag en kapybara"),
+        new Note(1, new Date("2020-03-18 07:00"), new TimeInClip(11, 0), "Här hör jag en humla")
       ],
       DUMMY_SOUNDFILE_LIST
     ),
     new SoundChain(
       2,
-      "2023-04-02",
+      "Massmord",
       new Date(),
       new Date(),
       SoundChainState.Analysed,
       [
-        new Note(0, new Date("2020-03-18 06:00"), new TimeInClip(10, 10), "Här hör jag en hund"),
-        new Note(1, new Date("2020-03-18 07:00"), new TimeInClip(11, 0), "Här hör jag en get")
+        new Note(0, new Date("1700-11-19 06:00"), new TimeInClip(10, 10), "Här hör jag en ryss"),
+        new Note(1, new Date("1700-11-20 07:00"), new TimeInClip(11, 0), "Här hör jag karoliner marschera i Narva")
       ],
-      DUMMY_SOUNDFILE_LIST
+      KAROLINER_SOUNDFILE_LIST
     )
 ]
 

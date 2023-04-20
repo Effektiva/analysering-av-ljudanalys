@@ -158,6 +158,7 @@ const SoundfileList = (props: Props) => {
         items={items.map((soundclip) => soundclip.asListItem())}
         contextMenus={CONTEXT_MENUS}
         eventHandler={eventHandler}
+        selectedId={props.appState.currentlyPlayingSoundclip?.id}
       />
       {isPopupVisible &&
         <>
