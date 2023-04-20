@@ -19,7 +19,8 @@ const MainView = () => {
   const [appState, setAppState] = useState<AppState>({
     dossierState: DUMMY_DOSSIER_LIST,
     selectedSoundChain: undefined,
-    selectedInvestigation: DUMMY_INVESTIGATION
+    selectedInvestigation: DUMMY_INVESTIGATION,
+    currentlyPlayingSoundclip: undefined
   });
 
   const soundChainSelectedHandler = (id: number) => {
@@ -61,6 +62,7 @@ const MainView = () => {
         var newState = appState;
         newState.selectedInvestigation = investigation;
         newState.selectedSoundChain = undefined;
+        newState.currentlyPlayingSoundclip = undefined;
         setAppState(newState);
         setPage(<InvestigationPage key={appState.selectedInvestigation?.id} investigation={appState.selectedInvestigation!} soundChainSelected={soundChainSelectedHandler}/>);
         break;
@@ -69,6 +71,7 @@ const MainView = () => {
         const soundChain: SoundChain = filterById([...DUMMY_SOUNDCHAINS_LIST, ...DUMMY_SOUNDCHAINS_LIST2], id);
         var newState = appState;
         newState.selectedSoundChain = soundChain;
+        newState.currentlyPlayingSoundclip = undefined;
         setAppState(newState);
         setPage(<SoundanalysisPage key={appState.selectedSoundChain?.id} soundchain={appState.selectedSoundChain!} appState={appState} updateAppState={setAppState} />);
         break;
