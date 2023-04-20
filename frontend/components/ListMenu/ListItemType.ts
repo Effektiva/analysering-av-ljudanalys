@@ -1,4 +1,9 @@
-import { Tag } from "./Tag";
+export enum ItemStatus {
+  None,
+  Running,
+  Rejected,
+  Complete
+}
 
 export type ListItemType = {
   id: number,
@@ -6,5 +11,5 @@ export type ListItemType = {
   collapsable: boolean,
   subroots?: Array<ListItemType>,
   children?: Array<ListItemType>,
-  tags?: Array<Tag>
+  status?: ItemStatus
 }
