@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { ListItemInput } from "./ListItemInput";
 import * as LM from "./ListMenu";
 import { ListItemType } from "./ListItemType";
+
 
 type Props = {
   class: string,
@@ -10,7 +11,8 @@ type Props = {
   itemType?: LM.ItemType,
   parentID?: number,
   changeTextID?: number,
-  selected?: boolean
+  selected?: boolean,
+  icon?: ReactNode
 }
 
 /**
@@ -122,9 +124,7 @@ export const ListItem = (props: Props) => {
             >
               { props.selected === true ? <b>{props.item.text}</b> : props.item.text }
 
-              { props.item.tags?.map((i, tag) => {
-                return <div key={i} className={tag + " tag"}></div>
-              })}
+              { props.icon }
             </div>
           :
             <ListItemInput

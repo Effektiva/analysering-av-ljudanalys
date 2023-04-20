@@ -1,4 +1,4 @@
-import { ListItemType } from "@/components/ListMenu/ListItemType";
+import { ListItemType, ItemStatus } from "@/components/ListMenu/ListItemType";
 import Note from "../SoundAnalysis/Note";
 import ListItemRepresentable from "../ListItemRepresentable";
 import SoundChainState from "./SoundChainState";
@@ -34,11 +34,27 @@ class SoundChain implements ListItemRepresentable {
     this.soundClips = soundClips;
   }
 
+  private currentItemStatus(): ItemStatus {
+    switch (this.state) {
+      case SoundChainState.Analysed:
+      case SoundChainState.ManuallyAnalysed:
+        return ItemStatus.Complete;
+      case SoundChainState.AnalysisOngoing:
+        return ItemStatus.Running;
+      case SoundChainState.Rejected:
+        return ItemStatus.Rejected;
+      case SoundChainState.UnAnalysed:
+      default:
+        return ItemStatus.None;
+    }
+  }
+
   asListItem(): ListItemType {
     return {
       id: this.id ?? -1,
       text: this.name,
-      collapsable: false
+      collapsable: false,
+      status: this.currentItemStatus()
     }
   }
 }

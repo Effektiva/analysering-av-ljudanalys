@@ -3,6 +3,7 @@ import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/Li
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 import SoundChain from "@/models/General/SoundChain";
+import { FaCheckCircle as IconAcknowledge} from "react-icons/fa";
 
 type Props = {
   soundchains: Array<SoundChain>,
@@ -42,6 +43,7 @@ const SoundchainList = (props: Props) => {
 
   const toggleVisibility = () => {
     setMenuVisible(!menuVisible);
+    let a = IconAcknowledge;
   }
 
   return (

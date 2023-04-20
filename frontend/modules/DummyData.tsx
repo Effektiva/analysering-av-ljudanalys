@@ -84,7 +84,7 @@ export const DUMMY_SOUNDCHAINS_LIST: Array<SoundChain> = [
       "2023-03-18",
       new Date(),
       new Date(),
-      SoundChainState.Analysed,
+      SoundChainState.AnalysisOngoing,
       [
         new Note(0, new Date("2020-03-18 06:00"), new TimeInClip(10, 10), "Här hör jag en hund"),
         new Note(1, new Date("2020-03-18 07:00"), new TimeInClip(11, 0), "Här hör jag en get")
@@ -96,7 +96,7 @@ export const DUMMY_SOUNDCHAINS_LIST: Array<SoundChain> = [
       "2023-04-01",
       new Date(),
       new Date(),
-      SoundChainState.Analysed,
+      SoundChainState.ManuallyAnalysed,
       [
         new Note(0, new Date("2020-03-18 06:00"), new TimeInClip(10, 10), "Här hör jag en kapybara"),
         new Note(1, new Date("2020-03-18 07:00"), new TimeInClip(11, 0), "Här hör jag en humla")
@@ -108,7 +108,7 @@ export const DUMMY_SOUNDCHAINS_LIST: Array<SoundChain> = [
       "Massmord",
       new Date(),
       new Date(),
-      SoundChainState.Analysed,
+      SoundChainState.Rejected,
       [
         new Note(0, new Date("1700-11-19 06:00"), new TimeInClip(10, 10), "Här hör jag en ryss"),
         new Note(1, new Date("1700-11-20 07:00"), new TimeInClip(11, 0), "Här hör jag karoliner marschera i Narva")

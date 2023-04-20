@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import ContextMenu from "@/components/ContextMenu/ContextMenu";
 import ContextItem from "@/components/ContextMenu/ContextItem";
-import { ListItemType } from "./ListItemType";
+import { ItemStatus, ListItemType } from "./ListItemType";
 import { LOG as log } from "@/pages/_app";
 import { ListItem } from "./ListItem";
+import { IconType } from "react-icons";
+import { FaCheckCircle, FaMinusCircle, FaCloud } from "react-icons/fa";
 
 type Props = {
   items: Array<ListItemType>,
@@ -214,6 +216,21 @@ const ListMenu = (props: Props) => {
     props.eventHandler(response);
   }
 
+const iconForItem = (item: ListItemType): ReactNode => {
+  switch (item.status) {
+    case ItemStatus.Complete:
+      return <FaCheckCircle/>
+    case ItemStatus.Rejected:
+        return <FaMinusCircle/>
+    case ItemStatus.Running:
+        return <FaCloud/>
+    case undefined:
+    case ItemStatus.None:
+    default:
+      return <></>
+  }
+}
+
   return (
     <>
       <ul className="listMenu">
@@ -227,6 +244,7 @@ const ListMenu = (props: Props) => {
                       item={item}
                       eventHandler={eventHandler}
                       selected={props.selectedId === item.id}
+                      icon={iconForItem(item)}
                     />
            })
         }
