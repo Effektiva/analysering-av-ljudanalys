@@ -23,7 +23,7 @@ const AppView = () => {
   return (
     <Async promiseFn={loadInvestigationsAndDossiers}>
       {({ data, error, isLoading,  }) => {
-      if (isLoading) return "Loading blyat (your mom) data...";
+      if (isLoading) return "Loading blyat data...";
       if (error) return `Something went wong man: ${error.message}`;
       if (data) {
         return (
