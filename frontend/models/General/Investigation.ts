@@ -24,6 +24,18 @@ class Investigation implements ListItemRepresentable {
     }
   }
 
+  static initFromJSON(json: any): Investigation | undefined {
+    let id = json.id as number | undefined;
+    let name = json.name as string | undefined;
+    let soundChains: SoundChain[] = []; // TODO: FIX ME PLOX, actual sound chain plz
+
+    if (id !== undefined && name !== undefined && soundChains !== undefined) {
+      return new Investigation(id, name, soundChains);
+    } else {
+      return undefined;
+    }
+  }
+
 }
 
 export default Investigation;

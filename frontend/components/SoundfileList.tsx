@@ -93,8 +93,8 @@ const SoundfileList = (props: Props) => {
   }
 
   const dossierPopupComponent: ReactElement = <ListMenu
-    key={props.appState.dossierState.length}
-    items={props.appState.dossierState.map(dossier => dossier.topAndSubDossierListItems())}
+    key={props.appState.dossiers.length}
+    items={props.appState.dossiers.map(dossier => dossier.topAndSubDossierListItems())}
     eventHandler={dossierPopupHandler}
   />;
 

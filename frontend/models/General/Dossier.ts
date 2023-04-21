@@ -23,6 +23,19 @@ class Dossier implements ListItemRepresentable {
     this.soundfiles = soundfiles;
   }
 
+  static initFromJSON(json: any): Dossier | undefined {
+    let id = json.id as number | undefined;
+    let name = json.name as string | undefined;
+    let subdossiers: Dossier[] = []; // TODO: FIX ME PLOX UwU
+    let soundfiles: Soundclip[] = []; // TODO: FIX ME PLOX UwU
+
+    if (id !== undefined && name !== undefined && subdossiers !== undefined && soundfiles !== undefined) {
+      return new Dossier(id, name, subdossiers, soundfiles)
+    } else {
+      return undefined;
+    }
+  }
+
   asListItem(): ListItemType {
     let children = [
       ...this.subdossiers.map(dossier => dossier.asListItem()),

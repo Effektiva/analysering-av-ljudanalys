@@ -1,5 +1,5 @@
 import { DUMMY_INVESTIGATION_LIST, DUMMY_INVESTIGATION, DUMMY_DOSSIER_LIST, DUMMY_SOUNDCHAINS_LIST, DUMMY_SOUNDCHAINS_LIST2 } from "@/modules/DummyData";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import LeftMenu, { Type } from "./LeftMenu/LeftMenu";
 import SoundanalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
 import InvestigationPage from "./InvestigationPage/InvestigationPage";
@@ -8,6 +8,12 @@ import SoundChain from "@/models/General/SoundChain";
 import Investigation from "@/models/General/Investigation";
 import { LOG as log } from "@/pages/_app";
 
+
+type Props = {
+  appState: AppState
+}
+
+
 /**
  * The MainView is the main component switching beteen pages (Investigations, Dossiers, etc)
  * and does this through passing a handler funktion through props to the LeftMenu component.
@@ -15,13 +21,8 @@ import { LOG as log } from "@/pages/_app";
  * left menu, this handler funktion is called by the child component LeftMenu, passing an id
  * and type of the list item and the page is updated accordingly.
  */
-const MainView = () => {
-  const [appState, setAppState] = useState<AppState>({
-    dossierState: DUMMY_DOSSIER_LIST,
-    selectedSoundChain: undefined,
-    selectedInvestigation: DUMMY_INVESTIGATION,
-    currentlyPlayingSoundclip: undefined
-  });
+const MainView = (props: Props) => {
+  const [appState, setAppState] = useState<AppState>(props.appState);
 
   const soundChainSelectedHandler = (id: number) => {
     selectedHandler(Type.SOUNDCHAIN, id);
@@ -58,7 +59,7 @@ const MainView = () => {
     switch (type) {
       case Type.INVESTIGATION:
         log.debug("Selected investigation with id: " + id);
-        const investigation: Investigation = filterById(DUMMY_INVESTIGATION_LIST, id);
+        const investigation: Investigation = filterById(appState.investigations, id);
         var newState = appState;
         newState.selectedInvestigation = investigation;
         newState.selectedSoundChain = undefined;
