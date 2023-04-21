@@ -70,7 +70,7 @@ const InvestigationList = (props: Props) => {
   }
   const addNewItem = () => {
     log.debug("New item...")
-    setItems(prev => [...prev, new Investigation(id, "Ny utredning " + id, [])]);
+    setItems(prev => [...prev, new Investigation(id, "Ny utredning " + id)]);
     setID(prev => prev + 1);
   }
 
