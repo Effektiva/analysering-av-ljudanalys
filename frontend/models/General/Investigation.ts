@@ -1,19 +1,22 @@
 import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ListItemRepresentable from "../ListItemRepresentable";
-import SoundChain from "./SoundChain";
+
+export type InvestigationJSON = {
+  id: number,
+  name: string
+}
 
 /**
  * Represents an investigation that holds several soundchains.
  */
 class Investigation implements ListItemRepresentable {
+
   id: number | undefined;
   name: string;
-  soundChains: Array<SoundChain>;
 
-  constructor(id: number | undefined, name: string, soundChains: Array<SoundChain>) {
+  constructor(id: number | undefined, name: string) {
     this.id = id;
     this.name = name;
-    this.soundChains = soundChains;
   }
 
   asListItem(): ListItemType {
@@ -21,6 +24,17 @@ class Investigation implements ListItemRepresentable {
       id: this.id ?? -1,
       text: this.name,
       collapsable: false
+    }
+  }
+
+  static initFromJSON(json: InvestigationJSON): Investigation | undefined {
+    let id = json.id as number | undefined;
+    let name = json.name as string | undefined;
+
+    if (id !== undefined && name !== undefined) {
+      return new Investigation(id, name);
+    } else {
+      return undefined;
     }
   }
 

@@ -34,6 +34,28 @@ class SoundChain implements ListItemRepresentable {
     this.soundClips = soundClips;
   }
 
+  static initFromJSON(json: any): SoundChain | undefined {
+    let id = json.id as number | undefined;
+    let name = json.name as string | undefined;
+    let startTime = json.id as Date | undefined;
+    let endTime = json.name as Date | undefined;
+    let state = json.id as SoundChainState | undefined;
+    let comments = json.name as Array<Note> | undefined;
+    let soundClips = json.id as Array<Soundclip> | undefined; // code medium
+
+    if (id !== undefined &&
+      name !== undefined &&
+      startTime !== undefined &&
+      endTime !== undefined &&
+      state !== undefined &&
+      comments !== undefined &&
+      soundClips !== undefined) {
+      return new SoundChain(id, name, startTime, endTime, state, comments, soundClips);
+    } else {
+      return undefined;
+    }
+  }
+
   private currentItemStatus(): ItemStatus {
     switch (this.state) {
       case SoundChainState.Analysed:

@@ -1,9 +1,11 @@
 import Investigation from "@/models/General/Investigation";
 import SoundClassFilterInput from "../SoundClassFilterInput";
 import SoundchainList from "../LeftMenu/SoundchainList";
+import SoundChain from "@/models/General/SoundChain";
 
 type Props = {
   investigation: Investigation,
+  soundChains: Array<SoundChain>,
   soundChainSelected: (id: number) => void
 }
 
@@ -33,11 +35,11 @@ const InvestigationPage = (props: Props) => {
         {/* Right column */}
         <div className="col">
           <div className={Style.Filtered}>
-            <SoundchainList soundchains={props.investigation.soundChains} soundChainSelected={props.soundChainSelected}/>
+            <SoundchainList soundchains={props.soundChains} soundChainSelected={props.soundChainSelected}/>
           </div>
 
           <div className={Style.All}>
-            <SoundchainList soundchains={props.investigation.soundChains} soundChainSelected={props.soundChainSelected}/>
+            <SoundchainList soundchains={props.soundChains} soundChainSelected={props.soundChainSelected}/>
           </div>
         </div>
       </div>
