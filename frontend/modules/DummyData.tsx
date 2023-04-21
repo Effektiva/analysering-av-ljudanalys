@@ -133,10 +133,3 @@ export const DUMMY_SOUNDCHAINS_LIST2: Array<SoundChain> = [
 ]
 
 export const DUMMY_SOUNDCHAIN: SoundChain = DUMMY_SOUNDCHAINS_LIST[0];
-
-export const DUMMY_INVESTIGATION_LIST: Array<Investigation> = [
-  new Investigation(0, "Kalles Knarkaffärer", DUMMY_SOUNDCHAINS_LIST),
-  new Investigation(1, "Länsmansjäveln", DUMMY_SOUNDCHAINS_LIST2),
-]
-
-export const DUMMY_INVESTIGATION: Investigation = DUMMY_INVESTIGATION_LIST[0];

@@ -1,6 +1,6 @@
 import InvestigationList from "./InvestigationList";
 import DossierList from "./DossierList";
-import { DUMMY_DOSSIER_LIST, DUMMY_INVESTIGATION_LIST } from "@/modules/DummyData";
+import { DUMMY_DOSSIER_LIST } from "@/modules/DummyData";
 import AppState from "@/state/AppState";
 import { useEffect, useState } from "react";
 import Investigation from "@/models/General/Investigation";

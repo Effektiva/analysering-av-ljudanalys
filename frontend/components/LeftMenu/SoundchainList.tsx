@@ -19,7 +19,7 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundchainList = (props: Props) => {
-  const [items] = useState<Array<SoundChain>>(props.soundchains);
+  const [items] = useState(props.soundchains);
   const [menuVisible, setMenuVisible] = useState<boolean>(true);
 
   const eventHandler = (response: ListEventResponse) => {

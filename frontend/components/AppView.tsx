@@ -3,15 +3,16 @@ import AppState from "@/state/AppState";
 import APIService from "@/models/APIService";
 import MainView from "./MainView";
 
-const loadInvestigation = async (): Promise<AppState> => {
+const loadInvestigationsAndDossiers = async (): Promise<AppState> => {
   const dossiers = await APIService.getDossiers();
   const investigations = await APIService.getInvestigations();
   return {
     dossiers: dossiers,
     investigations: investigations,
+    soundChains: [],
     selectedSoundChain: undefined,
-    selectedInvestigation: investigations[0],
-    currentlyPlayingSoundclip: undefined
+    selectedInvestigation: undefined,
+    currentlyPlayingSoundclip: undefined,
   }
 };
 
@@ -20,7 +21,7 @@ const loadInvestigation = async (): Promise<AppState> => {
  */
 const AppView = () => {
   return (
-    <Async promiseFn={loadInvestigation}>
+    <Async promiseFn={loadInvestigationsAndDossiers}>
       {({ data, error, isLoading,  }) => {
       if (isLoading) return "Loading blyat (your mom) data...";
       if (error) return `Something went wong man: ${error.message}`;

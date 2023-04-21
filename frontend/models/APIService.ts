@@ -1,31 +1,31 @@
 import axios from 'axios';
-import Investigation from './General/Investigation';
-import { DUMMY_DOSSIER_LIST, DUMMY_INVESTIGATION_LIST } from '@/modules/DummyData';
+import Investigation, { InvestigationJSON } from './General/Investigation';
+import { DUMMY_DOSSIER_LIST } from '@/modules/DummyData';
 import { LOG as log } from '@/pages/_app';
 import Dossier from './General/Dossier';
+import SoundChain from './General/SoundChain';
+import { DUMMY_SOUNDCHAINS_LIST } from '@/modules/DummyData';
+import { DUMMY_SOUNDCHAINS_LIST2 } from '@/modules/DummyData';
 
 // FIX ME PLOX WHEN BACKEND NO HIDE :3
 class APIService {
 
   static apiURL = "http://localhost:3000";
 
-  constructor() {
-  }
-
   // API CALL TO BACKEND
   static getInvestigations = async (): Promise<Investigation[]> => {
-    return DUMMY_INVESTIGATION_LIST;
-    const result = await axios.get(this.apiURL + "/investigations");
-    const jsonData = result.data.get(0);
+    const dummyTestJSONData: InvestigationJSON[] = [ {id: 0, name: "Kalles Knarkaffärer"}, {id: 1, name: "Länsmansjäveln"} ];
+
+    // const result = await axios.get(this.apiURL + "/investigations");
+    const jsonData = dummyTestJSONData; // result.data.get(0);
     if (jsonData !== undefined) {
-      const jsonArray = jsonData;
       var investigations: Investigation[] = [];
-      for (const jsonInvestigation in jsonArray) {
-        const investigation = Investigation.initFromJSON(jsonInvestigation);
+      for (let index = 0; index < dummyTestJSONData.length; index++) {
+        const investigation = Investigation.initFromJSON(dummyTestJSONData[index]);
         if (investigation !== undefined) {
           investigations.push(investigation);
         } else {
-          log.warning("Could not create investigation from JSON: " + jsonInvestigation);
+          log.warning("Could not create investigation from: " + dummyTestJSONData[index]);
         }
       }
       return investigations;
@@ -39,17 +39,44 @@ class APIService {
     const result = await axios.get(this.apiURL + "/dossier");
     const jsonData = result.data.get(0);
     if (jsonData !== undefined) {
-      const jsonArray = jsonData;
       var dossiers: Dossier[] = [];
-      for (const jsonDossier in jsonArray) {
-        const dossier = Dossier.initFromJSON(jsonDossier);
+      for (let index = 0; index < jsonData.length; index++) {
+        const dossier = Dossier.initFromJSON(jsonData[index]);
         if (dossier !== undefined) {
           dossiers.push(dossier);
         } else {
-          log.warning("Could not create dossier from JSON: " + jsonDossier);
+          log.warning("Could not create investigation from: " + jsonData[index]);
         }
       }
       return dossiers;
+    } else {
+      return [];
+    }
+  }
+
+  static getSoundChainsForInvestigation = async (investigationId: number): Promise<SoundChain[]> => {
+    // DUMMY
+    if (investigationId == 0) {
+      return DUMMY_SOUNDCHAINS_LIST;
+    } else {
+      return DUMMY_SOUNDCHAINS_LIST2;
+    }
+
+    // Actual
+    const result = await axios.get(this.apiURL + "/investigations/" + investigationId + "/soundchains");
+    const jsonData = result.data.get(0);
+
+    if (jsonData !== undefined) {
+      var soundchains: SoundChain[] = [];
+      for (let index = 0; index < jsonData.length; index++) {
+        const soundchain = SoundChain.initFromJSON(jsonData[index]);
+        if (soundchain !== undefined) {
+          soundchains.push(soundchain);
+        } else {
+          log.warning("Could not create investigation from: " + jsonData[index]);
+        }
+      }
+      return soundchains;
     } else {
       return [];
     }

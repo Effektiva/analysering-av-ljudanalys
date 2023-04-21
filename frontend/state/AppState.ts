@@ -6,6 +6,7 @@ import Soundclip from "@/models/General/Soundclip";
 type AppState = {
   dossiers: Array<Dossier>,
   investigations: Array<Investigation>,
+  soundChains: Array<SoundChain>,
   selectedSoundChain: SoundChain | undefined,
   selectedInvestigation: Investigation | undefined,
   currentlyPlayingSoundclip: Soundclip | undefined
