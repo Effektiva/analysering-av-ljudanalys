@@ -5,7 +5,6 @@ import Metadata from "@/models/SoundAnalysis/Metadata";
 import Soundclip from "@/models/General/Soundclip";
 import SoundChain from "@/models/General/SoundChain";
 import Dossier from "@/models/General/Dossier";
-import Investigation from "@/models/General/Investigation";
 
 export const DUMMY_SOUNDFILE_LIST: Array<Soundclip> = [
   new Soundclip(
@@ -131,5 +130,3 @@ export const DUMMY_SOUNDCHAINS_LIST2: Array<SoundChain> = [
       DUMMY_SOUNDFILE_LIST2
     )
 ]
-
-export const DUMMY_SOUNDCHAIN: SoundChain = DUMMY_SOUNDCHAINS_LIST[0];
