@@ -1,7 +1,7 @@
 import Metadata from "@/models/SoundAnalysis/Metadata";
 
 type Props = {
-  metaData: Metadata;
+  metaData: Metadata | undefined;
 }
 
 const STYLE_NAMESPACE = "metadata__";
@@ -24,11 +24,11 @@ const MetadataView = (props: Props) => {
     <div className={Style.Container}>
       <div className={Style.Header}>Metadata</div>
         <div>
-          <span className={Style.MetadataName}> <b>Filnamn:</b> {props.metaData.getFileName()}</span>
-          <span className={Style.MetadataDate}> <b>Datum:</b> {props.metaData.getDate()}</span>
+          <span className={Style.MetadataName}> <b>Filnamn:</b> {props.metaData?.getFileName()}</span>
+          <span className={Style.MetadataDate}> <b>Datum:</b> {props.metaData?.getDate()}</span>
         </div>
         <div className={Style.MetadataDossiersDiv}>
-          <span> <b>Dossiers:</b> {props.metaData.getBelongingDossiers().map(dossier => "'" + dossier.name + "'").join(", \n")}</span>
+          <span> <b>Dossiers:</b> {props.metaData?.getBelongingDossiers().map(dossier => "'" + dossier.name + "'").join(", \n")}</span>
         </div>
     </div>
   );

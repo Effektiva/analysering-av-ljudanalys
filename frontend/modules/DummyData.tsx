@@ -6,6 +6,33 @@ import Soundclip from "@/models/General/Soundclip";
 import SoundChain from "@/models/General/SoundChain";
 import Dossier from "@/models/General/Dossier";
 
+export const DUMMY_SOUNDCHAIN_CLIPS: Array<Soundclip> = [
+  new Soundclip(
+    0,
+    new Metadata("2020-03-18_0000_0002", [new Dossier(0, "Kalle snackar"), new Dossier(1, "Test dossier 2")]),
+    new Date("2020-03-18 00:00:00"),
+    new Date("2020-03-18 00:02:05") // 02:05.64
+  ),
+  new Soundclip(
+    1,
+    new Metadata("2020-03-18_0002_0007", []),
+    new Date("2020-03-18 00:02:05"),
+    new Date("2020-03-18 00:07:44") // 05:39.62
+  ),
+  new Soundclip(
+    2,
+    new Metadata("2020-03-18_0007_0011", []),
+    new Date("2020-03-18 00:07:44"),
+    new Date("2020-03-18 00:11:30") // 03:44.57
+  ),
+  new Soundclip(
+    3,
+    new Metadata("2020-03-18_0011_0017", []),
+    new Date("2020-03-18 00:11:30"),
+    new Date("2020-03-18 00:16:47") // 05:17.36
+  ),
+]
+
 export const DUMMY_SOUNDFILE_LIST: Array<Soundclip> = [
   new Soundclip(
     0,
@@ -81,14 +108,14 @@ export const DUMMY_SOUNDCHAINS_LIST: Array<SoundChain> = [
   new SoundChain(
       0,
       "2023-03-18",
-      new Date(),
-      new Date(),
-      SoundChainState.AnalysisOngoing,
+      new Date("2020-03-18 00:00:00"),
+      new Date("2020-03-18 00:16:47"),
+      SoundChainState.Analysed,
       [
         new Note(0, new Date("2020-03-18 06:00"), new TimeInClip(10, 10), "Här hör jag en hund"),
         new Note(1, new Date("2020-03-18 07:00"), new TimeInClip(11, 0), "Här hör jag en get")
       ],
-      DUMMY_SOUNDFILE_LIST
+      DUMMY_SOUNDCHAIN_CLIPS
     ),
     new SoundChain(
       1,
@@ -97,8 +124,8 @@ export const DUMMY_SOUNDCHAINS_LIST: Array<SoundChain> = [
       new Date(),
       SoundChainState.ManuallyAnalysed,
       [
-        new Note(0, new Date("2020-03-18 06:00"), new TimeInClip(10, 10), "Här hör jag en kapybara"),
-        new Note(1, new Date("2020-03-18 07:00"), new TimeInClip(11, 0), "Här hör jag en humla")
+        new Note(0, new Date("2020-03-18 06:00"), new TimeInClip(10, 10), "Här hör jag en gethund"),
+        new Note(1, new Date("2020-03-18 07:00"), new TimeInClip(11, 0), "Här hör jag en hundget")
       ],
       DUMMY_SOUNDFILE_LIST
     ),
@@ -109,8 +136,8 @@ export const DUMMY_SOUNDCHAINS_LIST: Array<SoundChain> = [
       new Date(),
       SoundChainState.Rejected,
       [
-        new Note(0, new Date("1700-11-19 06:00"), new TimeInClip(10, 10), "Här hör jag en ryss"),
-        new Note(1, new Date("1700-11-20 07:00"), new TimeInClip(11, 0), "Här hör jag karoliner marschera i Narva")
+        new Note(0, new Date("2020-03-18 06:00"), new TimeInClip(10, 10), "Här hör jag ett marsvin"),
+        new Note(1, new Date("2020-03-18 07:00"), new TimeInClip(11, 0), "Här hör jag något annat")
       ],
       KAROLINER_SOUNDFILE_LIST
     )

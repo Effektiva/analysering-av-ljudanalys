@@ -8,6 +8,8 @@ import SoundChain from "@/models/General/SoundChain";
 import Note from "@/models/SoundAnalysis/Note";
 import Notes from "./Notes/Notes";
 import AppState from "@/state/AppState";
+import Soundclip from "@/models/General/Soundclip";
+import { LOG as log } from "@/pages/_app";
 
 type Props = {
   soundchain: SoundChain,
@@ -35,37 +37,32 @@ enum Style {
 const SoundAnalysisPage = (props: Props) => {
   const [playing, setPlaying] = useState(false);
   const [volumePercentage, setVolumePercentage] = useState(1);
-  const [progressPercentage, setProgressPercentage] = useState(0);
-  const [currentSoundClip, setCurrentSoundClip] = useState<undefined | HTMLAudioElement>(undefined);
-  const [currentClipID, setCurrentClipID] = useState<number>(-1);
   const [muted, setMuted] = useState<boolean>(false);
-
-  const getSoundClipURL = (id: number) => {
-    return "clips/" + props.soundchain.id + "/SoundClips/" + id + ".mp3";
-  }
+  const [soundclip, setSoundclip] = useState<Soundclip | undefined>(undefined);
+  const [clipZoom, setClipZoom] = useState<boolean>(false);
 
   /*
    * If a clip is selected in any of the soundfile lists this function is ran
    * and given the ID of that soundfile.
    */
   const clipSelected = (id: number) => {
-    if (id != currentClipID) {
-      currentSoundClip?.pause();
+    log.debug("select clip:", id);
 
-      const newClip = new Audio(getSoundClipURL(id));
-      setCurrentSoundClip(newClip);
-      setCurrentClipID(id);
+    if (soundclip != undefined && soundclip.id != id) {
+      soundclip?.audioElement?.pause();
 
       var appState = props.appState;
       let soundClip = appState.selectedSoundChain?.soundClips.find(soundClip => soundClip.id == id);
       appState.currentlyPlayingSoundclip = soundClip;
       props.updateAppState(appState);
     }
+
+    setSoundclip(props.soundchain.getSoundclipAndSetAudioElement(id));
   }
 
   const soundchainCommentsUpdated = (newNotes: Array<Note>) => {
     props.soundchain.comments = newNotes;
-    console.log("Updated comments!");
+    log.debug("Updated comments!");
     // TODO: Send to backend
   }
 
@@ -112,23 +109,28 @@ const SoundAnalysisPage = (props: Props) => {
         <div className="col">
           <Graph />
           <MediaControl
-            key={currentClipID}
-            currentClipID={currentClipID}
             playing={playing}
             setPlaying={setPlaying}
-            audioElement={currentSoundClip}
-            progressPercentage={progressPercentage}
-            setProgressPercentage={setProgressPercentage}
             volumePercentage={volumePercentage}
             setVolumePercentage={setVolumePercentage}
             muted={muted}
             setMuted={setMuted}
+            soundchain={props.appState.selectedSoundChain}
+            soundclip={soundclip}
+            setSoundclip={setSoundclip}
+            clipZoom={clipZoom}
           />
           <div className={Style.Buttons}>
             <div className={Style.Zoom}>
               Zoom
-              <button>Hela kedjan</button>
-              <button>Nuvarande klipp</button>
+              <button
+                onClick={() => { setClipZoom(false) }}
+                style={{border: clipZoom ? "0" : "1px solid black"}}
+              >Hela kedjan</button>
+              <button
+                onClick={() => { setClipZoom(true) }}
+                style={{border: clipZoom ? "1px solid black" : "0"}}
+              >Nuvarande klipp</button>
             </div>
             <button className={Style.AutoVolume}>
               Automagisk ljudsänkning

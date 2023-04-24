@@ -7,9 +7,11 @@ import ListItemRepresentable from "../ListItemRepresentable";
  */
 class Soundclip implements ListItemRepresentable {
   id: number | undefined;
+  audioElement: HTMLAudioElement | undefined;
   metadata: Metadata;
   startTime: Date;
   endTime: Date;
+  duration: number;
 
   constructor(
     id: number | undefined,
@@ -21,6 +23,7 @@ class Soundclip implements ListItemRepresentable {
     this.metadata = metadata;
     this.startTime = startTime;
     this.endTime = endTime;
+    this.duration = (this.endTime.valueOf() - this.startTime.valueOf())/1000; // in seconds
   }
 
   asListItem(): ListItemType {
@@ -29,6 +32,10 @@ class Soundclip implements ListItemRepresentable {
       text: this.metadata.fileName,
       collapsable: false
     }
+  }
+
+  setAudioElement(elem: HTMLAudioElement) {
+    this.audioElement = elem;
   }
 }
 
