@@ -42,21 +42,16 @@ const ProgressBar = (props: Props) => {
   }
 
   /*
-   * Takes seconds and returns a 00:00 [minutes:seconds] string from it.
+   * Takes seconds and returns a HH:MM:SS string from it.
    */
   const secondsToTimeString = (seconds: number): string => {
-    let minutes = Math.trunc(seconds/60);
-    let secondsString = Math.trunc(seconds - minutes*60).toString();
-    let minutesString = minutes.toString();
-
-    if (minutesString.length == 1) {
-      minutesString = "0" + minutesString;
-    }
-    if (secondsString.length == 1) {
-      secondsString = "0" + secondsString;
+    if (isNaN(seconds) || seconds < 0) {
+      return "--:--:--";
     }
 
-    return minutesString + ":" + secondsString;
+    // date takes a time in ms
+    let str = new Date(seconds*1000).toISOString().slice(11,19);
+    return str;
   }
 
   return (

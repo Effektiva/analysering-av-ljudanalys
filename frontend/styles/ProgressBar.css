@@ -6,7 +6,7 @@
 }
 
 .progressBar__bar {
-    width: 82%;
+    width: 71%;
     height: 20px;
     background: gray;
     border-radius: 5px;
@@ -19,7 +19,7 @@
 }
 
 .progressBar__currentTime {
-    width: 9%;
+    width: 14%;
     margin-top: -2px;
 }
 
