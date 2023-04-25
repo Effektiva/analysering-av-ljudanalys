@@ -101,10 +101,10 @@ export const ListItem = (props: Props) => {
   const getStyleClasses = (mainClass: string, hidden: boolean) => {
     let classes = "";
     if (hidden) {
-      classes += LM.StyleClass.Collapsed + " ";
+      classes += "collapsed ";
     }
 
-    classes += " " + mainClass;
+    classes += mainClass;
     return classes;
   }
 
@@ -137,14 +137,14 @@ export const ListItem = (props: Props) => {
             />
         }
 
-        { !hidden &&
-        <>
+        { !hidden && (props.item.subroots || props.item.children) &&
+        <ul>
           { props.item.subroots &&
-          <ul>
+          <>
             {
               props.item.subroots.map((subroot: ListItemType) => {
                 return <ListItem
-                          class={LM.StyleClass.Subroot}
+                          class={LM.StyleClass.Subroot + " " + LM.StyleClass.Collapsable}
                           key={subroot.id}
                           itemType={LM.ItemType.Subroot}
                           parentID={props.item.id}
@@ -154,14 +154,14 @@ export const ListItem = (props: Props) => {
                         />
               })
             }
-          </ul>
+          </>
           }
           { props.item.children &&
-          <ul>
+          <>
             {
               props.item.children.map((child: ListItemType) => {
                 return <ListItem
-                          class={LM.StyleClass.Child}
+                          class={LM.StyleClass.Child + " " + LM.StyleClass.Action}
                           itemType={LM.ItemType.Child}
                           key={child.id}
                           item={child}
@@ -169,9 +169,9 @@ export const ListItem = (props: Props) => {
                         />
               })
             }
-          </ul>
+          </>
           }
-        </>
+        </ul>
         }
       </li>
     </>

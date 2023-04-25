@@ -89,20 +89,20 @@ const VolumeBar = (props: Props) => {
     <>
       <div className={Style.Container}>
         <div
-          style={{color: props.playable ? "black" : "gray"}}
           className={Style.Button}
           onClick={() => props.setMuted(!props.muted)}
+          disabled={!props.playable}
         >{getIcon()}</div>
 
         <div
           className={Style.Bar}
           onClick={volumeBarClick}
-        >
+          disabled={!props.playable}
+          >
           <div
             className={Style.BarFill}
             style={{
               width: props.muted ? 0 : MAX_VOLUME_PROGRESS_WIDTH * Number(props.volumePercentage) + "%",
-              background: getBarColor()
             }}
           ></div>
         </div>

@@ -60,12 +60,12 @@ const ProgressBar = (props: Props) => {
         <div
           className={Style.Bar}
           onClick={progressBarClick}
+          disabled={!props.playable}
         >
           <div
             className={Style.Progress}
             style={{
               width: 100*(props.currentTime/props.duration) + "%",
-              background: props.playable ? "black" : "gray"
             }}
           ></div>
         </div>

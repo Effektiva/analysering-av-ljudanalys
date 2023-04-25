@@ -8,9 +8,7 @@ export default function Home() {
         <title>Frontend</title>
       </Head>
       <main>
-        <div className="container">
-          <AppView />
-        </div>
+        <AppView />
       </main>
     </>
   )

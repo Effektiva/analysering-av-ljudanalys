@@ -23,7 +23,7 @@ const EditableTextField = (props: Props) => {
 
   return (
     <>
-      {props.isEditing ? <textarea value={text} onChange={handleTextChange}></textarea> : <>{text}</>}
+      {props.isEditing ? <textarea value={text} onChange={handleTextChange}></textarea> : <div>{text}</div>}
     </>
   );
 };

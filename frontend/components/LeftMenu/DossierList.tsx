@@ -125,22 +125,24 @@ const DossierList = (props: Props) => {
 
   return (
     <>
-      <span
-        className="listMenuHeader"
-        onClick={toggleVisibility}
-      >
-        Dossier
-      </span>
-      { menuVisible &&
-        <ListMenu
-          key={dossiers.length}
-          items={dossiers.map((dossier) => dossier.asListItem())}
-          contextMenus={CONTEXT_MENUS}
-          eventHandler={eventHandler}
-          toggleableRoots={true}
-        />
-      }
-      <button className="listAddButton" onClick={addNewItem}>Ny dossier</button>
+      <div className="dossier_listmenu">
+        <span
+          className={"listMenuHeader" + ( !menuVisible ? " collapsed" : "")}
+          onClick={toggleVisibility}
+        >
+          Dossier
+        </span>
+        { menuVisible &&
+          <ListMenu
+            key={dossiers.length}
+            items={dossiers.map((dossier) => dossier.asListItem())}
+            contextMenus={CONTEXT_MENUS}
+            eventHandler={eventHandler}
+            toggleableRoots={true}
+          />
+        }
+        <button className="listAddButton" onClick={addNewItem}>Ny dossier</button>
+      </div>
     </>
   )
 }

@@ -13,6 +13,7 @@ const STYLE_NAMESPACE = "investigationPage__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
   Header = STYLE_NAMESPACE + "header",
+  Column = STYLE_NAMESPACE + "column",
   LeftButtons = STYLE_NAMESPACE + "leftButtons",
   Filtered = STYLE_NAMESPACE + "filtered",
   All = STYLE_NAMESPACE + "all"
@@ -21,26 +22,23 @@ enum Style {
 const InvestigationPage = (props: Props) => {
   return <>
     <div className={Style.Container}>
-      <div className="row">
+      {/* Left column */}
+      <div className={Style.Column}>
+        <div className={Style.LeftButtons}>
+          <button>Ladda upp filer</button>
+          <button>Analysera ej analyserade kedjor</button>
+        </div>
+        <SoundClassFilterInput />
+      </div>
 
-        {/* Left column */}
-        <div className="col">
-          <div className={Style.LeftButtons}>
-            <button>Ladda upp filer</button>
-            <button>Analysera ej analyserade kedjor</button>
-          </div>
-          <SoundClassFilterInput />
+      {/* Right column */}
+      <div className={Style.Column}>
+        <div className={Style.Filtered}>
+          <SoundchainList soundchains={props.soundChains} soundChainSelected={props.soundChainSelected}/>
         </div>
 
-        {/* Right column */}
-        <div className="col">
-          <div className={Style.Filtered}>
-            <SoundchainList soundchains={props.soundChains} soundChainSelected={props.soundChainSelected}/>
-          </div>
-
-          <div className={Style.All}>
-            <SoundchainList soundchains={props.soundChains} soundChainSelected={props.soundChainSelected}/>
-          </div>
+        <div className={Style.All}>
+          <SoundchainList soundchains={props.soundChains} soundChainSelected={props.soundChainSelected}/>
         </div>
       </div>
     </div>

@@ -315,19 +315,19 @@ const MediaControl = (props: Props) => {
       {/* Media buttons */}
       <div className={Style.buttonsContainer}>
         <div
-          style={{color: playable ? "black" : "gray"}}
           className={Style.BackwardsButton}
           onClick={() => buttonHandler(Event.Backward)}
+          disabled={!playable}
         ><BackwardIcon /></div>
         <div
-          style={{color: playable ? "black" : "gray"}}
           className={Style.StopPlayButton}
           onClick={() => buttonHandler(Event.TogglePlay)}
+          disabled={!playable}
         >{props.playing ? <PauseIcon /> : <PlayIcon />}</div>
         <div
-          style={{color: playable ? "black" : "gray"}}
           className={Style.ForwardButton}
           onClick={() => buttonHandler(Event.Forward)}
+          disabled={!playable}
         ><ForwardIcon /></div>
 
         <VolumeBar

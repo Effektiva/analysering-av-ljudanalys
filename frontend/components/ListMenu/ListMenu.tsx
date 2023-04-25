@@ -70,7 +70,8 @@ export enum StyleClass {
   Root = "listItemRoot",
   Child = "listItemChild",
   Subroot = "listItemSubroot",
-  Collapsed = "listItemCollapsed",
+  Collapsable = "listItemCollapsable",
+  Action = "listItemAction",
   Invalid = "listItemInputInvalid",
 }
 
@@ -238,7 +239,7 @@ const iconForItem = (item: ListItemType): ReactNode => {
            items.map((item) => {
             return <ListItem
                       key={item.id}
-                      class={StyleClass.Root}
+                      class={StyleClass.Root + " " + (props.toggleableRoots ? StyleClass.Collapsable : StyleClass.Action)}
                       itemType={ItemType.Root}
                       changeTextID={changeTextID}
                       item={item}
