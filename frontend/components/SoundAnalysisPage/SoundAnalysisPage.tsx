@@ -20,7 +20,9 @@ type Props = {
 const STYLE_NAMESPACE = "soundAnalysisPage__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
+  Col = STYLE_NAMESPACE + "col",
   Header = STYLE_NAMESPACE + "header",
+  SoundchainList = "lists",
   Filtered = STYLE_NAMESPACE + "filtered",
   All = STYLE_NAMESPACE + "all",
   Zoom = STYLE_NAMESPACE + "zoom",
@@ -68,20 +70,23 @@ const SoundAnalysisPage = (props: Props) => {
 
   return (
     <div className={Style.Container}>
-      <div className="row">
 
-        {/* Left column */}
-        <div className="col">
-          <div className={Style.Header}>
-            Ljudkedja: {props.soundchain.name}
+      {/* Left column */}
+      <div className={Style.Col}>
+        <div className={Style.Header}>
+          <h1> Ljudkedja: {props.soundchain.name} </h1>
 
-            <select className={Style.SetStatus}>
+          <div>
+            <label htmlFor="statusPicker">Markerad som</label>
+            <select id="statusPicker" className={Style.SetStatus +  " form-select"}>
               <option>Ej behandlad</option>
               <option>Behandlad</option>
               <option>Avvisad</option>
             </select>
           </div>
+        </div>
 
+        <div className={Style.SoundchainList}>
           <SoundClassFilterInput />
 
           <div className={Style.Filtered}>
@@ -104,41 +109,41 @@ const SoundAnalysisPage = (props: Props) => {
             />
           </div>
         </div>
+      </div>
 
-        {/* Right column */}
-        <div className="col">
-          <Graph />
-          <MediaControl
-            playing={playing}
-            setPlaying={setPlaying}
-            volumePercentage={volumePercentage}
-            setVolumePercentage={setVolumePercentage}
-            muted={muted}
-            setMuted={setMuted}
-            soundchain={props.appState.selectedSoundChain}
-            soundclip={soundclip}
-            setSoundclip={setSoundclip}
-            clipZoom={clipZoom}
-          />
-          <div className={Style.Buttons}>
-            <div className={Style.Zoom}>
-              Zoom
-              <button
-                onClick={() => { setClipZoom(false) }}
-                style={{border: clipZoom ? "0" : "1px solid black"}}
-              >Hela kedjan</button>
-              <button
-                onClick={() => { setClipZoom(true) }}
-                style={{border: clipZoom ? "1px solid black" : "0"}}
-              >Nuvarande klipp</button>
-            </div>
-            <button className={Style.AutoVolume}>
-              Automagisk ljudsänkning
-            </button>
+      {/* Right column */}
+      <div className={Style.Col}>
+        <Graph />
+        <MediaControl
+          playing={playing}
+          setPlaying={setPlaying}
+          volumePercentage={volumePercentage}
+          setVolumePercentage={setVolumePercentage}
+          muted={muted}
+          setMuted={setMuted}
+          soundchain={props.appState.selectedSoundChain}
+          soundclip={soundclip}
+          setSoundclip={setSoundclip}
+          clipZoom={clipZoom}
+        />
+        <div className={Style.Buttons}>
+          <div className={Style.Zoom}>
+            Zoom
+            <button
+              onClick={() => { setClipZoom(false) }}
+              style={{border: clipZoom ? "0" : "1px solid black"}}
+            >Hela kedjan</button>
+            <button
+              onClick={() => { setClipZoom(true) }}
+              style={{border: clipZoom ? "1px solid black" : "0"}}
+            >Nuvarande klipp</button>
           </div>
-          <MetadataView metaData={props.appState.currentlyPlayingSoundclip?.metadata ?? props.appState.selectedSoundChain!.soundClips[0].metadata}/>
-          <Notes soundchain={props.appState.selectedSoundChain!} soundchainCommentsUpdated={soundchainCommentsUpdated} />
+          <button className={Style.AutoVolume}>
+            Automagisk ljudsänkning
+          </button>
         </div>
+        <MetadataView metaData={props.appState.currentlyPlayingSoundclip?.metadata ?? props.appState.selectedSoundChain!.soundClips[0].metadata}/>
+        <Notes soundchain={props.appState.selectedSoundChain!} soundchainCommentsUpdated={soundchainCommentsUpdated} />
       </div>
     </div>
   );

@@ -1,0 +1,173 @@
+@use "palette.scss";
+
+/* The container of the whole note component */
+.notes__container {
+    padding: 5px 10px;
+    border-radius: 5px;
+
+    @include palette.notes;
+
+    /* Header of the note component */
+    .notes__header {
+        margin: 0;
+
+        font-weight: bold;
+        font-size: larger;
+    }
+
+    /* Direct childs of note */
+    > * {
+        padding: 5px;
+    }
+}
+
+/* The controls for adding a new note */
+.notes__newnote {
+    display: flex;
+
+    /* The first column  */
+    > :first-child {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+
+        padding-right: 20px;
+
+        /* The heading */
+        h3 {
+            font-size: larger;
+            white-space: nowrap;
+
+            padding-right: 10px;
+        }
+
+        /* Styling of the time input */
+        .notes__newnote_time {
+            display: flex;
+            justify-content: flex-end;
+
+            label {
+                margin-right: 5px;
+            }
+
+            input {
+                box-sizing: content-box;
+
+                width: 5ch;
+                padding: 3px;
+            }
+        }
+
+
+    }
+
+    /* The second column */
+    > :last-child {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+
+        width: 100%;
+
+        .notes__newnote_text {
+            display: flex;
+            flex-direction: column;
+
+            width: 100%;
+
+            textarea {
+                min-height: 2em;
+                max-height: 20em;
+                padding: 10px;
+            }
+        }
+
+        button {
+            padding: 4px 6px;
+            margin: 0 20px;
+
+            white-space: nowrap;
+        }
+    }
+}
+
+
+/* The list of notes */
+.notes__list__container {
+    width: 100%;
+    max-height: max(50vh, 200px);
+
+    overflow-y: auto;
+
+    /* Keep a distance between notes */
+    .notes__list__note:not(:last-child) {
+        margin-bottom: 8px;
+    }
+}
+
+/* A single note */
+.notes__list__note {
+    padding: 3px;
+
+    border-radius: 5px;
+
+    @include palette.note;
+}
+
+
+/* Top part of note, the information */
+.notes__list__header {
+    display: flex;
+    justify-content: space-between;
+
+    width: 100%;
+    padding: 0 10px 0.1rem;
+
+    font-size: 0.75rem;
+}
+
+
+/* Bottom part of note, the text */
+.notes__list__text {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    padding: 5px 10px;
+
+    border-radius: 5px;
+
+    @include palette.note-foreground;
+
+    textarea {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .notes__list__buttons {
+        @include palette.note-button;
+
+        padding-left: 60px;
+        margin-left: auto;
+
+        /* The buttons of the note */
+        button {
+            padding: 0;
+            margin: 0;
+
+            line-height: 0;
+
+            /* Should be image (could be svg, img or other) */
+            >* {
+                height: 1.2em;
+                width: 1.2em;
+            }
+        }
+
+        /* Keep space inbetween buttons */
+        button:not(:last-child) {
+            margin-right: 10px;
+        }
+    }
+}

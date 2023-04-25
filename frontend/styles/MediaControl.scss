@@ -1,0 +1,88 @@
+@use "palette.scss";
+
+.mediaControl__container {
+    width: 100%;
+    padding: 3px;
+
+    @include palette.media-control;
+
+    border-radius: 5px;
+}
+
+
+/* Buttons */
+.mediaControl__buttonsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0 15px;
+
+    .mediaControl__backwardsButton, .mediaControl__forwardButton, .mediaControl__stopPlayButton {
+        @include palette.media-control-button;
+
+        font-size: 18px;
+
+        /* Active buttons */
+        &:not([disabled]) {
+            @include palette.interactable;
+        }
+    }
+
+    .mediaControl__stopPlayButton {
+        margin: 0 14px;
+
+        font-size: 22px;
+    }
+
+
+    /* Keep the same spacing on left side to have buttons be centered */
+    $width-of-volumeBar: 30%;
+    &::before {
+        content: "";
+
+        width: 100%;
+        max-width: $width-of-volumeBar;
+        margin-right: auto;
+    }
+    /* The volumne bar. Shares flexbox with mediacontroler so shares file. */
+    .volumeBar__container {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+
+        width: $width-of-volumeBar;
+        margin-left: auto;
+
+        /* The volume button */
+        .volumeBar__button {
+            display: flex;
+
+            padding: 4px;
+
+            font-size: 18px;
+
+            @include palette.media-control-button;
+
+            &:not([disabled]) {
+                @include palette.interactable;
+            }
+        }
+
+        /* The bar for volume control */
+        .volumeBar__bar {
+            width: 100%;
+            height: 15px;
+
+            @include palette.media-control-bar;
+
+            &:not([disabled]) {
+                @include palette.interactable;
+            }
+        }
+
+        .volumeBar__barFill {
+            height: 100%;
+        }
+    }
+}

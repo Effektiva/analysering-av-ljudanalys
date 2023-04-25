@@ -20,6 +20,7 @@ enum Style {
   Date = STYLE_NAMESPACE + "date",
   Time = STYLE_NAMESPACE + "time",
   Text = STYLE_NAMESPACE + "text",
+  Buttons = STYLE_NAMESPACE + "buttons",
 }
 
 /**
@@ -59,33 +60,32 @@ const NotesList = (props: Props) => {
     <div className={Style.Container}>
       {
         props.notes.map(note => {
-          return <div key={note.id} className={Style.Note}>
-                  <div>
+          return  <div key={note.id} className={Style.Note}>
                     <div className={Style.Header}>
                       <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
                       <span className={Style.Time}>Tid i klipp: {note.timeInClip.formattedString()}</span>
-                      <>
-                        {editingNoteId === note.id
-                          ?
-                            <button onClick={() => saveEditedText(note.id) }>
-                              <IconSave />
-                            </button>
-                          :
-                            <button onClick={() => setEditingNoteId(note.id) }>
-                              <IconEdit />
-                            </button>
-                        }
-                      </>
-                      <button onClick={() => props.deleteNote(note.id)} disabled={editingNoteId === note.id}>
-                        <IconDelete />
-                      </button>
-
+                    </div>
+                    <div id={""+note.id} className={Style.Text}>
+                      <EditableTextField defaultText={note.text} isEditing={editingNoteId === note.id}/>
+                      <div className={Style.Buttons}>
+                        <>
+                          {editingNoteId === note.id
+                            ?
+                              <button onClick={() => saveEditedText(note.id) }>
+                                <IconSave />
+                              </button>
+                            :
+                              <button onClick={() => setEditingNoteId(note.id) }>
+                                <IconEdit />
+                              </button>
+                          }
+                        </>
+                        <button onClick={() => props.deleteNote(note.id)} disabled={editingNoteId === note.id}>
+                          <IconDelete />
+                        </button>
                     </div>
                   </div>
-                  <div id={""+note.id} className={Style.Text}>
-                   <EditableTextField defaultText={note.text} isEditing={editingNoteId === note.id}/>
-                  </div>
-                 </div>
+                </div>
         })
       }
     </div>

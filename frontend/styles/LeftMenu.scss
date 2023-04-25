@@ -1,0 +1,43 @@
+@use "palette.scss";
+@use "ListMenu.scss";
+
+/* The left-menu component */
+.left-menu {
+    display: flex;
+    flex-direction: column;
+
+    padding: 1rem;
+    min-width: 20em;
+
+    @include palette.left-menu;
+
+    /* Space and border inbetween elements */
+    > :not(:last-child) {
+        @include palette.left-menu-borders;
+
+        padding-bottom: 15px;
+        border-bottom: 2px solid;
+        margin-bottom: 15px;
+    }
+
+    /* The lists of left-menu */
+    .dossier_listmenu, .investigation_listmenu {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        margin-bottom: 15px;
+
+        .listMenuHeader {
+            @extend .listItemAction;
+
+            // Should not require these. Extend should cover them from ListMenu.scss as well
+            @include palette.interactable;
+        }
+    }
+
+    /* All interactable list items in left-menu */
+    .listItemCollapsable, .listItemAction {
+        @include palette.left-menu-button;
+    }
+}

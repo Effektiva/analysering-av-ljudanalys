@@ -1,6 +1,12 @@
+@use "palette.scss";
+
 .main-view {
     display: flex;
-    background-color: rgb(151, 151, 151);
+
+    width: 100%;
+    min-height: 100vh;
+
+    @include palette.page;
 }
 
 .main-view__description {
