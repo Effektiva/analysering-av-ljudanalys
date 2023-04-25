@@ -28,22 +28,7 @@ const MainView = (props: Props) => {
     selectedHandler(Type.SOUNDCHAIN, id);
   };
 
-  const [page, setPage] = useState(
-    <FrontPage/> // Empty front page \:^)
-  ); // TODO: Remove force
-
-  // Attempt to obtain the right path to dossier sub (ノಠ益ಠ)ノ彡┻━┻  data.
-  const getSearchPath = (id: number) => {
-    let num = id;
-    let ids: number[] = [];
-    while (num) {
-      const remainder = num % 10;
-      num -= remainder;
-      num /= 10;
-      ids = [remainder, ...ids];         // Appending to the back of the array.
-    }
-    return ids;
-  }
+  const [page, setPage] = useState(<FrontPage/>);
 
   const filterById = (dataList: Array<any>, id: number) => {
     const [data] = dataList.filter((data) => {
@@ -89,6 +74,7 @@ const MainView = (props: Props) => {
           />);
         break;
       default:
+        setPage(<FrontPage/>);
         break;
     }
   }

@@ -57,8 +57,8 @@ def insert_dummy(session):
     timelist= [time1, time2, time3, time4, time5, time6, time7, time8, time9, time10, time11, time12]
     ######## CREATE INVESTIGATIONS ########
     print("-------- creating inestigations --------")
-    session.execute(insert(models.Investigations).values(name = "1st investigation"))
-    session.execute(insert(models.Investigations).values(name = "2st investgation"))
+    session.execute(insert(models.Investigations).values(name = "Kalles Knarkaffärer"))
+    session.execute(insert(models.Investigations).values(name = "Länsmansjäveln"))
 
 
     ######## CREATE SOUNDCLASSES ########
@@ -128,21 +128,23 @@ def insert_dummy(session):
 
     ######## CREATE DOSSIERS ########
     print("-------- creating dossiers --------")
-    session.execute(insert(models.Dossier).values(name = "dossier1"))
-    session.execute(insert(models.Dossier).values(name = "dossier2"))
+    session.execute(insert(models.Dossier).values(name = "Favoriter"))
+    session.execute(insert(models.Dossier).values(name = "Suspekt snack"))
 
     ######## CREATE UNDER-DOSSIERS ########
     print("-------- creating under-dossiers --------")
-    session.execute(insert(models.Dossier).values(name = "under_dossier1", parent_folder_id = 1))
-    session.execute(insert(models.Dossier).values(name = "under_dossier2", parent_folder_id = 2))
+    session.execute(insert(models.Dossier).values(name = "Kalle snackar", parent_folder_id = 2))
+    session.execute(insert(models.Dossier).values(name = "Länsman snackar", parent_folder_id = 2))
 
 
     ######## CONNECTIING FILES TO DOSSIER ########
     print("-------- connecting files to dossiers --------")
     session.execute(insert(models.Folder).values(dossier_id = 1, sound_file_id = 1))
     session.execute(insert(models.Folder).values(dossier_id = 1, sound_file_id = 2))
-    session.execute(insert(models.Folder).values(dossier_id = 4, sound_file_id = 3))
-    session.execute(insert(models.Folder).values(dossier_id = 4, sound_file_id = 4))
+    session.execute(insert(models.Folder).values(dossier_id = 2, sound_file_id = 3))
+    session.execute(insert(models.Folder).values(dossier_id = 3, sound_file_id = 4))
+    session.execute(insert(models.Folder).values(dossier_id = 4, sound_file_id = 5))
+    session.execute(insert(models.Folder).values(dossier_id = 4, sound_file_id = 6))
 
 
     return 200
