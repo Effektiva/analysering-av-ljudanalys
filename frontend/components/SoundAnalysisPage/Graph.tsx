@@ -1,11 +1,9 @@
-import { useRef } from 'react';
-import { AreaChart } from '@toast-ui/react-chart';
+import { useRef, useEffect, useState } from 'react';
 
 const STYLE_NAMESPACE = "graph__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
 }
-
 
 const data = {
   categories: [
@@ -43,11 +41,21 @@ const options = {
   yAxis: { title: 'Temperature (Celsius)' },
 };
 
-
-
 const Graph = () => {
+  const [areaChart, setAreaChart] = useState<any>();
+
+  useEffect(() => {
+    const initAreaChart = async () => {
+        const { AreaChart } = await import('@toast-ui/react-chart');
+        setAreaChart(<AreaChart data={data} options={options} />);
+    }
+    initAreaChart()
+  }, [])
+
   return (
-    <AreaChart ref={useRef(null)} data={data} options={options} />
+    <div className={Style.Container}>
+      {areaChart}
+    </div>
   );
 }
 
