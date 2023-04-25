@@ -1,31 +1,25 @@
 import axios from 'axios';
-import Investigation, { InvestigationJSON } from './General/Investigation';
-import { DUMMY_DOSSIER_LIST } from '@/modules/DummyData';
+import Investigation from './General/Investigation';
 import { LOG as log } from '@/pages/_app';
 import Dossier from './General/Dossier';
 import SoundChain from './General/SoundChain';
 import { DUMMY_SOUNDCHAINS_LIST } from '@/modules/DummyData';
 import { DUMMY_SOUNDCHAINS_LIST2 } from '@/modules/DummyData';
 
-// FIX ME PLOX WHEN BACKEND NO HIDE :3
 class APIService {
+  static apiURL = "http://localhost:8000";
 
-  static apiURL = "http://localhost:3000";
-
-  // API CALL TO BACKEND
   static getInvestigations = async (): Promise<Investigation[]> => {
-    const dummyTestJSONData: InvestigationJSON[] = [ {id: 0, name: "Kalles Knarkaffärer"}, {id: 1, name: "Länsmansjäveln"} ];
-
-    // const result = await axios.get(this.apiURL + "/investigations");
-    const jsonData = dummyTestJSONData; // result.data.get(0);
+    const result = await axios.get(this.apiURL + "/investigations");
+    const jsonData = result.data;
     if (jsonData !== undefined) {
       var investigations: Investigation[] = [];
-      for (let index = 0; index < dummyTestJSONData.length; index++) {
-        const investigation = Investigation.initFromJSON(dummyTestJSONData[index]);
+      for (let index = 0; index < jsonData.length; index++) {
+        const investigation = Investigation.initFromJSON(jsonData[index]);
         if (investigation !== undefined) {
           investigations.push(investigation);
         } else {
-          log.warning("Could not create investigation from: " + dummyTestJSONData[index]);
+          log.warning("Could not create investigation from: " + jsonData[index]);
         }
       }
       return investigations;
@@ -35,9 +29,8 @@ class APIService {
   }
 
   static getDossiers = async (): Promise<Dossier[]> => {
-    return DUMMY_DOSSIER_LIST;
     const result = await axios.get(this.apiURL + "/dossier");
-    const jsonData = result.data.get(0);
+    const jsonData = result.data;
     if (jsonData !== undefined) {
       var dossiers: Dossier[] = [];
       for (let index = 0; index < jsonData.length; index++) {
@@ -45,7 +38,7 @@ class APIService {
         if (dossier !== undefined) {
           dossiers.push(dossier);
         } else {
-          log.warning("Could not create investigation from: " + jsonData[index]);
+          log.warning("Could not create dossier from: " + jsonData[index]);
         }
       }
       return dossiers;
