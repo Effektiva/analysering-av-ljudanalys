@@ -3,6 +3,7 @@ FROM node:18-alpine
 # I'm following this: https://stackoverflow.com/a/33106611
 WORKDIR /modules
 COPY package.json ./
+RUN npm config set legacy-peer-deps true
 RUN npm install
 ENV PATH /modules/node_modules/.bin:$PATH
 
