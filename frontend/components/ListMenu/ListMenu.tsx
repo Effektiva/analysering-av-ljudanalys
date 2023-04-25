@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useReducer, useState } from "react";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import ContextMenu from "@/components/ContextMenu/ContextMenu";
 import ContextItem from "@/components/ContextMenu/ContextItem";
@@ -90,7 +90,7 @@ export type ListEventResponse = {
   id: number,
   parentID?: number,
   value?: string,
-  nodeType?: ItemType,
+  itemType?: ItemType,
 }
 
 // Used internally
@@ -99,6 +99,7 @@ export type ContextMenuResponse = {
   id: number,
   cursor: number[],
   contextMenuIndex: number,
+  parentID?: number,
 }
 
 /**
@@ -129,11 +130,16 @@ export type ContextMenuResponse = {
  * - toggleableRoots?: If Root and Subroots visibilty should be toggleable by clicking them.
  */
 const ListMenu = (props: Props) => {
-  const [items] = useState<ListItemType[]>(props.items);
+  const [items, setItems] = useState<ListItemType[]>(props.items);
   const [contextMenuIndexOpen, setContextMenuIndexOpen] = useState<number>(-1);
   const [cursorPosition, setCursorPosition] = useState<number[]>([0, 0]);
   const [contextMenuOwnerID, setContextMenuOwnerID] = useState<number>(-1);
+  const [contextMenuParentID, setContextMenuParentID] = useState<number>(-1);
   const [changeTextID, setChangeTextID] = useState<number>(-1);
+
+  useEffect(() => {
+    setItems(props.items);
+  }, [props.items]);
 
   // We use this to hide the ContextMenu in case we get a click outside of the div that
   // contains the ContextMenu.
@@ -168,6 +174,7 @@ const ListMenu = (props: Props) => {
         setContextMenuIndexOpen(contextResponse.contextMenuIndex);
         setCursorPosition(contextResponse.cursor);
         setContextMenuOwnerID(contextResponse.id);
+        setContextMenuParentID(contextResponse.parentID!);
         setContextMenuVisible(true);
         break;
 
@@ -182,17 +189,17 @@ const ListMenu = (props: Props) => {
    */
   const contextMenuHandler = (event: ListEvent) => {
     setContextMenuIndexOpen(-1);
-    let nodeType = undefined;
+    let itemType = undefined;
 
     switch(contextMenuIndexOpen) {
       case 0:
-        nodeType = ItemType.Root;
+        itemType = ItemType.Root;
         break;
       case 1:
-        nodeType = ItemType.Subroot;
+        itemType = ItemType.Subroot;
         break;
       case 2:
-        nodeType = ItemType.Child;
+        itemType = ItemType.Child;
         break;
       default:
         log.error("No context menu for that index: ", contextMenuIndexOpen);
@@ -203,15 +210,15 @@ const ListMenu = (props: Props) => {
     // since we want to create an in-line input textbox.
     if (event == ListEvent.ContextChangeText) {
       setChangeTextID(contextMenuOwnerID);
-      log.debug("Change name of type", nodeType, "with id", contextMenuOwnerID);
+      log.debug("Change name of type", itemType, "with id", contextMenuOwnerID);
       return;
     }
 
     let response: ListEventResponse = {
       id: contextMenuOwnerID,
       event: event,
-      nodeType: nodeType,
-      parentID: contextMenuOwnerID,
+      itemType: itemType,
+      parentID: contextMenuParentID,
     }
 
     props.eventHandler(response);

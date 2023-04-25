@@ -128,7 +128,7 @@ async def create_underdossier(request: Request ,parent_id : int):
 
     response = makeList(session.execute(insert(models.Dossier).values(name = data["name"], parent_folder_id = parent_id).returning(models.Dossier)).fetchall())
 
-    return response
+    return {"id": response[0].id}
 
 # Lägg till ett ljudklipp i en dossier (d_id: int, s_id: int)
 @router2.post("/dossier/add/{id}")
