@@ -47,7 +47,12 @@ const CATEGORIES: Array<FilterItem> = [
 ];
 
 // TODO: Ensure that casing isn´t a problem!
-const DICTIONARY: Array<string> = ["kebab", "bil", "hund", "haj", "haja"];
+// const DICTIONARY: Array<string> = ["kebab", "bil", "hund", "haj", "haja"];
+let DICTIONARY: Array<string> = [];
+
+for (let elem = 0; elem < CATEGORIES.length; elem++) {
+  DICTIONARY = [...DICTIONARY, CATEGORIES[elem].name.toLocaleLowerCase()];
+}
 
 // Initial content of the categorylist showing, determined by relevans.
 const THRESHOLD = 80;
