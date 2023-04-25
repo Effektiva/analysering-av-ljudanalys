@@ -1,8 +1,9 @@
 import { useState } from "react";
-import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
+import ListMenu, { ItemType, ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 import Dossier from "@/models/General/Dossier";
+import APIService from "@/models/APIService";
 
 type Props = {
   selected: Function,
@@ -54,57 +55,83 @@ const DossierList = (props: Props) => {
   const [dossiers, setDossiers] = useState<Array<Dossier>>(props.dossiers);
   const [menuVisible, setMenuVisible] = useState<boolean>(true);
 
-  // TODO: just for demonstration
-  const [id, setID] = useState(4);
-
-  const eventHandler = (response: ListEventResponse) => {
+  const eventHandler = async (response: ListEventResponse) => {
     switch(response.event) {
+      case ListEvent.ClickOnRoot:
+      case ListEvent.ClickOnSubroot:
+        // Ignore
+        break;
+
       case ListEvent.ClickOnChild:
         log.debug("Goto soundfile:", response.id);
         props.selected(response.id);
         break;
 
       case ListEvent.ChangeTextOfRoot:
-        log.debug("Change name of id", response.id, "to:", response.value);
-
-        // TODO: just for demonstration, otherwise cleanup !
-        {
-          let newItems = [...dossiers];
-          let index = newItems.findIndex((elem) => elem.id == response.id);
-          newItems[index].name = response.value!;
-          setDossiers(newItems);
+        if (response.value != undefined) {
+          APIService.changeDossierName(response.id, response.value);
+          let newDossiers = [...dossiers];
+          let index = dossiers.findIndex((elem) => elem.id == response.id);
+          newDossiers[index].name = response.value!;
+          setDossiers(newDossiers);
         }
         break;
 
       case ListEvent.ChangeTextOfSubroot:
-        log.debug("Change name of ", response.parentID + "." + response.id, "to:", response.value)
-
-        // TODO: just for demonstration, otherwise cleanup !
-        {
-          let newItems = [...dossiers];
-          let parentIndex = newItems.findIndex((elem) => elem.id == response.parentID);
-          let parent = newItems[parentIndex];
+        if (response.value != undefined) {
+          APIService.changeDossierName(response.id, response.value);
+          let newDossiers = [...dossiers];
+          let parentIndex = dossiers.findIndex((elem) => elem.id == response.parentID);
+          let parent = newDossiers[parentIndex];
           let childIndex = parent.subdossiers!.findIndex((elem) => elem.id == response.id);
           parent.subdossiers![childIndex].name = response.value!;
-          setDossiers(newItems);
+          setDossiers(newDossiers);
         }
         break;
 
       case ListEvent.ContextCreateFolder:
-        log.debug("Create folder", "(" + response.nodeType + "):", response.id);
+        let index = dossiers.findIndex((elem) => elem.id === response.id);
+        let name = "Ny subdossier " + dossiers[index].subdossiers.length;
+        let id = await APIService.createSubDossier(response.id, name);
+        if (id != -1) {
+          log.debug(response.id);
+          let newDossiers = [...dossiers];
+          newDossiers[index].subdossiers.push(new Dossier(id, name, [], []));
+          setDossiers(newDossiers);
+        }
         break;
 
       case ListEvent.ContextExport:
-        log.debug("Export", "(" + response.nodeType + "):", response.id);
+        log.debug("Export", "(" + response.itemType + "):", response.id);
         break;
 
       case ListEvent.ContextDelete:
-        log.debug("Delete", "(" + response.nodeType + "):", response.id);
-        break;
+        switch(response.itemType) {
+          case ItemType.Root:
+            {
+              let newDossiers = [...dossiers];
+              let index = dossiers.findIndex((dos) => dos.id == response.id);
+              newDossiers.splice(index, 1);
+              setDossiers(newDossiers);
+            }
+            APIService.deleteDossier(response.id);
+            break;
+          case ItemType.Subroot:
+            {
+              let newDossiers = [...dossiers];
+              let parentIndex = dossiers.findIndex((dos) => dos.id == response.parentID);
+              let parent = newDossiers[parentIndex];
+              let childIndex = parent.subdossiers!.findIndex((elem) => elem.id == response.id);
+              parent.subdossiers.splice(childIndex, 1);
+              setDossiers(newDossiers);
+            }
+            APIService.deleteDossier(response.id);
+            break;
+          case ItemType.Child:
+            log.debug("Del child");
+            break;
 
-      case ListEvent.ClickOnRoot:
-      case ListEvent.ClickOnSubroot:
-        log.debug("Ignore click...");
+        }
         break;
 
       default:
@@ -113,10 +140,11 @@ const DossierList = (props: Props) => {
     }
   }
 
-  const addNewItem = () => {
-    log.debug("New item...")
-    setDossiers(prev => [...prev, new Dossier(id, "Dossier " + id)]);
-    setID(prev => prev + 1);
+  const addNewItem = async () => {
+    let id = await APIService.createDossier("Ny dossier " + dossiers.length);
+    if (id != -1) {
+      setDossiers(prev => [...prev, new Dossier(id, "Ny dossier " + dossiers.length)]);
+    }
   }
 
   const toggleVisibility = () => {

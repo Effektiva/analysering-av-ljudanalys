@@ -34,11 +34,19 @@ const InvestigationPage = (props: Props) => {
       {/* Right column */}
       <div className={Style.Column}>
         <div className={Style.Filtered}>
-          <SoundchainList soundchains={props.soundChains} soundChainSelected={props.soundChainSelected}/>
+          <SoundchainList
+            soundchains={props.soundChains}
+            soundChainSelected={props.soundChainSelected}
+            investigationID={props.investigation.id}
+          />
         </div>
 
         <div className={Style.All}>
-          <SoundchainList soundchains={props.soundChains} soundChainSelected={props.soundChainSelected}/>
+          <SoundchainList
+            soundchains={props.soundChains}
+            soundChainSelected={props.soundChainSelected}
+            investigationID={props.investigation.id}
+          />
         </div>
       </div>
     </div>

@@ -40,7 +40,7 @@ export const ListItem = (props: Props) => {
     let response: LM.ListEventResponse = {
       id: (pars[0] != undefined) ? pars[0] : props.item.id,
       event: LM.ListEvent.UndefinedEvent,
-      nodeType: props.itemType,
+      itemType: props.itemType,
     }
 
     if (props.itemType != LM.ItemType.Child && props.item.collapsable === true) {
@@ -74,6 +74,7 @@ export const ListItem = (props: Props) => {
       event: LM.ListEvent.UndefinedEvent,
       id: (pars[0] != undefined) ? pars[0] : props.item.id,
       cursor: [event.clientX, event.clientY],
+      parentID: props.parentID,
     }
 
     switch(props.itemType) {
