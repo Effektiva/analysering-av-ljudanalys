@@ -1,3 +1,4 @@
+from queue import Empty
 from sqlalchemy import select, insert, update, delete
 from fastapi import APIRouter, Request, Response
 import models
@@ -5,6 +6,21 @@ import models
 from .helpers import makeList, session
 
 router4= APIRouter()
+
+# Hämta vilken ljudkejda och utredning en ljufdil hör till
+@router4.get("/info/soundfile/{id1}")
+async def get_soundfile_info(id1: int):
+    sound_file = makeList(session.execute(select(models.SoundFile).where(models.SoundFile.id == id1)).fetchall())
+
+    # Den önskade ljudfilen finns inte
+    if len(sound_file) == 0:
+        return "No such soundfile"
+
+    sound_chain = makeList(session.execute(select(models.SoundChain).where(models.SoundChain.id == sound_file[0].sound_chain_id)).fetchall())
+    investigation = sound_chain[0].investigations_id
+
+    response = {"investigation": investigation, "soundchain": sound_file[0].sound_chain_id}
+    return response
 
 # Hämtar alla ljudklasser som vi har i vårt system
 @router4.get("/sound_class")
