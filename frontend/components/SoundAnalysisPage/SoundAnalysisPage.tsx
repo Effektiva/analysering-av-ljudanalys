@@ -52,7 +52,9 @@ const SoundAnalysisPage = (props: Props) => {
 
     if (soundclip != undefined && soundclip.id != id) {
       soundclip?.audioElement?.pause();
+    }
 
+    if (soundclip?.id != id) {
       var appState = props.appState;
       let soundClip = appState.selectedSoundChain?.soundClips.find(soundClip => soundClip.id == id);
       appState.currentlyPlayingSoundclip = soundClip;
@@ -60,6 +62,14 @@ const SoundAnalysisPage = (props: Props) => {
     }
 
     setSoundclip(props.soundchain.getSoundclipAndSetAudioElement(id));
+  }
+
+  const changeSoundclip = (clip: Soundclip) => {
+    var appState = props.appState;
+    let soundClip = appState.selectedSoundChain?.soundClips.find(soundClip => soundClip.id == clip.id);
+    appState.currentlyPlayingSoundclip = soundClip;
+    props.updateAppState(appState);
+    setSoundclip(clip);
   }
 
   const soundchainCommentsUpdated = (newNotes: Array<Note>) => {
@@ -123,7 +133,7 @@ const SoundAnalysisPage = (props: Props) => {
           setMuted={setMuted}
           soundchain={props.appState.selectedSoundChain}
           soundclip={soundclip}
-          setSoundclip={setSoundclip}
+          setSoundclip={changeSoundclip}
           clipZoom={clipZoom}
         />
         <div className={Style.Buttons}>
@@ -142,7 +152,10 @@ const SoundAnalysisPage = (props: Props) => {
             Automagisk ljudsänkning
           </button>
         </div>
-        <MetadataView metaData={props.appState.currentlyPlayingSoundclip?.metadata ?? props.appState.selectedSoundChain!.soundClips[0].metadata}/>
+        <MetadataView
+          metaData={props.appState.currentlyPlayingSoundclip?.metadata ??
+                    props.appState.selectedSoundChain!.soundClips[0].metadata}
+        />
         <Notes soundchain={props.appState.selectedSoundChain!} soundchainCommentsUpdated={soundchainCommentsUpdated} />
       </div>
     </div>

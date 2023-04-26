@@ -27,8 +27,8 @@ class Dossier implements ListItemRepresentable {
   static initFromJSON(json: any): Dossier | undefined {
     let id = json.id as number | undefined;
     let name = json.name as string | undefined;
-    let subdossiers: Dossier[] = [];
 
+    let subdossiers: Dossier[] = [];
     if (json.subDossier != undefined) {
       json.subDossier.forEach((doss: any) => {
         let newDossier = Dossier.initFromJSON(doss);

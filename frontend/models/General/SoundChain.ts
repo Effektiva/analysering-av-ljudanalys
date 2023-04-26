@@ -38,12 +38,28 @@ class SoundChain implements ListItemRepresentable {
 
   static initFromJSON(json: any): SoundChain | undefined {
     let id = json.id as number | undefined;
-    let name = json.name as string | undefined;
-    let startTime = json.id as Date | undefined;
-    let endTime = json.name as Date | undefined;
-    let state = json.id as SoundChainState | undefined;
-    let comments = json.name as Array<Note> | undefined;
-    let soundClips = json.id as Array<Soundclip> | undefined; // code medium
+    let startTime = new Date(json.startTime*1000);
+    let endTime = new Date(json.endTime*1000);
+    let state = json.state as SoundChainState | undefined;
+
+    let name = "undefined starttime";
+    if (startTime != undefined) {
+      name = startTime.toISOString().split('T')[0];
+    }
+
+    let comments = [] as Array<Note>;
+    if (json.comments != undefined) {
+      json.comments.forEach((note: any) => {
+        comments.push(Note.fromJson(note));
+      });
+    }
+
+    let soundClips = [] as Array<Soundclip>;
+    if (json.soundFiles != undefined) {
+      json.soundFiles.forEach((file: any) => {
+        soundClips.push(Soundclip.fromJson(file));
+      });
+    }
 
     if (id !== undefined &&
       name !== undefined &&
@@ -116,7 +132,7 @@ class SoundChain implements ListItemRepresentable {
    * up until the clip with `id`. Returns -1 if something goes wrong.
    */
   getSecondsToStartOfClip(clip: Soundclip): number {
-    return (clip.startTime.valueOf() - this.startTime.valueOf())/1000; // duration in seconds
+    return (clip.startTime.valueOf() - this.startTime.valueOf())/1000;
   }
 
   /*

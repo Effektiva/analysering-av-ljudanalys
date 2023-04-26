@@ -63,7 +63,6 @@ const DossierList = (props: Props) => {
         break;
 
       case ListEvent.ClickOnChild:
-        log.debug("Goto soundfile:", response.id);
         props.selected(response.id);
         break;
 
