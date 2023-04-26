@@ -3,39 +3,9 @@ import Investigation from './General/Investigation';
 import { LOG as log } from '@/pages/_app';
 import Dossier from './General/Dossier';
 import SoundChain from './General/SoundChain';
-import { DUMMY_SOUNDCHAINS_LIST } from '@/modules/DummyData';
-import { DUMMY_SOUNDCHAINS_LIST2 } from '@/modules/DummyData';
 
 class APIService {
   static apiURL = "http://localhost:8000";
-
-  static getSoundChainsForInvestigation = async (investigationId: number): Promise<SoundChain[]> => {
-    // DUMMY
-    if (investigationId == 0) {
-      return DUMMY_SOUNDCHAINS_LIST;
-    } else {
-      return DUMMY_SOUNDCHAINS_LIST2;
-    }
-
-    // Actual
-    const result = await axios.get(this.apiURL + "/investigations/" + investigationId + "/soundchains");
-    const jsonData = result.data.get(0);
-
-    if (jsonData !== undefined) {
-      var soundchains: SoundChain[] = [];
-      for (let index = 0; index < jsonData.length; index++) {
-        const soundchain = SoundChain.initFromJSON(jsonData[index]);
-        if (soundchain !== undefined) {
-          soundchains.push(soundchain);
-        } else {
-          log.warning("Could not create investigation from: " + jsonData[index]);
-        }
-      }
-      return soundchains;
-    } else {
-      return [];
-    }
-  }
 
   /*
    * Investigations
@@ -95,6 +65,40 @@ class APIService {
   /*
    * Soundchains
    */
+  static getSoundChainsForInvestigation = async (investigationId: number): Promise<SoundChain[]> => {
+    const result = await axios.get(this.apiURL + "/investigations/" + investigationId + "/soundchains");
+    const jsonData = result.data;
+
+    if (jsonData !== undefined) {
+      var soundchains: SoundChain[] = [];
+      for (let index = 0; index < jsonData.length; index++) {
+        const soundchain = SoundChain.initFromJSON(jsonData[index]);
+        if (soundchain !== undefined) {
+          soundchains.push(soundchain);
+        } else {
+          log.warning("Could not create soundchains from: " + jsonData[index]);
+        }
+      }
+      return soundchains;
+    } else {
+      return [];
+    }
+  }
+
+  static getFullSoundChain = async (investigationID: number, soundchainID: number): Promise<SoundChain | undefined> => {
+      const result = await axios.get(this.apiURL + "/investigations/" + investigationID + "/soundchains/" + soundchainID);
+      const jsonData = result.data;
+
+      if (jsonData !== undefined) {
+        let soundchain: SoundChain | undefined = SoundChain.initFromJSON(jsonData);
+        if (soundchain !== undefined) {
+            return soundchain;
+        } else {
+          log.warning("Couldn't create soundchain from:", jsonData);
+        }
+      }
+  }
+
   static deleteSoundchain = async (investigationID: number, soundchainID: number) => {
     await axios.delete(this.apiURL + "/investigations/" + investigationID + "/soundchains",
                        {data: {"id": soundchainID}}).
@@ -170,6 +174,24 @@ class APIService {
                   } else {
                     log.warning("Couldn't create subdossier:", response);
                   }
+                });
+
+    return result;
+  }
+
+  /*
+   * Soundfiles
+   */
+  static getSoundfileInfo = async (id: number): Promise<{investigation: number, soundchain: number}> => {
+    let result = {investigation: -1, soundchain: -1};
+    await axios.get(this.apiURL + "/info/soundfile/" + id).
+                then((response: any) => {
+                  if (response.status === 200) {
+                    result = response.data;
+                  } else {
+                    log.warning("Couldn't get soundfile info:", response);
+                  }
+
                 });
 
     return result;

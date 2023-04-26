@@ -58,20 +58,42 @@ const MainView = (props: Props) => {
             />);
         });
         break;
-      case Type.SOUNDCHAIN: // Todo: need to figure out a good way to structure dossier data so that its easy to extract.
+      case Type.SOUNDCHAIN:
         log.debug("Selected soundChain with id: " + id);
-        const soundChain: SoundChain = filterById(appState.soundChains, id);
-        var newState = appState;
-        newState.selectedSoundChain = soundChain;
-        newState.currentlyPlayingSoundclip = undefined;
-        setAppState(newState);
-        setPage(
-          <SoundanalysisPage
-            key={appState.selectedSoundChain?.id}
-            soundchain={appState.selectedSoundChain!}
-            appState={appState}
-            updateAppState={setAppState}
-          />);
+        if (appState.selectedInvestigation?.id != undefined) {
+          APIService.getFullSoundChain(appState.selectedInvestigation.id, id).then((chain) => {
+            var newState = appState;
+            newState.selectedSoundChain = chain;
+            newState.currentlyPlayingSoundclip = undefined;
+            setAppState(newState);
+            setPage(
+              <SoundanalysisPage
+                key={appState.selectedSoundChain?.id}
+                soundchain={appState.selectedSoundChain!}
+                appState={appState}
+                updateAppState={setAppState}
+              />);
+          });
+        } else {
+          log.warning("appState.selectedInvestigation.id is undefined");
+        }
+        break;
+      case Type.DOSSIER:
+        log.debug("Selected soundclip:", id);
+        APIService.getSoundfileInfo(id).then((info) => {
+          var newState = appState;
+          APIService.getFullSoundChain(info.investigation, info.soundchain).then((chain) => {
+            newState.selectedSoundChain = chain;
+            setAppState(newState);
+            setPage(
+              <SoundanalysisPage
+                key={appState.selectedSoundChain?.id}
+                soundchain={appState.selectedSoundChain!}
+                appState={appState}
+                updateAppState={setAppState}
+              />);
+          });
+        });
         break;
       default:
         setPage(<FrontPage/>);

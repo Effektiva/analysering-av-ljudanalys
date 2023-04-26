@@ -16,10 +16,10 @@ class Note {
 
   // Function to create note from json object. Throw error if json object is not valid
   static fromJson(json: any): Note {
-    if (json.id === undefined || json.date === undefined || json.time === undefined || json.text === undefined) {
+    if (json.id === undefined || json.time === undefined || json.text === undefined) {
       throw new Error("Invalid json object");
     }
-    return new Note(json.id, new Date(json.date), TimeInClip.fromTimeString(json.time), json.text);
+    return new Note(json.id, new Date(), new TimeInClip(13, 37), json.text);
   }
 
   public getLocalDate(): string {

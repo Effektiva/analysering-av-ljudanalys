@@ -20,22 +20,21 @@ import base64
 def insert_dummy(session):
     ######## CREATE TIME ########
     print("-------- creating time --------")
-    datum1 = datetime.datetime(1970, 1, 1, 1, 0, 0)
+    datum1 = datetime.datetime(2023, 3, 18, 0, 0, 0)
     datum2 = datetime.datetime(1970, 1, 1, 1, 1, 0)
-    datum3 = datetime.datetime(1970, 1, 1, 1, 2, 0)
+    datum3 = datetime.datetime(2023, 3, 18, 0, 16, 47)
 
-
-    datum4 = datetime.datetime(1970, 1, 2, 2, 0, 0)
+    datum4 = datetime.datetime(2023, 5, 10, 2, 0, 0)
     datum5 = datetime.datetime(1970, 1, 2, 2, 1, 0)
-    datum6 = datetime.datetime(1970, 1, 2, 2, 2, 0)
+    datum6 = datetime.datetime(2023, 5, 11, 2, 2, 0)
 
-    datum7 = datetime.datetime(1970, 1, 3, 3, 0, 0)
+    datum7 = datetime.datetime(2022, 2, 3, 3, 0, 0)
     datum8 = datetime.datetime(1970, 1, 3, 3, 1, 0)
-    datum9 = datetime.datetime(1970, 1, 3, 3, 2, 0)
+    datum9 = datetime.datetime(2022, 2, 3, 3, 2, 0)
 
-    datum10 = datetime.datetime(1970, 1, 3, 4, 0, 0)
+    datum10 = datetime.datetime(2099, 1, 3, 4, 0, 0)
     datum11 = datetime.datetime(1970, 1, 3, 4, 1, 0)
-    datum12 = datetime.datetime(1970, 1, 3, 4, 2, 0)
+    datum12 = datetime.datetime(2099, 1, 3, 4, 2, 0)
 
 
     time1 = time.mktime(datum1.timetuple())
@@ -78,17 +77,47 @@ def insert_dummy(session):
 
 
     ######## CREATE SOUNDFILES ########
+
+    ########## BEGIN DATA NEEDED FOR DEMO
     print("-------- creating soundfiles --------")
-    session.execute(insert(models.SoundFile).values(start_time =  time1, end_time =  time2, file_name = "soundfile_1", sound_chain_id = 1))
-    session.execute(insert(models.SoundFile).values(start_time =  time2, end_time =  time3, file_name = "soundfile_2", sound_chain_id = 1))
-    session.execute(insert(models.SoundFile).values(start_time =  time4, end_time =  time5, file_name = "soundfile_3", sound_chain_id = 2))
-    session.execute(insert(models.SoundFile).values(start_time =  time5, end_time =  time6, file_name = "soundfile_4", sound_chain_id = 2))
+    t1_rw = datetime.datetime(2023, 3, 18, 0, 0, 0);
+    t2_rw = datetime.datetime(2023, 3, 18, 0, 2, 5);
+    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M");
+    session.execute(insert(models.SoundFile).values(start_time = time.mktime(t1_rw.timetuple()),
+                                                    end_time =   time.mktime(t2_rw.timetuple()),
+                                                    file_name = file_name_rw,
+                                                    sound_chain_id = 1))
+    t1_rw = datetime.datetime(2023, 3, 18, 0, 2, 5);
+    t2_rw = datetime.datetime(2023, 3, 18, 0, 7, 44);
+    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M");
+    session.execute(insert(models.SoundFile).values(start_time = time.mktime(t1_rw.timetuple()),
+                                                    end_time =   time.mktime(t2_rw.timetuple()),
+                                                    file_name = file_name_rw,
+                                                    sound_chain_id = 1))
+    t1_rw = datetime.datetime(2023, 3, 18, 0, 7, 44);
+    t2_rw = datetime.datetime(2023, 3, 18, 0, 11, 30);
+    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M");
+    session.execute(insert(models.SoundFile).values(start_time = time.mktime(t1_rw.timetuple()),
+                                                    end_time =   time.mktime(t2_rw.timetuple()),
+                                                    file_name = file_name_rw,
+                                                    sound_chain_id = 1))
+    t1_rw = datetime.datetime(2023, 3, 18, 0, 11, 30);
+    t2_rw = datetime.datetime(2023, 3, 18, 0, 16, 47);
+    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M");
+    session.execute(insert(models.SoundFile).values(start_time = time.mktime(t1_rw.timetuple()),
+                                                    end_time =   time.mktime(t2_rw.timetuple()),
+                                                    file_name = file_name_rw,
+                                                    sound_chain_id = 1))
+    ########## END DATA NEEDED FOR DEMO
+
+    session.execute(insert(models.SoundFile).values(start_time =  time4, end_time =  time5, file_name = "soundfile_5", sound_chain_id = 2))
+    session.execute(insert(models.SoundFile).values(start_time =  time5, end_time =  time6, file_name = "soundfile_6", sound_chain_id = 2))
 
 
-    session.execute(insert(models.SoundFile).values(start_time =  time7, end_time =  time8, file_name = "soundfile_5", sound_chain_id = 3))
-    session.execute(insert(models.SoundFile).values(start_time =  time8, end_time =  time9, file_name = "soundfile_6", sound_chain_id = 3))
-    session.execute(insert(models.SoundFile).values(start_time =  time10, end_time =  time11, file_name = "soundfile_7", sound_chain_id = 4))
-    session.execute(insert(models.SoundFile).values(start_time =  time11, end_time =  time12, file_name = "soundfile_8", sound_chain_id = 4))
+    session.execute(insert(models.SoundFile).values(start_time =  time7, end_time =  time8, file_name = "soundfile_7", sound_chain_id = 3))
+    session.execute(insert(models.SoundFile).values(start_time =  time8, end_time =  time9, file_name = "soundfile_8", sound_chain_id = 3))
+    session.execute(insert(models.SoundFile).values(start_time =  time10, end_time =  time11, file_name = "soundfile_9", sound_chain_id = 4))
+    session.execute(insert(models.SoundFile).values(start_time =  time11, end_time =  time12, file_name = "soundfile_10", sound_chain_id = 4))
 
 
     ######## CREATE COMMENTS ########
