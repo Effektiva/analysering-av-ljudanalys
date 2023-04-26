@@ -179,6 +179,16 @@ class APIService {
     return result;
   }
 
+  static deleteSoundfileFromDossier = async (dossierID: number, soundfileID: number) => {
+    await axios.delete(this.apiURL + "/dossier/delete/" + soundfileID, {data: {"id": dossierID}}).
+                then((response: any) => {
+                  if (response.status !== 200) {
+                    log.warning("Couldn't remove soundfile from dossier:", response);
+                  }
+                });
+  }
+
+
   /*
    * Soundfiles
    */

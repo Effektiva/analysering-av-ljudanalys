@@ -56,6 +56,7 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 const DossierList = (props: Props) => {
   const [dossiers, setDossiers] = useState<Array<Dossier>>(props.dossiers);
   const [menuVisible, setMenuVisible] = useState<boolean>(true);
+  const [forceUpdate, setForceUpdate] = useState<boolean>(false);
 
   const eventHandler = async (response: ListEventResponse) => {
     switch(response.event) {
@@ -121,17 +122,70 @@ const DossierList = (props: Props) => {
             {
               let newDossiers = [...dossiers];
               let parentIndex = dossiers.findIndex((dos) => dos.id == response.parentID);
-              let parent = newDossiers[parentIndex];
-              let childIndex = parent.subdossiers!.findIndex((elem) => elem.id == response.id);
-              parent.subdossiers.splice(childIndex, 1);
-              setDossiers(newDossiers);
+
+              if (parentIndex != -1) {
+                let parent = newDossiers[parentIndex];
+                let childIndex = parent.subdossiers!.findIndex((elem) => elem.id == response.id);
+                parent.subdossiers.splice(childIndex, 1);
+                setDossiers(newDossiers);
+              } else {
+                log.warning("Couldn't find parent index.")
+              }
             }
             APIService.deleteDossier(response.id);
             break;
           case ItemType.Child:
-            log.debug("Del child");
-            break;
+            {
+              let rootIndex = -1;
+              let subrootIndex = -1;
+              let childIndex = -1;
 
+              // A child can be on two different levels, straight beneath a root dossier or
+              // beneath a subroot dossier.
+              dossiers.some((root, ri) => {
+                // If it's straight beneath a root dossier, we'll find it here.
+                root.soundfiles.forEach((file, i) => {
+                  if (file.id == response.id) {
+                    rootIndex = ri;
+                    childIndex = i;
+                  }
+                });
+
+                if (rootIndex != -1 && childIndex != -1) {
+                  return true;
+                } else {
+                  // Otherwise we'll have to dig deeper
+                  root.subdossiers.forEach((subroot, si) => {
+                    subroot.soundfiles.forEach((file, i) => {
+                      if (file.id == response.id) {
+                        rootIndex = ri;
+                        subrootIndex = si;
+                        childIndex = i;
+                      }
+                    })
+                  })
+                }
+              });
+
+              // Remove the child.
+              let newDossiers = dossiers;
+              if (rootIndex != -1 && childIndex != -1 && subrootIndex == -1) {
+                newDossiers[rootIndex].soundfiles.splice(childIndex, 1);
+                let dossierID = newDossiers[rootIndex].id;
+                APIService.deleteSoundfileFromDossier(dossierID!, response.id)
+              } else if (rootIndex != -1 && childIndex != -1 && subrootIndex != -1) {
+                newDossiers[rootIndex].subdossiers[subrootIndex].soundfiles.splice(childIndex, 1);
+                let dossierID = newDossiers[rootIndex].subdossiers[subrootIndex].id;
+                APIService.deleteSoundfileFromDossier(dossierID!, response.id)
+              } else {
+                log.warning("Couldn't find all indexes needed to remove soundfile from dossier.");
+                return;
+              }
+
+              setDossiers(newDossiers);
+              setForceUpdate(!forceUpdate);
+            }
+            break;
         }
         break;
 
@@ -169,6 +223,7 @@ const DossierList = (props: Props) => {
             eventHandler={eventHandler}
             toggleableRoots={true}
             selectedId={props.appState.selectedSoundclip?.id}
+            forceUpdate={forceUpdate}
           />
         }
         <button className="listAddButton" onClick={addNewItem}>Ny dossier</button>

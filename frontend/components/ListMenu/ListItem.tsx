@@ -3,7 +3,6 @@ import { ListItemInput } from "./ListItemInput";
 import * as LM from "./ListMenu";
 import { ListItemType } from "./ListItemType";
 
-
 type Props = {
   class: string,
   item: ListItemType,
@@ -165,6 +164,7 @@ export const ListItem = (props: Props) => {
               props.item.children.map((child: ListItemType) => {
                 return <ListItem
                           key={child.id}
+                          parentID={props.parentID}
                           class={LM.StyleClass.Child + " " + LM.StyleClass.Action}
                           itemType={LM.ItemType.Child}
                           item={child}

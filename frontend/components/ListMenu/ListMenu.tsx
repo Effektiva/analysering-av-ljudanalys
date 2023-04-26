@@ -13,7 +13,8 @@ type Props = {
   eventHandler: Function,
   contextMenus?: Array<ContextItem[]>,
   toggleableRoots?: boolean,
-  selectedId?: number
+  selectedId?: number,
+  forceUpdate?: boolean
 }
 
 /**
@@ -139,7 +140,7 @@ const ListMenu = (props: Props) => {
 
   useEffect(() => {
     setItems(props.items);
-  }, [props.items]);
+  }, [props.items, props.forceUpdate]);
 
   // We use this to hide the ContextMenu in case we get a click outside of the div that
   // contains the ContextMenu.
