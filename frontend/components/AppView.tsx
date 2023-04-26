@@ -12,7 +12,7 @@ const loadInvestigationsAndDossiers = async (): Promise<AppState> => {
     soundChains: [],
     selectedSoundChain: undefined,
     selectedInvestigation: undefined,
-    currentlyPlayingSoundclip: undefined,
+    selectedSoundclip: undefined,
   }
 };
 

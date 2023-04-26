@@ -47,7 +47,7 @@ const MainView = (props: Props) => {
           newState.selectedInvestigation = investigation;
           newState.soundChains = soundChains;
           newState.selectedSoundChain = undefined;
-          newState.currentlyPlayingSoundclip = undefined;
+          newState.selectedSoundclip = undefined;
           setAppState(newState);
           setPage(
             <InvestigationPage
@@ -64,7 +64,7 @@ const MainView = (props: Props) => {
           APIService.getFullSoundChain(appState.selectedInvestigation.id, id).then((chain) => {
             var newState = appState;
             newState.selectedSoundChain = chain;
-            newState.currentlyPlayingSoundclip = undefined;
+            newState.selectedSoundclip = undefined;
             setAppState(newState);
             setPage(
               <SoundanalysisPage
@@ -83,7 +83,11 @@ const MainView = (props: Props) => {
         APIService.getSoundfileInfo(id).then((info) => {
           var newState = appState;
           APIService.getFullSoundChain(info.investigation, info.soundchain).then((chain) => {
+            let investigation = appState.investigations.find(inv => inv.id === info.investigation);
+            newState.selectedInvestigation = investigation;
             newState.selectedSoundChain = chain;
+            let clip = newState.selectedSoundChain?.getSoundclip(id);
+            newState.selectedSoundclip = clip;
             setAppState(newState);
             setPage(
               <SoundanalysisPage

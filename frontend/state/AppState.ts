@@ -9,7 +9,7 @@ type AppState = {
   soundChains: Array<SoundChain>,
   selectedSoundChain: SoundChain | undefined,
   selectedInvestigation: Investigation | undefined,
-  currentlyPlayingSoundclip: Soundclip | undefined
+  selectedSoundclip: Soundclip | undefined
 }
 
 export default AppState;

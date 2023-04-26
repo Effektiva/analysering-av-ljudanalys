@@ -12,6 +12,7 @@ type Props = {
   parentID?: number,
   changeTextID?: number,
   selected?: boolean,
+  selectedId?: number | undefined,
   icon?: ReactNode
 }
 
@@ -145,13 +146,14 @@ export const ListItem = (props: Props) => {
             {
               props.item.subroots.map((subroot: ListItemType) => {
                 return <ListItem
-                          class={LM.StyleClass.Subroot + " " + LM.StyleClass.Collapsable}
                           key={subroot.id}
+                          class={LM.StyleClass.Subroot + " " + LM.StyleClass.Collapsable}
                           itemType={LM.ItemType.Subroot}
                           parentID={props.item.id}
                           item={subroot}
                           changeTextID={props.changeTextID}
                           eventHandler={props.eventHandler}
+                          selectedId={props.selectedId}
                         />
               })
             }
@@ -162,11 +164,12 @@ export const ListItem = (props: Props) => {
             {
               props.item.children.map((child: ListItemType) => {
                 return <ListItem
+                          key={child.id}
                           class={LM.StyleClass.Child + " " + LM.StyleClass.Action}
                           itemType={LM.ItemType.Child}
-                          key={child.id}
                           item={child}
                           eventHandler={props.eventHandler}
+                          selected={props.selectedId === child.id}
                         />
               })
             }

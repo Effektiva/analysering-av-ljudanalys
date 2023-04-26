@@ -2,7 +2,7 @@ import SoundfileList from "@/components/SoundfileList";
 import SoundClassFilterInput from "@/components/SoundClassFilterInput";
 import Graph from "./Graph";
 import MetadataView from "./MetaDataView";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MediaControl from "./MediaControl/MediaControl";
 import SoundChain from "@/models/General/SoundChain";
 import Note from "@/models/SoundAnalysis/Note";
@@ -43,6 +43,17 @@ const SoundAnalysisPage = (props: Props) => {
   const [soundclip, setSoundclip] = useState<Soundclip | undefined>(undefined);
   const [clipZoom, setClipZoom] = useState<boolean>(false);
 
+  useEffect(() => {
+    log.debug("new clip selected");
+    setSoundclip(props.appState.selectedSoundclip);
+    let id = props.appState.selectedSoundclip?.id;
+    let currentId = soundclip?.id;
+    if (id && id != currentId) {
+      soundclip?.audioElement?.pause();
+      setSoundclip(props.soundchain.getSoundclipAndSetAudioElement(id));
+    }
+  }, [props.appState.selectedSoundclip]);
+
   /*
    * If a clip is selected in any of the soundfile lists this function is ran
    * and given the ID of that soundfile.
@@ -57,7 +68,7 @@ const SoundAnalysisPage = (props: Props) => {
     if (soundclip?.id != id) {
       var appState = props.appState;
       let soundClip = appState.selectedSoundChain?.soundClips.find(soundClip => soundClip.id == id);
-      appState.currentlyPlayingSoundclip = soundClip;
+      appState.selectedSoundclip = soundClip;
       props.updateAppState(appState);
     }
 
@@ -67,7 +78,7 @@ const SoundAnalysisPage = (props: Props) => {
   const changeSoundclip = (clip: Soundclip) => {
     var appState = props.appState;
     let soundClip = appState.selectedSoundChain?.soundClips.find(soundClip => soundClip.id == clip.id);
-    appState.currentlyPlayingSoundclip = soundClip;
+    appState.selectedSoundclip = soundClip;
     props.updateAppState(appState);
     setSoundclip(clip);
   }

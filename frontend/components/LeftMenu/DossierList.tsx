@@ -4,10 +4,12 @@ import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 import Dossier from "@/models/General/Dossier";
 import APIService from "@/models/APIService";
+import AppState from "@/state/AppState";
 
 type Props = {
   selected: Function,
   dossiers: Array<Dossier>,
+  appState: AppState,
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -166,6 +168,7 @@ const DossierList = (props: Props) => {
             contextMenus={CONTEXT_MENUS}
             eventHandler={eventHandler}
             toggleableRoots={true}
+            selectedId={props.appState.selectedSoundclip?.id}
           />
         }
         <button className="listAddButton" onClick={addNewItem}>Ny dossier</button>

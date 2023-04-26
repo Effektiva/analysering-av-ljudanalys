@@ -251,7 +251,8 @@ const iconForItem = (item: ListItemType): ReactNode => {
                       changeTextID={changeTextID}
                       item={item}
                       eventHandler={eventHandler}
-                      selected={props.selectedId === item.id}
+                      selected={props.toggleableRoots ? false : props.selectedId === item.id}
+                      selectedId={props.selectedId}
                       icon={iconForItem(item)}
                     />
            })
