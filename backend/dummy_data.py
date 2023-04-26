@@ -72,7 +72,7 @@ def insert_dummy(session):
     ######## CREATE SOUNDCHAINS ########
     print("-------- creating soundchains --------")
     session.execute(insert(models.SoundChain).values(start_time = time1, end_time =  time3, investigations_id = 1))
-    session.execute(insert(models.SoundChain).values(start_time =  time4, end_time =  time6, investigations_id = 1))
+    session.execute(insert(models.SoundChain).values(start_time =  time4, end_time =  time6, investigations_id = 1,))
     session.execute(insert(models.SoundChain).values(start_time =  time7, end_time =  time9, investigations_id = 2))
     session.execute(insert(models.SoundChain).values(start_time =  time10, end_time =  time12, investigations_id = 2))
 
@@ -119,10 +119,7 @@ def insert_dummy(session):
 
     ######## CREATE TAGS ########
     print("-------- creating tags --------")
-    session.execute(insert(models.Tags).values(tag_id = "MYSTISKT", sound_file_id = 1))
-    session.execute(insert(models.Tags).values(tag_id = "MYSTISKT", sound_file_id = 2))
-    session.execute(insert(models.Tags).values(tag_id = "MYSTISKT", sound_file_id = 4))
-    session.execute(insert(models.Tags).values(tag_id = "MYSTISKT", sound_file_id = 5))
+    session.execute(update(models.SoundChain).where(models.SoundChain.id == 1).values(chain_state = "analyserad"))
 
 
 

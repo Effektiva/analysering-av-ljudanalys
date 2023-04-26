@@ -19,7 +19,7 @@ async def read_investigationsSoundChains(id: int):
                                           .where(models.SoundFile.sound_chain_id == soundchain.id)).fetchall())
 
         soundClassList = []
-        tagList = []
+        #tagList = []
 
         for soundFile in soundfiles:
             # hämta ut alla ljud intervall som ljudfilen har
@@ -36,16 +36,16 @@ async def read_investigationsSoundChains(id: int):
                             soundClassList.append(sound.sound_class)
 
             # Hämta alla taggar som är kopplade med ljudfilen
-            tags = makeList(session.execute(select(models.Tags)
-                                            .where(models.Tags.sound_file_id == soundFile.id)).fetchall())
+            #tags = makeList(session.execute(select(models.Tags)
+             #                               .where(models.Tags.sound_file_id == soundFile.id)).fetchall())
 
             # Sätt ihop en lista med alla taggar utan upprepning
-            for tag in tags:
-                if tag.tag_id not in tagList:
-                    tagList.append(tag.tag_id)
+            #for tag in tags:
+             #   if tag.tag_id not in tagList:
+              #      tagList.append(tag.tag_id)
 
 
-        dic = {"id": soundchain.id, "startTime": soundchain.start_time, "endTime": soundchain.end_time, "tags": soundClassList, "state": tagList}
+        dic = {"id": soundchain.id, "startTime": soundchain.start_time, "endTime": soundchain.end_time, "soundClasses": soundClassList, "state": soundchain.chain_state}
 
         soundChainList.append(dic)
 
@@ -101,9 +101,9 @@ async def remove_investigationsSoundChains(id: int):
 
 
 
-#### Sätta taggar på varje ljudifl som finns i den valda ljudkedjan
+#### Ändra state på en ljudkedja
 @router3.put("/investigations/{id}/soundchains")
-async def update_investigationsSoundChains(request: Request):
+async def update_state_soundchain(request: Request):
     try:
         data = await request.json()
     except:
@@ -112,23 +112,31 @@ async def update_investigationsSoundChains(request: Request):
     if data.get("id") is None:
         return "'id' Saknas"
 
+    if data.get("state") is None:
+        return "nytt state saknas"
 
-    if data.get("tags"):
-        sound_chain = makeList(session.execute(select(models.SoundFile).where(models.SoundFile.sound_chain_id == data["id"])))
+    return session.execute(update(models.SoundChain).where(models.SoundChain.id == data["id"]).values(chain_state = data["state"]))
 
-        for file in sound_chain:
-            session.execute(delete(models.Tags).where(models.Tags.sound_file_id == file.id))
+# Ändra state på en ljudfil
 
-            for tag in data["tags"]:
-                session.execute(insert(models.Tags).values(tag_id = tag, sound_file_id = file.id))
-        return "Taggar tillagda"
+@router3.put("/investigations/{id1}/soundchains/{id2}/soundfiles/{id3}")
+async def update_state_soundfile(request: Request):
+    try:
+        data = await request.json()
+    except:
+        return "Ingen data skickas, 'id' och eller 'tag' behövs"
 
-    else:
-        return "'tags' saknas"
+    if data.get("id") is None:
+        return "'id' Saknas"
+
+    if data.get("state") is None:
+        return "nytt state saknaas"
+
+    return session.execute(update(models.SoundFile).where(models.SoundFile.id == data["id"]).values(file_state = data["state"]))
 
 
 # file_name= /parent/ivest/osvosvosv/ljudfil.mp3
-# Hämta all data som en ljudkedja har TODO lägg till att ljudintervallen med repsketive ljud  och trust value
+# Hämta all data som en ljudkedja har
 @router3.get("/investigations/{id1}/soundchains/{id2}")
 async def read_soundchaindata(id1: int, id2: int):
     # Data från ljudkedjan
@@ -142,7 +150,7 @@ async def read_soundchaindata(id1: int, id2: int):
     soundClassList = []
 
     # Lista med alla taggar i ljudkedjan (ex avlyssnad och analyserad)
-    tagList = []
+    #tagList = []
 
     # Lista med alla kommentarer till ljudfilerna
     commentList = []
@@ -173,13 +181,13 @@ async def read_soundchaindata(id1: int, id2: int):
             soundIntervalList.append(soundIntervalObject)
 
         # Hämta alla taggar som är kopplade med ljudfilen
-        tags = makeList(session.execute(select(models.Tags)
-                                        .where(models.Tags.sound_file_id == soundFile.id)).fetchall())
+        #tags = makeList(session.execute(select(models.Tags)
+         #                               .where(models.Tags.sound_file_id == soundFile.id)).fetchall())
 
         # Sätt ihop en lista med alla taggar utan upprepning
-        for tag in tags:
-            if tag.tag_id not in tagList:
-                tagList.append(tag.tag_id)
+        #for tag in tags:
+         #   if tag.tag_id not in tagList:
+          #      tagList.append(tag.tag_id)
 
 
         # Hämtar alla kommentarer som hör till ljudfilen
@@ -190,12 +198,12 @@ async def read_soundchaindata(id1: int, id2: int):
 
 
         # Detta är hur vi tror att det ska vara (Backendteamet)
-        soundFileList.append({"id": soundFile.id, "startTime": soundFile.start_time, "endTime": soundFile.end_time, "file_name": soundFile.file_name, "sound_intervals" : soundIntervalList})
+        soundFileList.append({"id": soundFile.id, "startTime": soundFile.start_time, "endTime": soundFile.end_time, "fileName": soundFile.file_name, "state": soundFile.file_state, "soundIntervals" : soundIntervalList})
 
 
     response = {"id": soundchain.id, "startTime": soundchain.start_time,
-                 "endTime": soundchain.end_time, "tags": soundClassList,
-                 "state": tagList, "soundFiles": soundFileList, "comments": commentList}
+                 "endTime": soundchain.end_time, "soundClasses": soundClassList,
+                 "state": soundchain.chain_state, "soundFiles": soundFileList, "comments": commentList}
 
 
 

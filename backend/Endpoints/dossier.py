@@ -146,6 +146,20 @@ async def create_soundInDossier(request: Request, id: int):
     session.execute(insert(models.Folder).values(dossier_id = data["id"], sound_file_id = id))
 
 
+# Ta bort ett ljudklipp från en dossier (d_id: int, s_id: int)
+@router2.delete("/dossier/delete/{id}")
+async def delete_soundInDossier(request: Request, id: int):
+    # id är ljudklipps id
+    # data["id"] är id på dossiern
+    try:
+        data = await request.json()
+    except:
+        return "Ingen data skickas, 'id' för dossiern behövs"
+
+    if data.get("id") is None:
+        return "'id' för dossiern saknaas"
+
+    return session.execute(delete(models.Folder).where(models.Folder.dossier_id == data["id"], models.Folder.sound_file_id == id))
 
 
 # Exporterar en dossier med ett viss id. Ska vara i CVS fil format HUR SKA RETURNEN VARA? VAR SKA FILEN SPARAS?

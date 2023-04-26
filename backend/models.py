@@ -33,6 +33,7 @@ class SoundChain(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     start_time = Column(Integer)
     end_time = Column(Integer)
+    chain_state = Column(String, nullable=True)
 
     investigations_id = Column(Integer, ForeignKey("investigations.id"))
     #investigations = relationship("Investigations", back_populates = "sound_chains")
@@ -50,6 +51,7 @@ class SoundFile(Base):
     start_time = Column(Integer)
     end_time = Column(Integer)
     file_name = Column(String, index=True)
+    file_state = Column(String, nullable=True)
     #audio_file = Column(LargeBinary, nullable=False)
     sound_chain_id = Column(Integer, ForeignKey("sound_chain.id"))
     #sound_chain = relationship("SoundChain", back_populates = "sound_files")
