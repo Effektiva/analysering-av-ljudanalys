@@ -169,8 +169,8 @@ def insert_dummy(session):
     session.execute(insert(models.Folder).values(dossier_id = 1, sound_file_id = 2))
     session.execute(insert(models.Folder).values(dossier_id = 2, sound_file_id = 3))
     session.execute(insert(models.Folder).values(dossier_id = 3, sound_file_id = 4))
-    session.execute(insert(models.Folder).values(dossier_id = 4, sound_file_id = 5))
-    session.execute(insert(models.Folder).values(dossier_id = 4, sound_file_id = 6))
+    session.execute(insert(models.Folder).values(dossier_id = 4, sound_file_id = 7))
+    session.execute(insert(models.Folder).values(dossier_id = 4, sound_file_id = 8))
 
 
     return 200

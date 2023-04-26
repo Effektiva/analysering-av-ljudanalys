@@ -50,6 +50,7 @@ const LeftMenu = (props: Props) => {
         key={"dosss:" + dossiers.join(',')}
         selected={selectedDossierHandler}
         dossiers={props.appState.dossiers}
+        appState={props.appState}
       />
     </div>
   )
