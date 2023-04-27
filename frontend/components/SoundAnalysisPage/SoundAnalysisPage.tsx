@@ -2,13 +2,12 @@ import SoundfileList from "@/components/SoundfileList";
 import SoundClassFilterInput from "@/components/SoundClassFilterInput";
 import Graph from "./Graph";
 import MetadataView from "./MetaDataView";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MediaControl from "./MediaControl/MediaControl";
 import SoundChain from "@/models/General/SoundChain";
 import Note from "@/models/SoundAnalysis/Note";
 import Notes from "./Notes/Notes";
 import AppState from "@/state/AppState";
-import Soundclip from "@/models/General/Soundclip";
 import { LOG as log } from "@/pages/_app";
 
 type Props = {
@@ -40,47 +39,26 @@ const SoundAnalysisPage = (props: Props) => {
   const [playing, setPlaying] = useState(false);
   const [volumePercentage, setVolumePercentage] = useState(1);
   const [muted, setMuted] = useState<boolean>(false);
-  const [soundclip, setSoundclip] = useState<Soundclip | undefined>(undefined);
   const [clipZoom, setClipZoom] = useState<boolean>(false);
-
-  useEffect(() => {
-    log.debug("new clip selected");
-    setSoundclip(props.appState.selectedSoundclip);
-    let id = props.appState.selectedSoundclip?.id;
-    let currentId = soundclip?.id;
-    if (id && id != currentId) {
-      soundclip?.audioElement?.pause();
-      setSoundclip(props.soundchain.getSoundclipAndSetAudioElement(id));
-    }
-  }, [props.appState.selectedSoundclip]);
+  const [_, setForceRerender] = useState<boolean>(false);
 
   /*
    * If a clip is selected in any of the soundfile lists this function is ran
    * and given the ID of that soundfile.
    */
-  const clipSelected = (id: number) => {
-    log.debug("select clip:", id);
-
-    if (soundclip != undefined && soundclip.id != id) {
-      soundclip?.audioElement?.pause();
+  const clipSelected = (newClipId: number) => {
+    const currentClip = props.appState.selectedSoundclip!;
+    if (currentClip.id != newClipId) {
+      log.debug("Selected new clip:", newClipId);
+      if (playing) { currentClip.audioElement?.pause(); }
+      var newState = props.appState;
+      let newClip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(newClipId);
+      newState.selectedSoundclip = newClip;
+      props.updateAppState(newState);
+      setForceRerender(prev => !prev);
+    } else {
+      log.debug("Already playing clip:", newClipId);
     }
-
-    if (soundclip?.id != id) {
-      var appState = props.appState;
-      let soundClip = appState.selectedSoundChain?.soundClips.find(soundClip => soundClip.id == id);
-      appState.selectedSoundclip = soundClip;
-      props.updateAppState(appState);
-    }
-
-    setSoundclip(props.soundchain.getSoundclipAndSetAudioElement(id));
-  }
-
-  const changeSoundclip = (clip: Soundclip) => {
-    var appState = props.appState;
-    let soundClip = appState.selectedSoundChain?.soundClips.find(soundClip => soundClip.id == clip.id);
-    appState.selectedSoundclip = soundClip;
-    props.updateAppState(appState);
-    setSoundclip(clip);
   }
 
   const soundchainCommentsUpdated = (newNotes: Array<Note>) => {
@@ -142,9 +120,8 @@ const SoundAnalysisPage = (props: Props) => {
           setVolumePercentage={setVolumePercentage}
           muted={muted}
           setMuted={setMuted}
-          soundchain={props.appState.selectedSoundChain}
-          soundclip={soundclip}
-          setSoundclip={changeSoundclip}
+          appState={props.appState}
+          clipSelected={clipSelected}
           clipZoom={clipZoom}
         />
         <div className={Style.Buttons}>

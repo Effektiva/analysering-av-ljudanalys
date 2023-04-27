@@ -7,8 +7,7 @@ import {
 import { LOG as log } from "@/pages/_app";
 import ProgressBar from "./ProgressBar";
 import VolumeBar from "./VolumeBar";
-import Soundclip from "@/models/General/Soundclip";
-import SoundChain from "@/models/General/SoundChain";
+import AppState from "@/state/AppState";
 
 type Props = {
   playing: boolean,
@@ -17,10 +16,9 @@ type Props = {
   setVolumePercentage: Function,
   muted: boolean,
   setMuted: Function,
-  soundchain: SoundChain | undefined,
-  soundclip: Soundclip | undefined,
-  setSoundclip: Function,
   clipZoom: boolean,
+  appState: AppState,
+  clipSelected: Function,
 }
 
 const STYLE_NAMESPACE = "mediaControl__";
@@ -50,10 +48,9 @@ export enum Event {
  * setVolumePercentage - The function to be called when setting volume percentage.
  * muted - If we're muted.
  * setMuted - The function to be called when setting muted.
- * soundchain - The current soundchain that's chosen.
- * soundclip - The current soundclip that's chosen.
- * setSoundclip - The function to be called when setting a new soundclip.
- * zoomed - Whether we're zoomed into a clip or viewing the whole chain.
+ * clipZoom - Whether we're zoomed into a clip or viewing the whole chain.
+ * appState - The apps state.
+ * clipSelected - To be called when we want to switch clips.
  */
 const MediaControl = (props: Props) => {
   const [playable, setPlayable] = useState(false);
@@ -61,49 +58,55 @@ const MediaControl = (props: Props) => {
   const [duration, setDuration] = useState<number>(0);
   const [seek, setSeek] = useState<number>(0);
 
-  // Run when audioElement changes (e.g. new clip is chosen/seeked to).
+  // Run when soundclip changes (e.g. new clip is chosen/seeked to).
   useEffect(() => {
-    if (props.soundclip != undefined && props.soundclip.audioElement != undefined) {
-      log.debug("soundclip change:", props.soundclip.id);
+    const soundclip = props.appState?.selectedSoundclip!;
+    const soundchain = props.appState?.selectedSoundChain!;
+    log.debug("soundclip change:", soundclip.id);
 
+    if (soundclip == undefined) {
+      log.warning("soundclip change in MediaControl: soundclip is undefined");
+    } else if (soundclip.audioElement == undefined) {
+      log.warning("soundclip change in MediaControl: audioElement is undefined");
+    } else {
       updateTimes();
-      props.soundclip.audioElement.volume = props.volumePercentage;
-      props.soundclip.audioElement.muted = props.muted;
+      soundclip.audioElement.volume = props.volumePercentage;
+      soundclip.audioElement.muted = props.muted;
 
       // Runs when the audio has finished loading.
-      props.soundclip.audioElement.oncanplay = () => {
+      soundclip.audioElement.oncanplay = () => {
         setPlayable(true);
-        if (props.soundclip != undefined && props.soundclip.audioElement != undefined) {
-          if (props.playing) props.soundclip.audioElement.play();
+        if (soundclip != undefined && soundclip.audioElement != undefined) {
+          if (props.playing) soundclip.audioElement.play();
 
           // When we want to seek somewhere which requires us to change
           // the currently playing clip, then seek is set to where in the
           // newly chosen clip we want to start at.
-          if (seek && props.soundclip.audioElement != undefined) {
-            props.soundclip.audioElement.currentTime = seek;
+          if (seek && soundclip.audioElement != undefined) {
+            soundclip.audioElement.currentTime = seek;
             setSeek(0);
           }
 
           // <obj>.oncanplay is ran whenever the clip is playable, not only when it
           // "initialised", which is what we wish to use it for.
-          props.soundclip.audioElement.oncanplay = () => {};
+          soundclip.audioElement.oncanplay = () => {};
         } else {
           log.error("Soundclip or audioElement is undefined.");
         }
       };
 
       // Update the progress counters when ...audioElement.currentTime changes.
-      props.soundclip.audioElement.ontimeupdate = updateTimes;
+      soundclip.audioElement.ontimeupdate = updateTimes;
 
       // Play the next clip in the soundchain when this one finishes.
-      props.soundclip.audioElement.onended = () => {
+      soundclip.audioElement.onended = () => {
         log.debug("Soundclip ended...");
 
-        if (props.soundclip) {
-          let newClip = props.soundchain?.getNextClipAndSetAudioElement(props.soundclip);
+        if (soundclip) {
+          let newClip = soundchain.getNextClipAndSetAudioElement(soundclip);
           if (newClip) {
             log.debug("New clip exists, playing:", newClip.id);
-            props.setSoundclip(newClip);
+            props.clipSelected(newClip.id);
           } else {
             log.debug("No next clip, stop playing.");
             props.setPlaying(false);
@@ -111,20 +114,21 @@ const MediaControl = (props: Props) => {
         }
       };
     }
-  }, [props.soundclip]); // ignore warning, we only want to run when soundclip changes
+  }, [props.appState.selectedSoundclip]); // ignore warning, we only want to run when soundclip changes
 
   // Run when the zoom-level changes.
   useEffect(() => {
+    const soundclip = props.appState.selectedSoundclip;
     log.debug("zoomed:", props.clipZoom);
 
-    if (props.soundclip != undefined && props.soundclip.audioElement != undefined) {
+    if (soundclip != undefined && soundclip.audioElement != undefined) {
       updateTimes();
 
       // I think this function is saved "statically" when we set it above once
       // a new soundclip is chosen. Which means `props.zoomed` doesn't update
       // inside of it when it changes. So we have to re-set it here to get the
       // correct `props.zoomed` value inside of updateTimes().
-      props.soundclip.audioElement.ontimeupdate = updateTimes;
+      soundclip.audioElement.ontimeupdate = updateTimes;
     }
   }, [props.clipZoom]); // ignore warning, we only want to run when zoom is changed
 
@@ -132,22 +136,20 @@ const MediaControl = (props: Props) => {
    * Set duration/currentTime depending on the zoom-level.
    */
   const updateTimes = () => {
-    if (props.soundclip?.audioElement == undefined) {
-      log.error("props.soundclip?.audioElement is undefined");
-      return;
-    }
+    const soundclip = props.appState.selectedSoundclip!;
+    const soundchain = props.appState.selectedSoundChain!;
 
-    if (props.clipZoom) {
-      setCurrentTime(props.soundclip.audioElement.currentTime);
-      setDuration(props.soundclip.duration);
+    if (soundclip == undefined || soundclip.audioElement == undefined) {
+      log.warning("Updating times: Soundclip/audioElement is undefined:", soundclip);
+    } else if (soundchain == undefined) {
+      log.warning("Updating times: Soundchain is undefined", soundchain);
+    } else if (props.clipZoom) {
+      setCurrentTime(soundclip.audioElement.currentTime);
+      setDuration(soundclip.duration);
     } else {
-      if (props.soundchain != undefined) {
-        let current = props.soundchain.getSecondsToStartOfClip(props.soundclip) + props.soundclip.audioElement.currentTime;
-        setCurrentTime(current);
-        setDuration(props.soundchain.duration);
-      } else {
-        log.error("props.soundchain is undefined");
-      }
+      let current = soundchain.getSecondsToStartOfClip(soundclip) + soundclip.audioElement.currentTime;
+      setCurrentTime(current);
+      setDuration(soundchain.duration);
     }
   }
 
@@ -155,8 +157,15 @@ const MediaControl = (props: Props) => {
    * Called on all button presses related to progress changes.
    */
   const buttonHandler = (event: Event) => {
+    const soundclip = props.appState.selectedSoundclip!;
     if (!playable) {
-      log.error("Soundclip not playable yet.");
+      log.warning("Soundclip not playable yet.");
+      return;
+    } else if (soundclip == undefined) {
+      log.warning("Soundclip is undefined");
+      return;
+    } else if (soundclip.audioElement == undefined) {
+      log.warning("audioElement is undefined");
       return;
     }
 
@@ -165,17 +174,12 @@ const MediaControl = (props: Props) => {
         progressEventHandler(Event.Backward, 0);
         break;
       case Event.TogglePlay:
-        if (props.soundclip?.audioElement == undefined) {
-          log.error("props.soundclip?.audioElement is undefined");
-          return;
-        }
-
         props.setPlaying(!props.playing);
 
-        if (props.soundclip.audioElement.paused) {
-          props.soundclip.audioElement?.play();
+        if (soundclip.audioElement.paused) {
+          soundclip.audioElement?.play();
         } else {
-          props.soundclip.audioElement?.pause();
+          soundclip.audioElement?.pause();
         }
         break;
       case Event.Forward:
@@ -192,17 +196,21 @@ const MediaControl = (props: Props) => {
    * of the volume bar was pressed.
    */
   const volumeEventHandler = (perc: number) => {
-    if (props.soundclip?.audioElement != undefined) {
-      props.soundclip.audioElement.volume = perc;
-      props.setVolumePercentage(perc);
+    const soundclip = props.appState.selectedSoundclip;
+    if (soundclip == undefined || soundclip.audioElement == undefined) {
+      log.warning("Soundclip/audioElement is undefined");
     } else {
-      log.error("audioElement is undefined");
+      soundclip.audioElement.volume = perc;
+      props.setVolumePercentage(perc);
     }
   }
 
   const muteHandler = (val: boolean) => {
-    if (props.soundclip?.audioElement) {
-      props.soundclip.audioElement.muted = val;
+    const soundclip = props.appState.selectedSoundclip;
+    if (soundclip == undefined || soundclip.audioElement == undefined) {
+      log.warning("Soundclip/audioElement is undefined");
+    } else {
+      soundclip.audioElement.muted = val;
     }
     props.setMuted(val);
   }
@@ -212,100 +220,96 @@ const MediaControl = (props: Props) => {
    * from this file when forward/backwards buttons are pressed.
    */
   const progressEventHandler = (event: Event, perc: number) => {
-    if (props.soundclip?.audioElement != undefined && props.soundclip?.audioElement.duration != undefined) {
-      let seekTo = 0;
+    const soundclip = props.appState.selectedSoundclip;
+    const soundchain = props.appState.selectedSoundChain;
+    if (soundclip == undefined) {
+      log.warning("Soundclip is undefined");
+      return;
+    } else if (soundclip.audioElement == undefined) {
+      log.warning("audioElement is undefined");
+      return;
+    } else if (soundchain == undefined) {
+      log.warning("Soundchain is undefined");
+      return;
+    }
 
-      if (props.clipZoom) {
-        switch(event) {
-          case Event.Forward:
-            if (props.soundchain != undefined && props.soundclip != undefined) {
-              seekTo = props.soundchain?.getSecondsToStartOfClip(props.soundclip) + currentTime + 30;
-            }
-            break;
-          case Event.Backward:
-            if (props.soundchain != undefined && props.soundclip != undefined) {
-              seekTo = props.soundchain?.getSecondsToStartOfClip(props.soundclip) + currentTime - 30;
-            }
-            break;
-          case Event.ProgressBar:
-            seekTo = duration * (perc/100);
-            props.soundclip?.audioElement.fastSeek(seekTo);
-            return;
-          default:
-            log.error("Unhandled event:", event);
-            break;
-        }
-      } else {
-        switch(event) {
-          case Event.Forward:
-              seekTo = currentTime + 30;
-            break;
-          case Event.Backward:
-              seekTo = currentTime - 30;
-            break;
-          case Event.ProgressBar:
-            if (props.soundchain) {
-              seekTo = (perc/100) * props.soundchain?.duration;
-            } else {
-              log.error("props.soundchain is undefined.");
-            }
-            break;
-          default:
-            log.error("Unhandled event:", event);
-            break;
-        }
-      }
-
-      if (props.soundchain) {
-        // In seconds, where are we ending up because of the seek?
-        let str = new Date(seekTo*1000).toISOString().slice(11,19);
-        log.debug("chain seek:", str);
-
-        // Do we need to switch clips?
-        let newClipID = undefined;
-        let totalDuration = 0;
-        props.soundchain?.soundClips?.some((elem, _) => {
-          // If where we want to end up is less than the total
-          // duration of the clips we've looped over, then we know
-          // the current clip is the clip we want to switch to.
-          totalDuration += elem.duration;
-          if (seekTo < totalDuration) {
-            newClipID = elem.id;
-            return true;
-          }
-        });
-        let switchClips = newClipID != props.soundclip.id;
-
-        if (newClipID != undefined) {
-          // If the new clip isn't the first clip in the soundchain we need to
-          // remove the time upto this clip.
-          if (newClipID != 0) {
-            let clip = props.soundchain.getSoundclip(newClipID);
-            if (clip) {
-              seekTo = seekTo - props.soundchain.getSecondsToStartOfClip(clip);
-            }
-          }
-
-          str = new Date(seekTo*1000).toISOString().slice(11,19);
-          log.debug("clip seek:", str);
-
-          if (switchClips) {
-            props.soundclip.audioElement.pause();
-            props.setSoundclip(props.soundchain.getSoundclipAndSetAudioElement(newClipID));
-            setSeek(seekTo); // where we want to start on the new clip when it initialises
-            setPlayable(false);
-          } else {
-            props.soundclip?.audioElement.fastSeek(seekTo);
-            updateTimes();
-          }
-        } else {
-          log.error("newClipID is undefined");
-        }
-      } else {
-        log.error("Soundchain is undefined.");
+    let seekTo = 0;
+    if (props.clipZoom) {
+      switch(event) {
+        case Event.Forward:
+          seekTo = soundchain.getSecondsToStartOfClip(soundclip) + currentTime + 30;
+          break;
+        case Event.Backward:
+          seekTo = soundchain.getSecondsToStartOfClip(soundclip) + currentTime - 30;
+          break;
+        case Event.ProgressBar:
+          seekTo = duration * (perc/100);
+          soundclip.audioElement.fastSeek(seekTo);
+          return;
+        default:
+          log.error("Unhandled event:", event);
+          break;
       }
     } else {
-      log.error("Audio element/duration is undefined.");
+      switch(event) {
+        case Event.Forward:
+            seekTo = currentTime + 30;
+          break;
+        case Event.Backward:
+            seekTo = currentTime - 30;
+          break;
+        case Event.ProgressBar:
+          seekTo = (perc/100) * soundchain.duration;
+          break;
+        default:
+          log.error("Unhandled event:", event);
+          break;
+      }
+    }
+
+    // In seconds, where are we ending up because of the seek?
+    let str = new Date(seekTo*1000).toISOString().slice(11,19);
+    log.debug("chain seek:", str);
+
+    // Do we need to switch clips?
+    let newClipID = undefined;
+    let totalDuration = 0;
+    soundchain.soundClips?.some((elem, _) => {
+      // If where we want to end up is less than the total
+      // duration of the clips we've looped over, then we know
+      // the current clip is the clip we want to switch to.
+      totalDuration += elem.duration;
+      if (seekTo < totalDuration) {
+        newClipID = elem.id;
+        return true;
+      }
+    });
+    let switchClips = newClipID != soundclip.id;
+
+    if (newClipID != undefined) {
+      // If the new clip isn't the first clip in the soundchain we need to
+      // remove the time upto this clip.
+      if (newClipID != 0) {
+        let clip = soundchain.getSoundclip(newClipID);
+        if (clip) {
+          seekTo = seekTo - soundchain.getSecondsToStartOfClip(clip);
+        }
+      }
+
+      str = new Date(seekTo*1000).toISOString().slice(11,19);
+      log.debug("clip seek:", str);
+
+      if (switchClips) {
+        soundclip.audioElement.pause();
+        props.clipSelected(newClipID);
+        setSeek(seekTo); // where we want to start on the new clip when it initialises
+        setPlayable(false);
+      } else {
+        soundclip.audioElement.fastSeek(seekTo);
+        updateTimes();
+      }
+    } else {
+      log.error("newClipID is undefined");
     }
   }
 
@@ -331,7 +335,7 @@ const MediaControl = (props: Props) => {
         ><ForwardIcon /></div>
 
         <VolumeBar
-          key={props.soundclip?.id}
+          key={props.appState.selectedSoundclip?.id}
           playable={playable}
           volumePercentage={props.volumePercentage}
           setVolumePercentage={volumeEventHandler}
@@ -341,7 +345,7 @@ const MediaControl = (props: Props) => {
       </div>
 
       <ProgressBar
-        key={props.soundclip?.id}
+        key={props.appState.selectedSoundclip?.id}
         playable={playable}
         currentTime={currentTime}
         duration={duration}
