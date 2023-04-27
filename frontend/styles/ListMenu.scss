@@ -1,0 +1,164 @@
+@use "palette.scss";
+
+/* Each list should have a describing header with this class */
+.listMenuHeader {
+    width: 100%;
+    padding: 3px 5px;
+
+    font-weight: bold;
+}
+
+/* The actual list is contained within a ul with this class  */
+.listMenu {
+    display: inline-block;
+
+    width: 100%;
+    margin: 0;
+
+    /* This list and underlying lists */
+    &, ul {
+        list-style: none;
+        padding: 0;
+    }
+}
+
+/* All interactable items in a .listMenu */
+.listItemCollapsable, .listItemAction {
+    .listMenu & {
+        @include palette.interactable;
+    }
+}
+
+/* Creating the lines in the list */
+.listItemRoot, .listItemChild, .listItemSubroot {
+
+    white-space: nowrap;
+
+    li li li &::before {
+        content: "│  ├─ ";
+    }
+
+    li li li:last-child &::before {
+        content: "│  └─ ";
+    }
+
+    li li:last-child li &::before {
+        content: "   ├─ ";
+    }
+
+    li li:last-child li:last-child &::before {
+        content: "   └─ ";
+    }
+
+    li li &::before {
+        content: "├─ ";
+    }
+
+    li li:last-child &::before {
+        content: "└─ ";
+    }
+
+    li &::before {
+        @include palette.list-lines;
+
+        white-space: pre;
+        line-height: 1;
+        letter-spacing: -1px;
+        font-size: 1.4em;
+
+        overflow-y: hidden;
+    }
+}
+
+
+/* When a ListItem is collapsed */
+.listItemCollapsable {
+    position: relative;
+
+    &::after {
+        position: absolute;
+        right: .5em;
+
+        content: "-";
+    }
+
+    &.collapsed {
+        &::after {
+            content: "+";
+        }
+    }
+}
+
+.listItemCollapsable+ul {
+    display: block;
+    overflow: hidden;
+}
+
+.listItemCollapsable.collapsed+ul {
+    height: 0;
+}
+
+
+
+/* Button to add to list */
+.listAddButton {
+    margin-top: 1rem;
+    width: 10rem;
+}
+
+/* When input is empty/invalid while changing a ListItem's text */
+.listItemInputInvalid {
+    border: 2px solid red;
+}
+
+/*
+ * Icon/tags
+ *
+ * .tag is the container for all tags
+ * Beneath it there's an individual div for each tag the listItem
+ * contains with the corresponding class below.
+ */
+
+.tag {
+    float: right;
+}
+
+.analysisOngoing::after {
+    content: "[P]"
+}
+
+.analysisUnstarted::after {
+    content: "[E]"
+}
+
+.analysisFinished::after {
+    content: "[K]"
+}
+
+.analysisFailed::after {
+    content: "[M]"
+}
+
+.soundchainAnalysed::after {
+    content: "[A]"
+}
+
+.soundchainRejected::after {
+    content: "[R]"
+}
+
+.fileReceived::after {
+    content: "[M]"
+}
+
+.analysisSucceeded::after {
+    content: "[S]"
+}
+
+.soundfileProcessed::after {
+    content: "[P]"
+}
+
+.soundfileRejected::after {
+    content: "[R]"
+}

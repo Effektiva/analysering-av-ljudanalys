@@ -1,0 +1,13 @@
+@use "palette.scss";
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body, main {
+    box-sizing: border-box;
+
+    width: 100%;
+    min-height: 100vh;
+}

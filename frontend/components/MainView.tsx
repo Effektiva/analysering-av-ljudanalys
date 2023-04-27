@@ -1,9 +1,16 @@
-import { DUMMY_INVESTIGATION_LIST, DUMMY_SOUNDCHAIN, DUMMY_DOSSIER_LIST } from "@/modules/DummyData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LeftMenu, { Type } from "./LeftMenu/LeftMenu";
 import SoundanalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
 import InvestigationPage from "./InvestigationPage/InvestigationPage";
 import AppState from "@/state/AppState";
+import Investigation from "@/models/General/Investigation";
+import { LOG as log } from "@/pages/_app";
+import APIService from "@/models/APIService";
+import FrontPage from "./BasicLayout/FrontPage";
+
+type Props = {
+  appState: AppState
+}
 
 /**
  * The MainView is the main component switching beteen pages (Investigations, Dossiers, etc)
@@ -12,31 +19,19 @@ import AppState from "@/state/AppState";
  * left menu, this handler funktion is called by the child component LeftMenu, passing an id
  * and type of the list item and the page is updated accordingly.
  */
-const MainView = () => {
-  const [appState, setAppState] = useState<AppState>({
-    dossierState: DUMMY_DOSSIER_LIST,
-    selectedSoundChain: DUMMY_SOUNDCHAIN
-  });
-  const [page, setPage] = useState(
-  <SoundanalysisPage
-    soundchain={appState.selectedSoundChain!}
-    appState={appState}
-    updateAppState={setAppState}
-  />
-  ); // TODO: Remove force
+const MainView = (props: Props) => {
+  const [appState, setAppState] = useState<AppState>(props.appState);
+  const [page, setPage] = useState(<FrontPage/>);
+  const [forceUpdateLeftMenu, setForceUpdateLeftMenu] = useState<boolean>(false);
 
-  // Attempt to obtain the right path to dossier sub data.
-  const getSearchPath = (id: number) => {
-    let num = id;
-    let ids: number[] = [];
-    while (num) {
-      const remainder = num % 10;
-      num -= remainder;
-      num /= 10;
-      ids = [remainder, ...ids];         // Appending to the back of the array.
-    }
-    return ids;
+  const updateApp = (newState: AppState) => {
+    setForceUpdateLeftMenu(prev => !prev); // TODO: See issue #104
+    setAppState(newState);
   }
+
+  const soundChainSelectedHandler = (id: number) => {
+    selectedHandler(Type.SOUNDCHAIN, id);
+  };
 
   const filterById = (dataList: Array<any>, id: number) => {
     const [data] = dataList.filter((data) => {
@@ -48,20 +43,78 @@ const MainView = () => {
   const selectedHandler = (type: Type, id: number) => {
     switch (type) {
       case Type.INVESTIGATION:
-        const investigation = filterById(DUMMY_INVESTIGATION_LIST, id);
-        setPage(<InvestigationPage />);
+        log.debug("Selected investigation with id: " + id);
+        const investigation: Investigation = filterById(appState.investigations, id);
+        APIService.getSoundChainsForInvestigation(id).then((soundChains) => {
+          var newState = appState;
+          newState.selectedInvestigation = investigation;
+          newState.soundChains = soundChains;
+          newState.selectedSoundChain = undefined;
+          newState.selectedSoundclip = undefined;
+          setAppState(newState);
+          setPage(
+            <InvestigationPage
+              key={appState.selectedInvestigation?.id}
+              investigation={appState.selectedInvestigation!}
+              soundChains={appState.soundChains}
+              soundChainSelected={soundChainSelectedHandler}
+            />);
+        });
         break;
-      case Type.DOSSIER: // Todo: need to figure out a good way to structure dossier data so that its easy to extract.
-        setPage(<SoundanalysisPage soundchain={appState.selectedSoundChain!} appState={appState} updateAppState={setAppState} />);
+      case Type.SOUNDCHAIN:
+        log.debug("Selected soundChain with id: " + id);
+        if (appState.selectedInvestigation?.id != undefined) {
+          APIService.getFullSoundChain(appState.selectedInvestigation.id, id).then((chain) => {
+            var newState = appState;
+            newState.selectedSoundChain = chain;
+            newState.selectedSoundclip = undefined;
+            setAppState(newState);
+            setPage(
+              <SoundanalysisPage
+                key={appState.selectedSoundChain?.id}
+                soundchain={appState.selectedSoundChain!}
+                appState={appState}
+                updateAppState={updateApp}
+              />);
+          });
+        } else {
+          log.warning("appState.selectedInvestigation.id is undefined");
+        }
+        break;
+      case Type.DOSSIER:
+        log.debug("Selected soundclip:", id);
+        APIService.getSoundfileInfo(id).then((info) => {
+          var newState = appState;
+          APIService.getFullSoundChain(info.investigation, info.soundchain).then((chain) => {
+            let investigation = appState.investigations.find(inv => inv.id === info.investigation);
+            newState.selectedInvestigation = investigation;
+            newState.selectedSoundChain = chain;
+            let clip = newState.selectedSoundChain?.getSoundclip(id);
+            newState.selectedSoundclip = clip;
+            setAppState(newState);
+            setPage(
+              <SoundanalysisPage
+                key={appState.selectedSoundChain?.id}
+                soundchain={appState.selectedSoundChain!}
+                appState={appState}
+                updateAppState={updateApp}
+              />);
+          });
+        });
         break;
       default:
+        setPage(<FrontPage/>);
         break;
     }
   }
 
   return (
     <div className="main-view">
-      <LeftMenu selected={selectedHandler} />
+      <LeftMenu
+        forceUpdate={forceUpdateLeftMenu}
+        selected={selectedHandler}
+        appState={appState}
+      />
       {page}
     </div>
   )

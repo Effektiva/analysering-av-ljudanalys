@@ -1,6 +1,7 @@
 import { Event } from "./MediaControl";
 
 type Props = {
+  playable: boolean,
   currentTime: number,
   duration: number,
   progressEventHandler: Function
@@ -41,21 +42,16 @@ const ProgressBar = (props: Props) => {
   }
 
   /*
-   * Takes seconds and returns a 00:00 [minutes:seconds] string from it.
+   * Takes seconds and returns a HH:MM:SS string from it.
    */
   const secondsToTimeString = (seconds: number): string => {
-    let minutes = Math.trunc(seconds/60);
-    let secondsString = Math.trunc(seconds - minutes*60).toString();
-    let minutesString = minutes.toString();
-
-    if (minutesString.length == 1) {
-      minutesString = "0" + minutesString;
-    }
-    if (secondsString.length == 1) {
-      secondsString = "0" + secondsString;
+    if (isNaN(seconds) || seconds < 0) {
+      return "--:--:--";
     }
 
-    return minutesString + ":" + secondsString;
+    // date takes a time in ms
+    let str = new Date(seconds*1000).toISOString().slice(11,19);
+    return str;
   }
 
   return (
@@ -64,10 +60,13 @@ const ProgressBar = (props: Props) => {
         <div
           className={Style.Bar}
           onClick={progressBarClick}
+          disabled={!props.playable}
         >
           <div
             className={Style.Progress}
-            style={{width: 100*(props.currentTime/props.duration) + "%"}}
+            style={{
+              width: 100*(props.currentTime/props.duration) + "%",
+            }}
           ></div>
         </div>
         <div className={Style.EndTime}>{secondsToTimeString(props.duration)}</div>

@@ -1,0 +1,121 @@
+@use "palette.scss";
+
+
+/* The div that contains the whole soundAnalysisPage (meaning all content of this file) */
+.soundAnalysisPage__container {
+    display: flex;
+
+    flex-direction: row;
+
+    width: 100%;
+    height: 100%;
+    padding: 0 10px;
+
+    background-color: none;
+    color: inherit;
+
+
+
+    /* Columns of soundAnalysisPage */
+    .soundAnalysisPage__col {
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+        padding: 10px;
+
+        // Left column of the soundAnalysisPage
+        &:first-child {
+            max-width: 30%;
+        }
+
+
+        // Right column of the soundAnalysisPage
+        &:last-child {
+            /* Keep spacing between children */
+            >*:not(:last-child) {
+                margin-bottom: 5px;
+            }
+        }
+    }
+
+
+    /* Heading of soundAnalysisPage, the one showing which soundchain is selected */
+    .soundAnalysisPage__header {
+        display: flex;
+        flex-direction: row;
+
+        padding: 15px 0 4px;
+
+        /* The text of the header */
+        h1 {
+            align-self: center;
+
+            width: 100%;
+            margin: 0;
+
+            font-size: 24px;
+        }
+
+        /* Statuscontroll of current soundchain */
+        .soundAnalysisPage__setStatus {
+            width: auto;
+            height: auto;
+        }
+        /* The text above the statuscontroll */
+        label {
+            font-size: small;
+        }
+    }
+
+
+    /* All lists in soundAnalysisPage */
+    .soundAnalysisPage__filtered, .soundAnalysisPage__all {
+        padding: 10px;
+        margin-bottom: 10px;
+
+        @include palette.soundchain-list;
+
+
+        /* All interactable list items in the lists */
+        .listItemCollapsable, .listItemAction {
+            @include palette.soundchain-list-button;
+        }
+    }
+
+    /* Buttons under the graph */
+    .soundAnalysisPage__buttons {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        /* Space beteen children */
+        > :not(:last-child) {
+            margin-right: 10px;
+        }
+
+        /* The zoom buttonpanel */
+        .soundAnalysisPage__zoom {
+            width: fit-content;
+            padding: 10px;
+
+            border-radius: 5px;
+
+            @include palette.zoom-panel;
+
+            button {
+                padding: 5px;
+                margin-left: 5px;
+
+                // TODO: Coloring the button will ruin states! Fix!
+                //background-color: palette.$zoom-button-bg;
+                //color: palette.$zoom-button-text;
+            }
+        }
+
+        /* The auto volume button */
+        button.soundAnalysisPage__autoVolume {
+            padding: 5px;
+        }
+    }
+}

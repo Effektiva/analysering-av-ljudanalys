@@ -1,0 +1,125 @@
+@use "sass:map";
+@import "bootstrap/scss/bootstrap-utilities.scss";
+
+
+/***********************************************
+ All colors of the website
+ **********************************************/
+
+/* Create background and color that has contrast to the background. */
+@mixin background-and-contrast-text($bg-color) {
+    background-color: $bg-color;
+    color: color-contrast($bg-color);
+}
+
+/* General components */
+%component {
+    @include background-and-contrast-text(#d3d3d3);
+}
+%button {
+    @include background-and-contrast-text(#c9c9c9);
+}
+%icon-button {
+    color: #000;
+
+    &:hover {
+        color: #5A5A5A;
+    }
+
+    &[disabled] {
+        color: #ABABAB;
+    }
+}
+%bar {
+    background-color: #888888;
+
+    // Assumed that direct child of bar is its fill
+    >* {
+        background-color: #000;
+    }
+
+    // If bar is disabled
+    &[disabled] {
+        background-color: #b7b7b7;
+
+        >* {
+            background-color: #b7b7b7;
+        }
+    }
+}
+
+@mixin popup {
+    @include background-and-contrast-text(#ffffff);
+}
+
+@mixin page {
+    @include background-and-contrast-text(#b2b2b2);
+    font-family: (Helvetica, Arial, sans-serif);
+}
+
+$left-menu-bg: #325fc0;
+$left-menu-text: color-contrast($left-menu-bg);
+@mixin left-menu {
+    background: $left-menu-bg;
+    color: $left-menu-text;
+}
+@mixin left-menu-borders {
+    border-color: $left-menu-text;
+}
+@mixin left-menu-button {
+    &:hover {
+        background-color: #829edb;
+    }
+}
+
+@mixin list-lines {
+    font-family: ('Courier New', Courier, monospace);
+}
+
+@mixin soundchain-list {
+    @include background-and-contrast-text(#fff);
+}
+
+@mixin soundchain-list-button {
+    &:hover {
+        background-color: #c5c5c5;
+    }
+}
+
+@mixin media-control {
+    @extend %component;
+}
+@mixin media-control-button {
+    @extend %icon-button;
+}
+@mixin media-control-bar {
+    @extend %bar;
+}
+
+@mixin zoom-panel {
+    @extend %component;
+}
+
+@mixin notes {
+    @extend %component;
+}
+@mixin note {
+    @include background-and-contrast-text(#656565);
+}
+@mixin note-foreground {
+    @include background-and-contrast-text(#fff);
+}
+@mixin note-button {
+    @extend %icon-button;
+}
+
+
+/* I made a class for this since it can be further developed easily. */
+@mixin not-selectable {
+    user-select: none;
+}
+
+@mixin interactable {
+    @include not-selectable;
+    cursor: pointer;
+}

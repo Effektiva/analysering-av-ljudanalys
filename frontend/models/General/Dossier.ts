@@ -1,6 +1,7 @@
 import { ListItemType } from "@/components/ListMenu/ListItemType";
 import ListItemRepresentable from "../ListItemRepresentable";
 import Soundclip from "./Soundclip";
+import Metadata from "../SoundAnalysis/Metadata";
 
 /**
  * Represents a collection of soundclips. Can also store subdossiers, but with a maximum depth of 1.
@@ -21,6 +22,32 @@ class Dossier implements ListItemRepresentable {
     this.name = name;
     this.subdossiers = subdossiers;
     this.soundfiles = soundfiles;
+  }
+
+  static initFromJSON(json: any): Dossier | undefined {
+    let id = json.id as number | undefined;
+    let name = json.name as string | undefined;
+
+    let subdossiers: Dossier[] = [];
+    if (json.subDossier != undefined) {
+      json.subDossier.forEach((doss: any) => {
+        let newDossier = Dossier.initFromJSON(doss);
+        if (newDossier) {
+          subdossiers.push(newDossier);
+        }
+      });
+    }
+
+    let soundfiles: Soundclip[] = [];
+    json.soundFiles.forEach((file: any) => {
+      soundfiles.push(new Soundclip(file.id, new Metadata(file.fileName, []), new Date(0), new Date(0)));
+    });
+
+    if (id !== undefined && name !== undefined && subdossiers !== undefined && soundfiles !== undefined) {
+      return new Dossier(id, name, subdossiers, soundfiles);
+    } else {
+      return undefined;
+    }
   }
 
   asListItem(): ListItemType {
@@ -51,7 +78,6 @@ class Dossier implements ListItemRepresentable {
       subroots: children
     }
   }
-
 }
 
 export default Dossier;

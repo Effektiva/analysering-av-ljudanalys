@@ -1,5 +1,5 @@
 import Head from "next/head"
-import MainView from "@/components/MainView"
+import AppView from "@/components/AppView"
 
 export default function Home() {
   return (
@@ -8,9 +8,7 @@ export default function Home() {
         <title>Frontend</title>
       </Head>
       <main>
-        <div className="container">
-          <MainView />
-        </div>
+        <AppView />
       </main>
     </>
   )

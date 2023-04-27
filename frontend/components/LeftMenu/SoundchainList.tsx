@@ -3,9 +3,12 @@ import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/Li
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 import SoundChain from "@/models/General/SoundChain";
+import APIService from "@/models/APIService";
 
 type Props = {
   soundchains: Array<SoundChain>,
+  soundChainSelected: (id: number) => void,
+  investigationID: number | undefined
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -18,17 +21,24 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundchainList = (props: Props) => {
-  const [items] = useState<Array<SoundChain>>(props.soundchains);
+  const [soundchains, setSoundchains] = useState(props.soundchains);
   const [menuVisible, setMenuVisible] = useState<boolean>(true);
 
   const eventHandler = (response: ListEventResponse) => {
     switch(response.event) {
       case ListEvent.ClickOnRoot:
         log.debug("Goto soundchain:", response.id);
+        props.soundChainSelected(response.id);
         break;
 
       case ListEvent.ContextDelete: {
-        log.debug("Remove soundchain:", response.id);
+        if (props.investigationID) {
+          APIService.deleteSoundchain(props.investigationID, response.id);
+          let newSoundchains = [...soundchains];
+          let index = soundchains.findIndex((elem: SoundChain) => elem.id == response.id);
+          newSoundchains.splice(index, 1);
+          setSoundchains(soundchains);
+        }
         break;
       }
 
@@ -52,8 +62,8 @@ const SoundchainList = (props: Props) => {
       </span>
       { menuVisible &&
         <ListMenu
-          key={items.length}
-          items={items.map(soundchain => soundchain.asListItem())}
+          key={soundchains.length}
+          items={soundchains.map(soundchain => soundchain.asListItem())}
           contextMenus={CONTEXT_MENUS}
           eventHandler={eventHandler}
         />

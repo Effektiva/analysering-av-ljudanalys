@@ -1,0 +1,32 @@
+.metadata__container {
+    width: 100%;
+    padding: 5px;
+    background: white;
+    border-radius: 5px;
+}
+
+.metadata__header {
+    font-weight: bold;
+    padding: 3px;
+    background: lightgray;
+    border-radius: 5px;
+}
+
+.metadata__metadata-name {
+    float: left;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.metadata__metadata-date {
+    float: right;
+    clear: right;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.metadata__metadata-dossiers-div {
+    clear: both;
+    padding: 3px;
+    border-radius: 5px;
+}

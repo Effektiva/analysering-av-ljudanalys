@@ -14,6 +14,9 @@ const STYLE_NAMESPACE = "notes__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
   Header = STYLE_NAMESPACE + "header",
+  NewNote = STYLE_NAMESPACE + "newnote",
+  NewNoteTime = STYLE_NAMESPACE + "newnote_time",
+  NewNoteText = STYLE_NAMESPACE + "newnote_text",
 }
 
 /**
@@ -85,11 +88,23 @@ const Notes = (props: Props) => {
 
   return (
     <div className={Style.Container}>
-      <div className={Style.Header}>Anteckningar</div>
-      Tidpunkt: <input id="newNoteTime" placeholder="12:34" /><br />
-      Anteckning: <textarea id="newNoteText" placeholder="Anteckningar" /><br />
-      <button onClick={addNewNote}>Lägg till</button>
-
+      <h2 className={Style.Header}>Anteckningar</h2>
+      <div className={Style.NewNote} aria-describedby="newNoteHead">
+        <div>
+          <h3 id="newNoteHead">Skapa ny anteckning</h3>
+          <div className={Style.NewNoteTime}>
+            <label htmlFor="newNoteTime">Tidpunkt:</label>
+            <input id="newNoteTime" placeholder="12:34" />
+          </div>
+        </div>
+        <div>
+          <div className={Style.NewNoteText}>
+            <label htmlFor="newNoteText">Anteckning:</label>
+            <textarea id="newNoteText" placeholder="Anteckningar" />
+          </div>
+          <button onClick={addNewNote}>Lägg till</button>
+        </div>
+      </div>
       <NotesList notes={notes} deleteNote={deleteNote} setNoteText={saveNewNoteText} />
     </div>
   );

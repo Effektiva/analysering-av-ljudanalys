@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { ListItemInput } from "./ListItemInput";
 import * as LM from "./ListMenu";
 import { ListItemType } from "./ListItemType";
@@ -10,6 +10,9 @@ type Props = {
   itemType?: LM.ItemType,
   parentID?: number,
   changeTextID?: number,
+  selected?: boolean,
+  selectedId?: number | undefined,
+  icon?: ReactNode
 }
 
 /**
@@ -37,7 +40,7 @@ export const ListItem = (props: Props) => {
     let response: LM.ListEventResponse = {
       id: (pars[0] != undefined) ? pars[0] : props.item.id,
       event: LM.ListEvent.UndefinedEvent,
-      nodeType: props.itemType,
+      itemType: props.itemType,
     }
 
     if (props.itemType != LM.ItemType.Child && props.item.collapsable === true) {
@@ -71,6 +74,7 @@ export const ListItem = (props: Props) => {
       event: LM.ListEvent.UndefinedEvent,
       id: (pars[0] != undefined) ? pars[0] : props.item.id,
       cursor: [event.clientX, event.clientY],
+      parentID: props.parentID,
     }
 
     switch(props.itemType) {
@@ -98,10 +102,10 @@ export const ListItem = (props: Props) => {
   const getStyleClasses = (mainClass: string, hidden: boolean) => {
     let classes = "";
     if (hidden) {
-      classes += LM.StyleClass.Collapsed + " ";
+      classes += "collapsed ";
     }
 
-    classes += " " + mainClass;
+    classes += mainClass;
     return classes;
   }
 
@@ -119,11 +123,9 @@ export const ListItem = (props: Props) => {
               onClick={() => clickHandler()}
               onContextMenu={contextClickHandler}
             >
-              {props.item.text}
+              { props.selected === true ? <b>{props.item.text}</b> : props.item.text }
 
-              { props.item.tags?.map((i, tag) => {
-                return <div key={i} className={tag + " tag"}></div>
-              })}
+              { props.icon }
             </div>
           :
             <ListItemInput
@@ -136,41 +138,45 @@ export const ListItem = (props: Props) => {
             />
         }
 
-        { !hidden &&
-        <>
+        { !hidden && (props.item.subroots || props.item.children) &&
+        <ul>
           { props.item.subroots &&
-          <ul>
+          <>
             {
               props.item.subroots.map((subroot: ListItemType) => {
                 return <ListItem
-                          class={LM.StyleClass.Subroot}
                           key={subroot.id}
+                          class={LM.StyleClass.Subroot + " " + LM.StyleClass.Collapsable}
                           itemType={LM.ItemType.Subroot}
-                          parentID={props.item.id}
+                          //parentID={props.item.id}
+                          parentID={subroot.id}
                           item={subroot}
                           changeTextID={props.changeTextID}
                           eventHandler={props.eventHandler}
+                          selectedId={props.selectedId}
                         />
               })
             }
-          </ul>
+          </>
           }
           { props.item.children &&
-          <ul>
+          <>
             {
               props.item.children.map((child: ListItemType) => {
                 return <ListItem
-                          class={LM.StyleClass.Child}
-                          itemType={LM.ItemType.Child}
                           key={child.id}
+                          parentID={props.item.id}
+                          class={LM.StyleClass.Child + " " + LM.StyleClass.Action}
+                          itemType={LM.ItemType.Child}
                           item={child}
                           eventHandler={props.eventHandler}
+                          selected={props.selectedId === child.id}
                         />
               })
             }
-          </ul>
+          </>
           }
-        </>
+        </ul>
         }
       </li>
     </>
