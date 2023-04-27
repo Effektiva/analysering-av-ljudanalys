@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import LeftMenu, { Type } from "./LeftMenu/LeftMenu";
-import SoundanalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
+import SoundAnalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
 import InvestigationPage from "./InvestigationPage/InvestigationPage";
 import AppState from "@/state/AppState";
 import Investigation from "@/models/General/Investigation";
@@ -21,7 +21,7 @@ type Props = {
  */
 const MainView = (props: Props) => {
   const [appState, setAppState] = useState<AppState>(props.appState);
-  const [page, setPage] = useState(<FrontPage/>);
+  const [page, setPage] = useState(<FrontPage />);
   const [forceUpdateLeftMenu, setForceUpdateLeftMenu] = useState<boolean>(false);
 
   const updateApp = (newState: AppState) => {
@@ -70,7 +70,7 @@ const MainView = (props: Props) => {
             newState.selectedSoundclip = undefined;
             setAppState(newState);
             setPage(
-              <SoundanalysisPage
+              <SoundAnalysisPage
                 key={appState.selectedSoundChain?.id}
                 soundchain={appState.selectedSoundChain!}
                 appState={appState}
@@ -93,7 +93,7 @@ const MainView = (props: Props) => {
             newState.selectedSoundclip = clip;
             setAppState(newState);
             setPage(
-              <SoundanalysisPage
+              <SoundAnalysisPage
                 key={appState.selectedSoundChain?.id}
                 soundchain={appState.selectedSoundChain!}
                 appState={appState}
@@ -103,7 +103,7 @@ const MainView = (props: Props) => {
         });
         break;
       default:
-        setPage(<FrontPage/>);
+        setPage(<FrontPage />);
         break;
     }
   }

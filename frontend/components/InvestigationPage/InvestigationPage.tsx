@@ -1,5 +1,5 @@
 import Investigation from "@/models/General/Investigation";
-import SoundClassFilterInput from "../SoundClassFilterInput";
+import SoundClassFilterInput from "../Filter/SoundClassFilterInput";
 import SoundchainList from "../LeftMenu/SoundchainList";
 import SoundChain from "@/models/General/SoundChain";
 

@@ -1,5 +1,15 @@
-import { log } from "console";
 import { useState, KeyboardEvent, ChangeEvent } from "react";
+
+const STYLE_NAMESPACE = "soundClassFilter__";
+enum Style {
+  Container = STYLE_NAMESPACE + "container",
+  Header = STYLE_NAMESPACE + "header",
+  Input = STYLE_NAMESPACE + "input",
+  List = STYLE_NAMESPACE + "list",
+  ListContainer = STYLE_NAMESPACE + "listContainer",
+  ListHeader = STYLE_NAMESPACE + "listHeader",
+  ListRemove = STYLE_NAMESPACE + "listRemove",
+}
 
 type Props = {
   dictionary: Array<string>
@@ -20,7 +30,7 @@ const SearchBar = (props: Props) => {
     return !props.activatedCategories.includes(elem);
   })
 
-  const [suggestions, setSuggestions] = useState<Suggestions>({elements: ["", ...unusedCategories], currentIndex: 0});
+  const [suggestions, setSuggestions] = useState<Suggestions>({ elements: ["", ...unusedCategories], currentIndex: 0 });
 
   // Finds dictionary sentences matching with input string.
   const findPrefix = (input: string): Array<string> => {
@@ -42,10 +52,10 @@ const SearchBar = (props: Props) => {
     if (value === "") {
       newElements = ["", ...unusedCategories];
     } else {
-      newElements =[...findPrefix(value), ""]; 
+      newElements = [...findPrefix(value), ""];
     }
 
-    setSuggestions({elements: newElements, currentIndex: 0});
+    setSuggestions({ elements: newElements, currentIndex: 0 });
     setDisplayInvalidInput(false);
   }
 
@@ -54,7 +64,7 @@ const SearchBar = (props: Props) => {
     switch (event.key) {
       case "ArrowDown":
         const nextIndex = suggestions.currentIndex === suggestions.elements.length - 1 ? 0 : suggestions.currentIndex + 1;
-        setSuggestions({...suggestions, currentIndex: nextIndex});
+        setSuggestions({ ...suggestions, currentIndex: nextIndex });
         break;
       case "ArrowRight":
         const value = suggestions.elements.length === 0 ? "" : suggestions.elements[suggestions.currentIndex];
@@ -62,7 +72,7 @@ const SearchBar = (props: Props) => {
           setPrefix(value);
         }
         setDisplayInvalidInput(false);
-        setSuggestions({elements: ["", ...findPrefix(value)], currentIndex: 0});
+        setSuggestions({ elements: ["", ...findPrefix(value)], currentIndex: 0 });
         break;
       case "Enter":
         const isValid = unusedCategories.includes(prefix.toLowerCase());
@@ -70,24 +80,23 @@ const SearchBar = (props: Props) => {
           props.onSubmit(prefix.toLowerCase())
           setPrefix("");
         }
-        setSuggestions({elements: ["", ...unusedCategories.filter((e) => {return e !== prefix;})], currentIndex: 0});
+        setSuggestions({ elements: ["", ...unusedCategories.filter((e) => { return e !== prefix; })], currentIndex: 0 });
         setDisplayInvalidInput(!isValid);
         break;
     }
   }
 
   return (
-    <div>
+    <div className={Style.Input}>
       <input
         type="text"
         name="search-bar"
         id="search-bar"
-        placeholder="Search..."
+        placeholder="Välj ljudklasser att filtrera på"
         value={prefix}
         onChange={changeHandler}
         onKeyDown={keyDownHandler}
       />
-
       <input
         type="text"
         name="search-bar"

@@ -1,13 +1,11 @@
 import { useState } from "react";
 import SoundClassFilterItem, { FilterItem } from "./SoundClassFilterItem";
 import SearchBar from "./SearchBar";
-import { log } from "console";
 import { CATEGORIES } from "./Categories";
 import CATS from './TempCategoryFetch.json';
-import { CANCELLED } from "dns";
 export type { FilterItem } from "./SoundClassFilterItem";
 
-const STYLE_NAMESPACE = "soundClassFilterInput__";
+const STYLE_NAMESPACE = "soundClassFilter__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
   Header = STYLE_NAMESPACE + "header",
@@ -17,9 +15,14 @@ enum Style {
   ListHeader = STYLE_NAMESPACE + "listHeader"
 }
 
+
+/**
+ * TODO: ska onChange vara med? verkar funka utan.
+ */
 type Props = {
-  onChange: Function;
+  //onChange: Function;
 }
+
 
 /**
  * Generates a list of all category names to use in autocompletion.
@@ -73,7 +76,6 @@ const SoundClassFilterInput = (props: Props) => {
 
   return (
     <div className={Style.Container}>
-      <div className={Style.Header}>Filtrering</div>
       <SearchBar dictionary={DICTIONARY} activatedCategories={activatedCategories} onSubmit={addCategoryHandler} />
       <div className={Style.ListContainer}>
         <div className={Style.ListHeader}>Aktiva filter</div>

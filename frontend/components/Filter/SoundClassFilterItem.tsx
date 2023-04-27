@@ -1,7 +1,11 @@
-import { LOG as log } from "@/pages/_app"
-
-const STYLE_NAMESPACE = "soundClassFilterInput__";
+const STYLE_NAMESPACE = "soundClassFilter__";
 enum Style {
+  Container = STYLE_NAMESPACE + "container",
+  Header = STYLE_NAMESPACE + "header",
+  Input = STYLE_NAMESPACE + "input",
+  List = STYLE_NAMESPACE + "list",
+  ListContainer = STYLE_NAMESPACE + "listContainer",
+  ListHeader = STYLE_NAMESPACE + "listHeader",
   ListRemove = STYLE_NAMESPACE + "listRemove",
 }
 
@@ -22,9 +26,9 @@ const SoundClassFilterItem = (props: Props) => {
   }
 
   return (
-    <li key={props.filterProperties.id}>
+    <li className={Style.ListContainer} key={props.filterProperties.id}>
+      <div className={Style.ListRemove} onClick={deleteHandler}>-</div>
       {props.filterProperties.name}
-      <div className={Style.ListRemove} onClick={deleteHandler}>X</div>
     </li>
   );
 }

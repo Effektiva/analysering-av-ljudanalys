@@ -1,34 +1,36 @@
-.soundClassFilterInput__container {
+.soundClassFilter__container {
     padding-top: 10px;
 }
 
-.soundClassFilterInput__header {
+.soundClassFilter__header {
+    font-size: 30px;
+}
+
+.soundClassFilter__input {
+    padding: 3px;
     font-size: 20px;
 }
 
-.soundClassFilterInput__input {
-    padding: 3px;
-}
-
-.soundClassFilterInput__input::placeholder {
+.soundClassFilter__input::placeholder {
     font-style: italic;
 }
 
-.soundClassFilterInput__listContainer {
+.soundClassFilter__listContainer {
+    list-style: none;
 }
 
-.soundClassFilterInput__listHeader {
+.soundClassFilter__listHeader {
     padding-top: 5px;
-    font-size: 17px;
+    font-size: 20px;
 }
 
-.soundClassFilterInput__list {
+.soundClassFilter__list {}
 
-}
-
-.soundClassFilterInput__listRemove {
+.soundClassFilter__listRemove {
     font-weight: bold;
-    float: right;
-    margin-right: 70%;
+    float: left;
+    margin-right: 4%;
+    border-radius: 20%;
+    padding-left: 2%;
+    padding-right: 2%;
 }
-
