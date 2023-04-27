@@ -24,7 +24,7 @@ const LeftMenu = (props: Props) => {
   const [dossiers, setDossiers] = useState<Dossier[]>(props.appState.dossiers);
 
   useEffect(() => {
-    log.debug("Forced!");
+    log.debug("Forced rerender leftmenu");
   }, [props.forceUpdate])
 
   useEffect(() => {
