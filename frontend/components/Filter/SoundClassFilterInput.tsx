@@ -1,8 +1,11 @@
 import { useState } from "react";
 import SoundClassFilterItem, { FilterItem } from "./SoundClassFilterItem";
-export type { FilterItem } from "./SoundClassFilterItem";
 import SearchBar from "./SearchBar";
 import { log } from "console";
+import { CATEGORIES } from "./Categories";
+import CATS from './TempCategoryFetch.json';
+import { CANCELLED } from "dns";
+export type { FilterItem } from "./SoundClassFilterItem";
 
 const STYLE_NAMESPACE = "soundClassFilterInput__";
 enum Style {
@@ -18,44 +21,31 @@ type Props = {
   onChange: Function;
 }
 
-const CATEGORIES: Array<FilterItem> = [
-  {
-    id: 0,
-    name: "Hund",
-    certaintyLevel: 40
-  },
-  {
-    id: 1,
-    name: "Bil",
-    certaintyLevel: 80
-  },
-  {
-    id: 3,
-    name: "Kebab",
-    certaintyLevel: 85
-  },
-  {
-    id: 4,
-    name: "Haj",
-    certaintyLevel: 60
-  },
-  {
-    id: 5,
-    name: "Haja",
-    certaintyLevel: 60
-  }
-];
+/**
+ * Generates a list of all category names to use in autocompletion.
+ */
+let DICTIONARY: Array<string> = [];
+for (let elem = 0; elem < CATEGORIES.length; elem++) {
+  DICTIONARY = [...DICTIONARY, CATEGORIES[elem].name.toLocaleLowerCase()];
+}
 
-// TODO: Ensure that casing isn´t a problem!
-const DICTIONARY: Array<string> = ["kebab", "bil", "hund", "haj", "haja"];
+/**
+ * Updates certainty level in CATEGORIES of those categories that where fetched from db.
+ * TODO: Ability to be called on when new soundClip is shown.
+ */
+for (let elem = 0; elem < CATS.CATS.length; elem++) {
+  let locInList = CATEGORIES.findIndex((category => category.name === CATS.CATS[elem].name));
+  CATEGORIES[locInList].certaintyLevel = CATS.CATS[elem].certaintyLevel;
+}
 
-// Initial content of the categorylist showing, determined by relevans.
-const THRESHOLD = 80;
+// Initial content of the categorylist showing, determined by relevance.
+const THRESHOLD = 50;
 const VALIDCATEGORIES = CATEGORIES.filter((category) => {
   return category.certaintyLevel >= THRESHOLD;
 })
 
-const SoundClassFilterInput = () => {
+
+const SoundClassFilterInput = (props: Props) => {
 
   const [activatedCategories, setActivatedCategories] = useState(
     VALIDCATEGORIES.map((category) => {
