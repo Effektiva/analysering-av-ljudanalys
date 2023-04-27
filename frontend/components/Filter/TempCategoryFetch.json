@@ -1,0 +1,14 @@
+{
+    "CATS": [
+        {
+            "id": 0,
+            "name": "Yell",
+            "certaintyLevel": 40
+        },
+        {
+            "id": 0,
+            "name": "Shout",
+            "certaintyLevel": 70
+        }
+    ]
+}
