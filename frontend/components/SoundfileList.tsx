@@ -7,6 +7,8 @@ import Popup from "@/components/Popup";
 import { LOG as log } from "@/pages/_app";
 import Soundclip from "@/models/General/Soundclip";
 import AppState from "@/state/AppState";
+import APIService from "@/models/APIService";
+import DossiersHelper from "@/models/DossiersHelper";
 
 type Props = {
   header: string,
@@ -45,21 +47,15 @@ const SoundfileList = (props: Props) => {
         break;
 
       case ListEvent.ContextAddToDossier:
-        log.debug("Add to dossier popup on:", response.id);
         setIsPopupVisible(true);
         setCurrentPopup(0);
-        if (response.parentID != undefined) {
-          setCurrentParentID(response.parentID);
-        }
+        setCurrentParentID(response.id);
         break;
 
       case ListEvent.ContextSetStatus: {
-        log.debug("Set status of:", response.id);
         setIsPopupVisible(true);
         setCurrentPopup(1);
-        if (response.parentID != undefined) {
-          setCurrentParentID(response.parentID);
-        }
+        setCurrentParentID(response.id);
         break;
       }
 
@@ -83,7 +79,15 @@ const SoundfileList = (props: Props) => {
     switch (response.event) {
       case ListEvent.ClickOnSubroot:
       case ListEvent.ClickOnRoot:
-        log.debug("Add clip", response.id, "to", currentParentID);
+        if (currentParentID != -1) {
+          let clip = props.appState.selectedSoundChain?.soundClips.find(clip => clip.id == currentParentID);
+          let newDossiers = DossiersHelper.addFileToDossier(props.appState.dossiers, response.id, clip!);
+          let newState = props.appState;
+          newState.dossiers = newDossiers;
+          props.updateAppState(newState);
+        } else {
+          log.warning("No dossier ID set.")
+        }
         setIsPopupVisible(false);
         break;
       default:
@@ -127,6 +131,9 @@ const SoundfileList = (props: Props) => {
       case ListEvent.ClickOnRoot:
         log.debug("Add status", statusPopupContents[response.id].text, "to", currentParentID);
         setIsPopupVisible(false);
+        APIService.setStatusOnSoundfile(props.appState.selectedInvestigation?.id!,
+                                        props.appState.selectedSoundChain?.id!,
+                                        currentParentID, response.id)
         break;
       default:
         log.error("Bad event: ", response.event)

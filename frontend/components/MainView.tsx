@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LeftMenu, { Type } from "./LeftMenu/LeftMenu";
 import SoundanalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
 import InvestigationPage from "./InvestigationPage/InvestigationPage";
 import AppState from "@/state/AppState";
-import SoundChain from "@/models/General/SoundChain";
 import Investigation from "@/models/General/Investigation";
 import { LOG as log } from "@/pages/_app";
 import APIService from "@/models/APIService";
@@ -12,7 +11,6 @@ import FrontPage from "./BasicLayout/FrontPage";
 type Props = {
   appState: AppState
 }
-
 
 /**
  * The MainView is the main component switching beteen pages (Investigations, Dossiers, etc)
@@ -23,12 +21,17 @@ type Props = {
  */
 const MainView = (props: Props) => {
   const [appState, setAppState] = useState<AppState>(props.appState);
+  const [page, setPage] = useState(<FrontPage/>);
+  const [forceUpdateLeftMenu, setForceUpdateLeftMenu] = useState<boolean>(false);
+
+  const updateApp = (newState: AppState) => {
+    setForceUpdateLeftMenu(prev => !prev); // TODO: See issue #104
+    setAppState(newState);
+  }
 
   const soundChainSelectedHandler = (id: number) => {
     selectedHandler(Type.SOUNDCHAIN, id);
   };
-
-  const [page, setPage] = useState(<FrontPage/>);
 
   const filterById = (dataList: Array<any>, id: number) => {
     const [data] = dataList.filter((data) => {
@@ -71,7 +74,7 @@ const MainView = (props: Props) => {
                 key={appState.selectedSoundChain?.id}
                 soundchain={appState.selectedSoundChain!}
                 appState={appState}
-                updateAppState={setAppState}
+                updateAppState={updateApp}
               />);
           });
         } else {
@@ -94,7 +97,7 @@ const MainView = (props: Props) => {
                 key={appState.selectedSoundChain?.id}
                 soundchain={appState.selectedSoundChain!}
                 appState={appState}
-                updateAppState={setAppState}
+                updateAppState={updateApp}
               />);
           });
         });
@@ -107,7 +110,11 @@ const MainView = (props: Props) => {
 
   return (
     <div className="main-view">
-      <LeftMenu selected={selectedHandler} appState={appState} />
+      <LeftMenu
+        forceUpdate={forceUpdateLeftMenu}
+        selected={selectedHandler}
+        appState={appState}
+      />
       {page}
     </div>
   )

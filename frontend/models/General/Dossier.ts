@@ -78,7 +78,6 @@ class Dossier implements ListItemRepresentable {
       subroots: children
     }
   }
-
 }
 
 export default Dossier;
