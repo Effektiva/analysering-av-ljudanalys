@@ -146,6 +146,22 @@ class APIService {
     return result;
   }
 
+  static createSubDossier = async (parentID: number, subName: string): Promise<number> => {
+    let result = -1;
+
+    await axios.post(this.apiURL + "/dossier/" + parentID, {"name": subName}).
+                then((response: any) => {
+                  if (response.status === 200) {
+                    result = response.data.id;
+                  } else {
+                    log.warning("Couldn't create subdossier:", response);
+                  }
+                });
+
+    return result;
+  }
+
+
   static changeDossierName = async (id: number, name: string) => {
     await axios.put(this.apiURL + "/dossier", {"id": id, "name": name}).
                 then((response: any) => {
@@ -164,19 +180,13 @@ class APIService {
                 });
   }
 
-  static createSubDossier = async (parentID: number, subName: string): Promise<number> => {
-    let result = -1;
-
-    await axios.post(this.apiURL + "/dossier/" + parentID, {"name": subName}).
+  static addSoundfileToDossier = async (dossierID: number, soundfileID: number) => {
+    await axios.post(this.apiURL + "/dossier/add/" + soundfileID, {"id": dossierID}).
                 then((response: any) => {
-                  if (response.status === 200) {
-                    result = response.data.id;
-                  } else {
-                    log.warning("Couldn't create subdossier:", response);
+                  if (response.status !== 200) {
+                    log.warning("Couldn't add soundfile to dossier:", response);
                   }
                 });
-
-    return result;
   }
 
   static deleteSoundfileFromDossier = async (dossierID: number, soundfileID: number) => {
@@ -185,9 +195,8 @@ class APIService {
                   if (response.status !== 200) {
                     log.warning("Couldn't remove soundfile from dossier:", response);
                   }
-                });
+    });
   }
-
 
   /*
    * Soundfiles
@@ -205,6 +214,18 @@ class APIService {
                 });
 
     return result;
+  }
+
+  static setStatusOnSoundfile = async (investigationID: number,
+                                       soundchainID: number,
+                                       soundfileID: number,
+                                       state: number) => {
+      await axios.put(this.apiURL + "/investigations/" + investigationID + "/soundchains/" + soundchainID + "/soundfiles/" + soundfileID, {"id": soundfileID, "state": state}).
+                  then((response: any) => {
+                      if (response.status !== 200) {
+                        log.warning("Couldn't set status of soundfile:", response);
+                      }
+                  });
   }
 
 }

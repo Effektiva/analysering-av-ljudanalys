@@ -4,10 +4,12 @@ import AppState from "@/state/AppState";
 import { useEffect, useState } from "react";
 import Investigation from "@/models/General/Investigation";
 import Dossier from "@/models/General/Dossier";
+import { LOG as log } from "@/pages/_app";
 
 type Props = {
   selected: Function,
-  appState: AppState
+  appState: AppState,
+  forceUpdate: boolean
 }
 
 export enum Type {
@@ -18,9 +20,12 @@ export enum Type {
 }
 
 const LeftMenu = (props: Props) => {
-
   const [investigations, setInvestigations] = useState<Investigation[]>(props.appState.investigations);
   const [dossiers, setDossiers] = useState<Dossier[]>(props.appState.dossiers);
+
+  useEffect(() => {
+    log.debug("Forced!");
+  }, [props.forceUpdate])
 
   useEffect(() => {
     setInvestigations(props.appState.investigations);

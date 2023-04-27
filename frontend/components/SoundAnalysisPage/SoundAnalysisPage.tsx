@@ -160,7 +160,7 @@ const SoundAnalysisPage = (props: Props) => {
             >Nuvarande klipp</button>
           </div>
           <button className={Style.AutoVolume}>
-            Automagisk ljudsänkning
+            Automatisk ljudsänkning
           </button>
         </div>
         <MetadataView

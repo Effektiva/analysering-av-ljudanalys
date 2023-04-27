@@ -148,7 +148,8 @@ export const ListItem = (props: Props) => {
                           key={subroot.id}
                           class={LM.StyleClass.Subroot + " " + LM.StyleClass.Collapsable}
                           itemType={LM.ItemType.Subroot}
-                          parentID={props.item.id}
+                          //parentID={props.item.id}
+                          parentID={subroot.id}
                           item={subroot}
                           changeTextID={props.changeTextID}
                           eventHandler={props.eventHandler}
@@ -164,7 +165,7 @@ export const ListItem = (props: Props) => {
               props.item.children.map((child: ListItemType) => {
                 return <ListItem
                           key={child.id}
-                          parentID={props.parentID}
+                          parentID={props.item.id}
                           class={LM.StyleClass.Child + " " + LM.StyleClass.Action}
                           itemType={LM.ItemType.Child}
                           item={child}
