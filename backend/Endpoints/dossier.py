@@ -143,7 +143,13 @@ async def create_soundInDossier(request: Request, id: int):
     if data.get("id") is None:
         return "'id' för dossiern saknas"
 
+    already_in = makeList(session.execute(select(models.Folder).where(models.Folder.dossier_id == data["id"], models.Folder.sound_file_id == id)).fetchall())
+    print(already_in)
+    if already_in:
+        return "File already in dossier"
+
     session.execute(insert(models.Folder).values(dossier_id = data["id"], sound_file_id = id))
+    return 200
 
 
 # Ta bort ett ljudklipp från en dossier (d_id: int, s_id: int)
