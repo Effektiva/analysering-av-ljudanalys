@@ -58,8 +58,8 @@ const MainView = (props: Props) => {
           setPage(
             <InvestigationPage
               key={appState.selectedInvestigation?.id}
-              investigation={appState.selectedInvestigation!}
-              soundChains={appState.soundChains}
+              appState={newState}
+              setAppState={updateApp}
               soundChainSelected={soundChainSelectedHandler}
             />);
         });
@@ -76,7 +76,7 @@ const MainView = (props: Props) => {
               <SoundanalysisPage
                 key={appState.selectedSoundChain?.id}
                 soundchain={appState.selectedSoundChain!}
-                appState={appState}
+                appState={newState}
                 updateAppState={updateApp}
               />);
           });
@@ -100,9 +100,9 @@ const MainView = (props: Props) => {
             setAppState(newState);
             setPage(
               <SoundanalysisPage
-                key={appState.selectedSoundChain?.id}
-                soundchain={appState.selectedSoundChain!}
-                appState={appState}
+                key={newState.selectedSoundChain?.id}
+                soundchain={newState.selectedSoundChain!}
+                appState={newState}
                 updateAppState={updateApp}
               />);
           });
