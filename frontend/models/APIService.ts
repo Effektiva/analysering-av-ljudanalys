@@ -164,6 +164,7 @@ class APIService {
 
 
   static changeDossierName = async (id: number, name: string) => {
+    log.debug("Change name of", id, "to", name);
     await axios.put(this.apiURL + "/dossier", {"id": id, "name": name}).
                 then((response: any) => {
                   if (response.status !== 200) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
