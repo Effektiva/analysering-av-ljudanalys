@@ -24,9 +24,21 @@ const MainView = (props: Props) => {
   const [page, setPage] = useState(<FrontPage/>);
   const [forceUpdateLeftMenu, setForceUpdateLeftMenu] = useState<boolean>(false);
 
+  // For debugging purposes, to see how often the whole app rerenders.
+  useEffect(() => {
+    log.debug("MainView rerender");
+  }, []);
+
   const updateApp = (newState: AppState) => {
-    setForceUpdateLeftMenu(prev => !prev); // TODO: See issue #104
+    log.debug("appState updated");
     setAppState(newState);
+
+    // The LeftMenu contains dossiers which is a nested array. When it updates
+    // useEffect doesn't seem to be able to pick it up. It can be updated from
+    // both within the list itself, but also from SoundAnalysisPage when we add
+    // a soundfile to a dossier. So we need a way to update the LeftMenu when
+    // that happens. This is the way.
+    setForceUpdateLeftMenu(prev => !prev); // TODO: See issue #104
   }
 
   const soundChainSelectedHandler = (id: number) => {

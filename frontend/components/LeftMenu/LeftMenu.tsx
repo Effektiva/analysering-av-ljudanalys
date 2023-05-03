@@ -4,8 +4,7 @@ import AppState from "@/state/AppState";
 import { useEffect, useState } from "react";
 import Investigation from "@/models/General/Investigation";
 import Dossier from "@/models/General/Dossier";
-import {FaCommentDots } from "react-icons/fa";
-import { LOG as log } from "@/pages/_app";
+import { FaCommentDots } from "react-icons/fa";
 
 type Props = {
   selected: Function,
@@ -23,10 +22,6 @@ export enum Type {
 const LeftMenu = (props: Props) => {
   const [investigations, setInvestigations] = useState<Investigation[]>(props.appState.investigations);
   const [dossiers, setDossiers] = useState<Dossier[]>(props.appState.dossiers);
-
-  useEffect(() => {
-    log.debug("Forced rerender leftmenu");
-  }, [props.forceUpdate])
 
   useEffect(() => {
     setInvestigations(props.appState.investigations);
