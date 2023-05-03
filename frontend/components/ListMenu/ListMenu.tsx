@@ -1,11 +1,10 @@
-import { ReactNode, useEffect, useReducer, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import ContextMenu from "@/components/ContextMenu/ContextMenu";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { ItemStatus, ListItemType } from "./ListItemType";
 import { LOG as log } from "@/pages/_app";
 import { ListItem } from "./ListItem";
-import { IconType } from "react-icons";
 import { FaCheckCircle, FaMinusCircle, FaCloud } from "react-icons/fa";
 
 type Props = {
@@ -14,7 +13,6 @@ type Props = {
   contextMenus?: Array<ContextItem[]>,
   toggleableRoots?: boolean,
   selectedId?: number,
-  forceUpdate?: boolean
 }
 
 /**
@@ -140,7 +138,7 @@ const ListMenu = (props: Props) => {
 
   useEffect(() => {
     setItems(props.items);
-  }, [props.items, props.forceUpdate]);
+  }, [props.items]);
 
   // We use this to hide the ContextMenu in case we get a click outside of the div that
   // contains the ContextMenu.
