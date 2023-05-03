@@ -77,7 +77,7 @@ const DossierList = (props: Props) => {
         setDossiers(await DossiersHelper.createSubdossier(dossiers, response.id));
         break;
       case ListEvent.ContextExport:
-        log.debug("Export", "(" + response.itemType + "):", response.id);
+        APIService.exportDossier(response.id);
         break;
       case ListEvent.ContextDelete:
         switch(response.itemType) {
