@@ -22,7 +22,6 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 
 const SoundchainList = (props: Props) => {
   const [soundchains, setSoundchains] = useState(props.soundchains);
-  const [menuVisible, setMenuVisible] = useState<boolean>(true);
 
   const eventHandler = (response: ListEventResponse) => {
     switch(response.event) {
@@ -48,26 +47,21 @@ const SoundchainList = (props: Props) => {
     }
   }
 
-  const toggleVisibility = () => {
-    setMenuVisible(!menuVisible);
-  }
-
   return (
     <>
-      <span
+      <div
         className="listMenuHeader"
-        onClick={toggleVisibility}
       >
-        Samtliga ljudkedjor
-      </span>
-      { menuVisible &&
-        <ListMenu
-          key={soundchains.length}
-          items={soundchains.map(soundchain => soundchain.asListItem())}
-          contextMenus={CONTEXT_MENUS}
-          eventHandler={eventHandler}
-        />
-      }
+        <div className="listItemButton">
+          Samtliga ljudkedjor
+        </div>
+      </div>
+      <ListMenu
+        key={soundchains.length}
+        items={soundchains.map(soundchain => soundchain.asListItem())}
+        contextMenus={CONTEXT_MENUS}
+        eventHandler={eventHandler}
+      />
     </>
   )
 }

@@ -4,6 +4,7 @@ import AppState from "@/state/AppState";
 import { useEffect, useState } from "react";
 import Investigation from "@/models/General/Investigation";
 import Dossier from "@/models/General/Dossier";
+import {FaCommentDots } from "react-icons/fa";
 import { LOG as log } from "@/pages/_app";
 
 type Props = {
@@ -45,6 +46,16 @@ const LeftMenu = (props: Props) => {
 
   return (
     <div className="left-menu">
+      <div className="left-menu__top">
+        <div className="left-menu__button">
+          <p>
+            Utredar Assisterar Program
+          </p>
+          <div className="left-menu__icon">
+            <FaCommentDots/>
+          </div>
+        </div>
+      </div>
       <InvestigationList
         key={"invs:" + investigations.join(',')}
         selected={selectedInvestigationHandler}

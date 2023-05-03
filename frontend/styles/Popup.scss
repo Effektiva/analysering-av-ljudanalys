@@ -10,12 +10,6 @@
     z-index: 1;
 }
 
-.popupCloseButton {
-    align-self: flex-end;
-
-    @include palette.interactable;
-}
-
 /* The window that covers the screen */
 .popupContainer {
     position: relative;
@@ -30,9 +24,42 @@
 
     display: flex;
     flex-direction: column;
-    padding: 10px 20px;
+
+    min-width: 400px;
+    padding: 20px 30px;
 
     border-radius: 4px;
-    border: 1px solid black;
-    background-color: white;
+
+    @include palette.popup;
+
+    box-shadow: 3px 4px 3px 0 rgba(0,0,0,0.75);
+
+    .popupTop {
+        display: flex;
+
+        padding-bottom: 15px;
+        border-bottom: lightgray 2px solid;
+
+        .popupTitle {
+            width: 100%;
+            padding-right: 15px;
+
+            font-weight: bold;
+        }
+
+        .popupCloseButton {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            width: 1.5em;
+
+            @include palette.interactable;
+            @include palette.popup-button;
+        }
+    }
+
+    .popupContent {
+        padding-top: 15px;
+    }
 }

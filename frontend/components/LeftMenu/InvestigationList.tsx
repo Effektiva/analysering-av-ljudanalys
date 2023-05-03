@@ -76,24 +76,25 @@ const InvestigationList = (props: Props) => {
   return (
     <>
       <div className="investigation_listmenu">
-        <span
-          className={"listMenuHeader" + ( !menuVisible ? " collapsed" : "")}
-          onClick={toggleVisibility}
+        <div
+          className={"listMenuHeader listItemCollapsable" + ( !menuVisible ? " collapsed" : "")}
         >
-          Utredningar
-        </span>
-        { menuVisible &&
-          <>
-            <ListMenu
-              key={investigations.length}
-              items={investigations.map(investigation => investigation.asListItem())}
-              contextMenus={CONTEXT_MENUS}
-              eventHandler={eventHandler}
-              selectedId={props.appState.selectedInvestigation?.id}
-              />
-            <button className="listAddButton" onClick={addNewItem}>Ny utredning</button>
-          </>
-        }
+          <div className="listItemButton"
+            onClick={toggleVisibility}
+          >
+            Utredningar
+          </div>
+        </div>
+        <div>
+          <ListMenu
+            key={investigations.length}
+            items={investigations.map(investigation => investigation.asListItem())}
+            contextMenus={CONTEXT_MENUS}
+            eventHandler={eventHandler}
+            selectedId={props.appState.selectedInvestigation?.id}
+            />
+          <button className="listAddButton" onClick={addNewItem}>Ny utredning</button>
+        </div>
       </div>
     </>
   )

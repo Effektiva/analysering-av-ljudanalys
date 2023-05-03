@@ -99,13 +99,20 @@ export const ListItem = (props: Props) => {
   /*
    * Returns the wanted css classes for the current ListItem.
    */
-  const getStyleClasses = (mainClass: string, hidden: boolean) => {
-    let classes = "";
+  const getStyleClasses = (mainClass: string, hidden: boolean, selected: boolean) => {
+    let classes = mainClass + " ";
+
+    if (props.item.subroots || props.item.children) {
+      classes += LM.StyleClass.Collapsable + " ";
+    }
+
     if (hidden) {
       classes += "collapsed ";
     }
+    if (selected) {
+      classes += "selected ";
+    }
 
-    classes += mainClass;
     return classes;
   }
 
@@ -119,13 +126,15 @@ export const ListItem = (props: Props) => {
       <li>
         { props.item.id != props.changeTextID ?
             <div
-              className={getStyleClasses(props.class, hidden)}
-              onClick={() => clickHandler()}
-              onContextMenu={contextClickHandler}
-            >
-              { props.selected === true ? <b>{props.item.text}</b> : props.item.text }
-
-              { props.icon }
+              className={getStyleClasses(props.class, hidden, props.selected)}
+              >
+              <div className="listItemButton"
+                onClick={() => clickHandler()}
+                onContextMenu={contextClickHandler}
+                >
+                { props.item.text }
+                { props.icon }
+              </div>
             </div>
           :
             <ListItemInput
@@ -138,15 +147,15 @@ export const ListItem = (props: Props) => {
             />
         }
 
-        { !hidden && (props.item.subroots || props.item.children) &&
-        <ul>
+        { (props.item.subroots || props.item.children) &&
+        <ul className="listMenu">
           { props.item.subroots &&
           <>
             {
               props.item.subroots.map((subroot: ListItemType) => {
                 return <ListItem
                           key={subroot.id}
-                          class={LM.StyleClass.Subroot + " " + LM.StyleClass.Collapsable}
+                          class={LM.StyleClass.Subroot}
                           itemType={LM.ItemType.Subroot}
                           //parentID={props.item.id}
                           parentID={subroot.id}

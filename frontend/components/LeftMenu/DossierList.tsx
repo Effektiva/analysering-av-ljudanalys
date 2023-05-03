@@ -121,13 +121,16 @@ const DossierList = (props: Props) => {
   return (
     <>
       <div className="dossier_listmenu">
-        <span
-          className={"listMenuHeader" + ( !menuVisible ? " collapsed" : "")}
-          onClick={toggleVisibility}
+        <div
+          className={"listMenuHeader listItemCollapsable" + ( !menuVisible ? " collapsed" : "")}
         >
-          Dossier
-        </span>
-        { menuVisible &&
+          <div className="listItemButton"
+            onClick={toggleVisibility}
+          >
+            Dossier
+          </div>
+        </div>
+        <div>
           <ListMenu
             key={dossiers.length}
             items={dossiers.map((dossier) => dossier.asListItem())}
@@ -137,8 +140,8 @@ const DossierList = (props: Props) => {
             selectedId={props.appState.selectedSoundclip?.id}
             forceUpdate={forceUpdate}
           />
-        }
-        <button className="listAddButton" onClick={addNewItem}>Ny dossier</button>
+          <button className="listAddButton" onClick={addNewItem}>Ny dossier</button>
+        </div>
       </div>
     </>
   )

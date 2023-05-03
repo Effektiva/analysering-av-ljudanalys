@@ -7,14 +7,9 @@
 
     flex-direction: row;
 
-    width: 100%;
     height: 100%;
+    width: 100%;
     padding: 0 10px;
-
-    background-color: none;
-    color: inherit;
-
-
 
     /* Columns of soundAnalysisPage */
     .soundAnalysisPage__col {
@@ -78,7 +73,7 @@
 
 
         /* All interactable list items in the lists */
-        .listItemCollapsable, .listItemAction {
+        .listItemButton {
             @include palette.soundchain-list-button;
         }
     }

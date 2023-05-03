@@ -158,7 +158,9 @@ const SoundfileList = (props: Props) => {
       <div
         className="listMenuHeader"
       >
-        {props.header}
+        <div className="listItemButton">
+          {props.header}
+        </div>
       </div>
       <ListMenu
         key={items.length}
@@ -172,12 +174,14 @@ const SoundfileList = (props: Props) => {
           {currentPopup ?
             <Popup
               component={statusPopupComponent}
+              title="Sätt status av ljudklipp till"
               reference={popupContainerReference}
               closeHandler={closePopup}
             />
             :
             <Popup
               component={dossierPopupComponent}
+              title="Lägg till ljudklipp i dossier"
               reference={popupContainerReference}
               closeHandler={closePopup}
             />
