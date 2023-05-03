@@ -209,7 +209,6 @@ const ListMenu = (props: Props) => {
     // since we want to create an in-line input textbox.
     if (event == ListEvent.ContextChangeText) {
       setChangeTextID(contextMenuOwnerID);
-      log.debug("Change name of type", itemType, "with id", contextMenuOwnerID);
       return;
     }
 

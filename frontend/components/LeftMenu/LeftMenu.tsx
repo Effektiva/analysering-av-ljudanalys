@@ -44,7 +44,7 @@ const LeftMenu = (props: Props) => {
       <div className="left-menu__top">
         <div className="left-menu__button">
           <p>
-            Utredar Assisterar Program
+            Utredningsassistansprogram
           </p>
           <div className="left-menu__icon">
             <FaCommentDots/>

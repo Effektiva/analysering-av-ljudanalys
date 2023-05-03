@@ -12,15 +12,16 @@ class DossiersHelper {
     let root = (indexes.root != -1 && indexes.subroot == -1);
     let found = ((indexes.root != -1 && indexes.subroot != -1) || root);
 
+
     if (!found) {
       log.warning("Couldn't find dossier:", dossierId);
       log.warning("Dossiers:", newDossiers);
     } else if (root) {
       newDossiers[indexes.root].name = text;
-      APIService.changeDossierName(indexes.root, text);
+      APIService.changeDossierName(dossierId, text);
     } else {
       newDossiers[indexes.root].subdossiers[indexes.subroot].name = text;
-      APIService.changeDossierName(indexes.subroot, text);
+      APIService.changeDossierName(dossierId, text);
     }
 
     return newDossiers;
