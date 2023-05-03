@@ -2,10 +2,11 @@ from queue import Empty
 from sqlalchemy import select, insert, update, delete
 from fastapi import APIRouter, Request, Response
 import models
+import os
 
 from .helpers import makeList, session
 
-router4= APIRouter()
+router4 = APIRouter()
 
 # Hämta vilken ljudkejda och utredning en ljufdil hör till
 @router4.get("/info/soundfile/{id1}")
@@ -68,13 +69,13 @@ async def create_comment(request: Request, id1: int, id2: int):
 
 # HÄMTA KOMENTARER FÖR ETT SPECIFIKT LJUDKLIPP
 @router4.get("/investigations/{id1}/soundchains/{id2}/soundfiles/{id3}/comments")
-async def remove_comment(id1: int, id2: int, id3: int):
+async def select_comment(id1: int, id2: int, id3: int):
     return makeList(session.execute(select(models.Comments).where(models.Comments.sound_file_id == id3)).fetchall())
 
 
 # Skapa put för kommentarer så man kan redigera
 @router4.put("/investigations/{id1}/sound/{id2}/comments")
-async def remove_comment(request: Request):
+async def update_comment(request: Request):
     try:
         data = await request.json()
     except:
@@ -82,8 +83,6 @@ async def remove_comment(request: Request):
 
 
     return session.execute(update(models.Comments).where(models.Comments.id == data["id"]).values(text = data["text"]))
-
-
 
 
 # Ta bort en kommentar
@@ -97,7 +96,35 @@ async def remove_comment(request: Request):
     return session.execute(delete(models.Comments).where(models.Comments.id == data["id"]))
 
 
-# Hämta ljuddata som är kopplats med en ljudfils id TODO TA BORT!
-@router4.get("investigations/{id1}/soundchains/{id2}/soundfiles/{id3}")
-async def read_sounddata(id3 = int):
-    return session.execute(select(models.SoundFile).where(models.SoundFile.id == id3)).fetchall()
+# Hämta ljuddata som är kopplats med en ljudfils
+@router4.get("/investigations/{id1}/soundchains/{id2}/soundfiles/{id3}")
+async def read_sounddata(id1: int, id2: int, id3: int):
+
+    # Hämta ljudfilen
+    soundFile = makeList(session.execute(select(models.SoundFile).where(models.SoundFile.id == id3)).fetchall())
+
+    if not soundFile:
+        return "Filen finns inte"
+
+    name = soundFile[0].file_name
+    print(name)
+
+    path = f"./parent/{id1}/{id2}/{name}"
+
+    print(path)
+
+    if not os.path.isfile(path):
+        return "Vägen till filen gick inte att hitta"
+
+    # Open the sound file as a binary file
+    #path = "./experiment.mp3"
+    with open(path, "rb") as file:
+        contents = file.read()
+
+    # File formatet
+    file_format = name.split(".")[1]
+    print(file_format)
+    #file_format = "mp3"
+
+    # Returnera ljudfilen
+    return Response(contents, media_type=f"audio/{file_format}")
