@@ -1,6 +1,12 @@
 from sqlalchemy import select, insert, update, delete
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Request, Response, File, UploadFile
 import models
+from typing import List
+import audio_metadata
+import os
+import datetime
+import time
+from pydub import AudioSegment
 
 from .helpers import makeList, session
 
@@ -53,25 +59,117 @@ async def read_investigationsSoundChains(id: int):
     return soundChainList
 
 
+
+# Hjälpfunktion för post som ligger nedanför, hanterar filer som inte matchar på något sätt så att de ändå lägs in (〜￣▽￣)〜
+async def wierdFiles(id, files):
+    SCID = makeList(session.execute(insert(models.SoundChain)
+                                .values(start_time = 1337, investigations_id = id)
+                                .returning(models.SoundChain.id)).fetchall())[0]
+
+    file_path = f"parent/{id}/{SCID}/"
+
+    # Skapar map där filerna ska ligga i
+    os.mkdir(file_path)
+
+    # Går igenom alla filer och skapar nya soundfiles i databasen samt lägger in dem i vårt interna filsystem
+    for file in files:
+        content = await file.read()
+        session.execute(insert(models.SoundFile).values(file_name = file.filename, sound_chain_id = SCID))
+        path_name = file_path + file.filename
+        with open(path_name, "wb") as f:
+            f.write(content)
+
+
+# Fixar tid för start och end.
+def calc_time(start_date, start_time, audio_len):
+    start_year = int(start_date[0])
+    start_month = int(start_date[1])
+    start_day = int(start_date[2])
+    start_hour = int(start_time[0])
+    start_min = int(start_time[1])
+    start_sec = int(start_time[2])
+    time_start = datetime.datetime(start_year, start_month, start_day, start_hour, start_min, start_sec)
+    delta_sec = datetime.timedelta(seconds=audio_len.streaminfo.duration)
+    time_end = time_start + delta_sec
+    datum_start = time.mktime(time_start.timetuple())
+    datum_end = time.mktime(time_end.timetuple())
+    return (datum_start, datum_end)
+
+
+# Tar in ett soundclip id och skapar alla ljudinterval
+def time_interval(soundFileId, path):
+    SoundFile = makeList(session.execute(select(models.SoundFile).where(models.SoundFile.id == soundFileId)).fetchall())[0]
+    if not SoundFile:
+        return "Something went wrong"
+
+    path = path + f"{SoundFile.file_name}"
+
+    # load the audio file
+    audio_file = AudioSegment.from_file(path)
+
+    # set the interval duration in milliseconds
+    interval_duration = 10000
+
+    # calculate the number of intervals
+    num_intervals = int(audio_file.duration_seconds * 1000 / interval_duration)
+
+    # iterate over the intervals
+    for i in range(num_intervals):
+        # calculate the start and end time of the interval
+        start_time = i * interval_duration
+        end_time = (i + 1) * interval_duration
+
+        # get the audio data for the interval
+        interval_audio = audio_file[start_time:end_time]
+
+        # calculate the maximum volume of the interval
+        max_volume = interval_audio.max_dBFS
+
+        # Skapa nytt tidsintervall
+        session.execute(insert(models.SoundInterval).values(start_time = start_time/1000, end_time = end_time/1000, highest_volume = max_volume, sound_file_id = soundFileId))
+
+
 # Skapar nya ljudkedjor med hjälp av massor av ljudfiler, skapar också ljudfiler
 # Indata får gärna se ut såhär tex
 # Denna kan inte hantera flera ljudfiler med samma start_time eller överlapp
 # INDATA = [{starttime: 120312, endtime: 12973, inv_id: 1, filename: path/filnamn}, {}, {}] # TODO
 @router3.post("/investigations/{id}/soundchains")
-async def create_investigationsSoundChains(id: int, request: Request):
-    try:
-        data = await request.json()
-    except:
-        return "Ingen data skickas" # Kolla vad vi ska få för data för guds
-    # id är investigation id
+async def create_investigationsSoundChains(id: int, files: List[UploadFile] = File(...)):
 
-    # Vi kanske får in en lista med ljudfilsnamn
+    # Ifall detta är första gången vi lägger in ljudkedjor i investigation
+    folderPath = f"parent/{id}"
+    print(os.path.isdir(folderPath))
+    if not os.path.isdir(folderPath):
+        os.mkdir(folderPath)
 
-    # Vi hämtar ut start och endtime
+    call_error = False
+    safe_word = []
+    file_dic = []
+
+    # Går igenom alla filer som vi har fått
+    for file in files:
+        content = await file.read()
+
+        # Kollar på innehållet av filen och drar ut när den starta och slutar utifrån innehållet och namnet
+        try:
+            audio_len = audio_metadata.loads(content)
+            start_date = file.filename.split("_")[0].split("-")
+            start_time = file.filename.split("_")[1].split("-")
+            start_end_time = calc_time(start_date, start_time, audio_len)
+            file_dic.append({"start_time": start_end_time[0], "end_time": start_end_time[1], "inv_id": id, "file_name": file.filename, "content": content})
+
+        except:
+            #Filnamnet är inte i rätt form på en av filerna eller så kan ljudlängden inte extraherats
+            safe_word.append(file)
+            call_error = True
 
 
+    # Om några filer inte har rätt namnform eller att vi inte kan få ut längden av dem på något sätt skapar vi en egen kedja för dem
+    if call_error:
+        await wierdFiles(id, safe_word)
 
-    sorted_data = sorted(data, key=lambda d: d['start_time'])  # Sorterar listan efter start_time
+
+    sorted_data = sorted(file_dic, key=lambda d: d['start_time'])  # Sorterar listan efter start_time
     last_time = None # Senaste end_time, behövs för att kolla ifall vi ska skapa en ny ljudkedja eller ej
     curr_SCID = None # Nuvarande ljudkedjan vi håller på att bygga nu
     for object in sorted_data:
@@ -81,9 +179,22 @@ async def create_investigationsSoundChains(id: int, request: Request):
                                         .values(start_time = object["start_time"], investigations_id = object["inv_id"])
                                         .returning(models.SoundChain.id)).fetchone()[0]
 
+            file_path = f"parent/{id}/{curr_SCID}/"
+            os.mkdir(file_path) # Skapar ny map för kedjan
+
+
+        path_name = file_path + object["file_name"]
+        # Skapar ny ljudfil med innehållet av de vi fick
+        with open(path_name, "wb") as f:
+            f.write(object["content"])
+
         # Lägg till ljudfilerna i databasen
-        session.execute(insert(models.SoundFile)
-                        .values(start_time = object["start_time"], end_time = object["end_time"], file_name = object["file_name"], sound_chain_id = curr_SCID))
+        soundFileId = makeList(session.execute(insert(models.SoundFile)
+                                               .values(start_time = object["start_time"], end_time = object["end_time"], file_name = object["file_name"], sound_chain_id = curr_SCID)
+                                               .returning(models.SoundFile.id)).fetchall())
+
+        # Lägg till tidsintervall för ljudfilerna
+        time_interval(soundFileId[0], file_path)
 
         last_time = object["end_time"]
 

@@ -17,6 +17,24 @@ import datetime
 import time
 import base64
 
+import os
+import shutil
+
+# Sätt till true under utveckling för just nu rensas databasen efter varje omstart
+DEV = True
+
+if DEV:
+    directory = "./parent"
+
+    for file_name in os.listdir(directory):
+        file_path = os.path.join(directory, file_name)
+        try:
+            shutil.rmtree(file_path)
+
+        except:
+            print("Something went wrong when removing old files")
+
+
 app = FastAPI()
 
 app.include_router(router1)
