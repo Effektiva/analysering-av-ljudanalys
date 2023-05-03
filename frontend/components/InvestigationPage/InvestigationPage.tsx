@@ -1,11 +1,11 @@
-import Investigation from "@/models/General/Investigation";
 import SoundClassFilterInput from "../SoundClassFilterInput";
 import SoundchainList from "../LeftMenu/SoundchainList";
-import SoundChain from "@/models/General/SoundChain";
+import AppState from "@/state/AppState";
+import { useState } from "react";
 
 type Props = {
-  investigation: Investigation,
-  soundChains: Array<SoundChain>,
+  appState: AppState,
+  setAppState: Function,
   soundChainSelected: (id: number) => void
 }
 
@@ -20,6 +20,12 @@ enum Style {
 }
 
 const InvestigationPage = (props: Props) => {
+  const [_, setForceUpdateLists] = useState<boolean>(false);
+
+  const updateLists = () => {
+    setForceUpdateLists(prev => !prev);
+  };
+
   return <>
     <div className={Style.Container}>
       {/* Left column */}
@@ -35,17 +41,19 @@ const InvestigationPage = (props: Props) => {
       <div className={Style.Column}>
         <div className={Style.Filtered}>
           <SoundchainList
-            soundchains={props.soundChains}
+            appState={props.appState}
+            setAppState={props.setAppState}
             soundChainSelected={props.soundChainSelected}
-            investigationID={props.investigation.id}
+            forceUpdate={updateLists}
           />
         </div>
 
         <div className={Style.All}>
           <SoundchainList
-            soundchains={props.soundChains}
+            appState={props.appState}
+            setAppState={props.setAppState}
             soundChainSelected={props.soundChainSelected}
-            investigationID={props.investigation.id}
+            forceUpdate={updateLists}
           />
         </div>
       </div>

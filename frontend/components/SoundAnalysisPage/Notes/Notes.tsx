@@ -3,16 +3,12 @@ import NotesList from "./NoteList";
 import { LOG as log } from "@/pages/_app";
 import Note from "@/models/SoundAnalysis/Note";
 import TimeInClip from "@/models/SoundAnalysis/TimeInClip";
-<<<<<<< HEAD
-import axios from "axios";
-=======
 import SoundChain from "@/models/General/SoundChain";
 
 type Props = {
   soundchain: SoundChain,
   soundchainCommentsUpdated: (newNotes: Array<Note>) => void,
 }
->>>>>>> 486864033e6cb2148ff778f856214a161ac3683d
 
 const STYLE_NAMESPACE = "notes__";
 enum Style {
@@ -48,28 +44,9 @@ const Notes = (props: Props) => {
     }
     setId(id + 1);
     try {
-<<<<<<< HEAD
-      let note = new Note(id + 1, new Date(), TimeInClip.fromTimeString(timeElement!.value), textAreaElement!.value); // Dont care about id since we should not set it here... TODO: Fix this...
-
-      // First axios call test. This is wewy scawy UwU, Använder postman istället
-      /*
-      axios.post('http://localhost:8000/investigations', {
-        "name": "Fungerar jag?"
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-      */
-
-      setNotes([...notes, note].sort((a, b) => a.timeInClip.getTime() - b.timeInClip.getTime()));
-=======
       let note = new Note(id + 1, new Date(), TimeInClip.fromTimeString(timeElement!.value), textAreaElement!.value); // Dont care about id since we should not set it here... TODO: Fix this...\
       let sortedNotes = [...notes, note].sort((a, b) => a.timeInClip.getTime() - b.timeInClip.getTime());
       setNotes(sortedNotes);
->>>>>>> 486864033e6cb2148ff778f856214a161ac3683d
     } catch (error) {
       log.warning("Got error: " + error);
     }

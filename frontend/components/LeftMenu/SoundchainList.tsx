@@ -4,11 +4,13 @@ import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 import SoundChain from "@/models/General/SoundChain";
 import APIService from "@/models/APIService";
+import AppState from "@/state/AppState";
 
 type Props = {
-  soundchains: Array<SoundChain>,
+  appState: AppState,
+  setAppState: Function,
   soundChainSelected: (id: number) => void,
-  investigationID: number | undefined
+  forceUpdate: Function
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -21,7 +23,7 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundchainList = (props: Props) => {
-  const [soundchains, setSoundchains] = useState(props.soundchains);
+  const [_, setForceUpdate] = useState<boolean>(false);
 
   const eventHandler = (response: ListEventResponse) => {
     switch(response.event) {
@@ -29,18 +31,18 @@ const SoundchainList = (props: Props) => {
         log.debug("Goto soundchain:", response.id);
         props.soundChainSelected(response.id);
         break;
-
-      case ListEvent.ContextDelete: {
-        if (props.investigationID) {
-          APIService.deleteSoundchain(props.investigationID, response.id);
-          let newSoundchains = [...soundchains];
-          let index = soundchains.findIndex((elem: SoundChain) => elem.id == response.id);
-          newSoundchains.splice(index, 1);
-          setSoundchains(soundchains);
+      case ListEvent.ContextDelete:
+        {
+          APIService.deleteSoundchain(props.appState.selectedInvestigation?.id!, response.id);
+          let newState = props.appState;
+          newState.soundChains = [...props.appState.soundChains];
+          let index = newState.soundChains.findIndex((elem: SoundChain) => elem.id == response.id);
+          newState.soundChains.splice(index, 1);
+          props.setAppState(newState);
+          props.forceUpdate();
+          setForceUpdate(prev => !prev);
         }
         break;
-      }
-
       default:
         log.error("Bad event: ", response.event)
         break;
@@ -56,12 +58,11 @@ const SoundchainList = (props: Props) => {
           Samtliga ljudkedjor
         </div>
       </div>
-      <ListMenu
-        key={soundchains.length}
-        items={soundchains.map(soundchain => soundchain.asListItem())}
-        contextMenus={CONTEXT_MENUS}
-        eventHandler={eventHandler}
-      />
+        <ListMenu
+          items={props.appState.soundChains.map(soundchain => soundchain.asListItem())}
+          contextMenus={CONTEXT_MENUS}
+          eventHandler={eventHandler}
+        />
     </>
   )
 }

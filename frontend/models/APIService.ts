@@ -100,6 +100,7 @@ class APIService {
   }
 
   static deleteSoundchain = async (investigationID: number, soundchainID: number) => {
+    log.debug("Delete from investigation", investigationID, "soundchain", soundchainID)
     await axios.delete(this.apiURL + "/investigations/" + investigationID + "/soundchains",
                        {data: {"id": soundchainID}}).
                 then((response: any) => {

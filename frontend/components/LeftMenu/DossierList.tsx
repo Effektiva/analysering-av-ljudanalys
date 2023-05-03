@@ -61,12 +61,12 @@ const DossierList = (props: Props) => {
 
   useEffect(() => {
     setDossiers(props.dossiers);
-    setForceUpdate(!forceUpdate);
+    setForceUpdate(!forceUpdate); // TODO: is this even doing anything?
   }, [props.dossiers]);
 
   useEffect(() => {
     setDossiers(props.appState.dossiers);
-    setForceUpdate(!forceUpdate);
+    setForceUpdate(!forceUpdate); // TODO: is this even doing anything?
   }, [props.appState.dossiers]);
 
   // TODO: Possible performance increaser is to use `response.parentID` when handling subroots

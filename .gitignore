@@ -3,3 +3,4 @@ node_modules
 package-lock.json
 .next
 backend/sql_app.db-journal
+backend/sql_app.db
