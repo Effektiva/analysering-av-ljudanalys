@@ -1,4 +1,3 @@
-import { useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
@@ -23,8 +22,6 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundchainList = (props: Props) => {
-  const [_, setForceUpdate] = useState<boolean>(false);
-
   const eventHandler = (response: ListEventResponse) => {
     switch(response.event) {
       case ListEvent.ClickOnRoot:
@@ -40,7 +37,6 @@ const SoundchainList = (props: Props) => {
           newState.soundChains.splice(index, 1);
           props.setAppState(newState);
           props.forceUpdate();
-          setForceUpdate(prev => !prev);
         }
         break;
       default:
