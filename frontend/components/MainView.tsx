@@ -42,6 +42,7 @@ const MainView = (props: Props) => {
   }
 
   const soundChainSelectedHandler = (id: number) => {
+    log.debug("Open soundchain:", id);
     selectedHandler(Type.SOUNDCHAIN, id);
   };
 

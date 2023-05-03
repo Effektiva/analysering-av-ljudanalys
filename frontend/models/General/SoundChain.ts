@@ -1,7 +1,6 @@
 import { ListItemType, ItemStatus } from "@/components/ListMenu/ListItemType";
 import Note from "../SoundAnalysis/Note";
 import ListItemRepresentable from "../ListItemRepresentable";
-import SoundChainState from "./SoundChainState";
 import Soundclip from "./Soundclip";
 
 /**
@@ -13,7 +12,7 @@ class SoundChain implements ListItemRepresentable {
   startTime: Date;
   endTime: Date;
   duration: number;
-  state: SoundChainState;
+  state: string;
   comments: Array<Note>;
   soundClips: Array<Soundclip>;
 
@@ -22,7 +21,7 @@ class SoundChain implements ListItemRepresentable {
     name: string,
     startTime: Date,
     endTime: Date,
-    state: SoundChainState,
+    state: string,
     comments: Array<Note>,
     soundClips: Array<Soundclip>
   ) {
@@ -40,7 +39,7 @@ class SoundChain implements ListItemRepresentable {
     let id = json.id as number | undefined;
     let startTime = new Date(json.startTime*1000);
     let endTime = new Date(json.endTime*1000);
-    let state = json.state as SoundChainState | undefined;
+    let state = json.state as string;
 
     let name = "undefined starttime";
     if (startTime != undefined) {
@@ -75,15 +74,19 @@ class SoundChain implements ListItemRepresentable {
   }
 
   private currentItemStatus(): ItemStatus {
-    switch (this.state) {
-      case SoundChainState.Analysed:
-      case SoundChainState.ManuallyAnalysed:
-        return ItemStatus.Complete;
-      case SoundChainState.AnalysisOngoing:
-        return ItemStatus.Running;
-      case SoundChainState.Rejected:
+    switch(this.state) {
+      case "0":
+        return ItemStatus.Untreated;
+      case "1":
+        return ItemStatus.AnalysisOngoing;
+      case "2":
+        return ItemStatus.AnalysisSucceeded;
+      case "3":
+        return ItemStatus.AnalysisFailed;
+      case "4":
+        return ItemStatus.Treated;
+      case "5":
         return ItemStatus.Rejected;
-      case SoundChainState.UnAnalysed:
       default:
         return ItemStatus.None;
     }
@@ -94,7 +97,7 @@ class SoundChain implements ListItemRepresentable {
       id: this.id ?? -1,
       text: this.name,
       collapsable: false,
-      status: this.currentItemStatus()
+      state: this.currentItemStatus()
     }
   }
 

@@ -71,7 +71,7 @@ const DossierList = (props: Props) => {
         break;
       case ListEvent.ChangeTextOfRoot:
       case ListEvent.ChangeTextOfSubroot:
-        setDossiers(DossiersHelper.changeText(dossiers, response.id, response.value));
+        setDossiers(DossiersHelper.changeText(dossiers, response.id, response.value!));
         break;
       case ListEvent.ContextCreateFolder:
         setDossiers(await DossiersHelper.createSubdossier(dossiers, response.id));

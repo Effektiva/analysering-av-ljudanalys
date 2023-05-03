@@ -226,6 +226,7 @@ class APIService {
                                        soundchainId: number,
                                        soundfileId: number,
                                        state: number) => {
+      log.debug("Change status of", soundfileId, "to", state);
       await axios.put(this.apiURL + "/investigations/" + investigationId + "/soundchains/" + soundchainId + "/soundfiles/" + soundfileId, {"id": soundfileId, "state": state}).
                   then((response: any) => {
           if (response.status !== 200) {

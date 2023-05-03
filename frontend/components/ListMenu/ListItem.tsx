@@ -126,14 +126,13 @@ export const ListItem = (props: Props) => {
       <li>
         { props.item.id != props.changeTextID ?
             <div
-              className={getStyleClasses(props.class, hidden, props.selected)}
+              className={getStyleClasses(props.class, hidden, props.selected!)}
               >
               <div className="listItemButton"
                 onClick={() => clickHandler()}
                 onContextMenu={contextClickHandler}
                 >
-                { props.item.text }
-                { props.icon }
+                { props.item.text } { props.icon }
               </div>
             </div>
           :
@@ -157,7 +156,6 @@ export const ListItem = (props: Props) => {
                           key={subroot.id}
                           class={LM.StyleClass.Subroot}
                           itemType={LM.ItemType.Subroot}
-                          //parentID={props.item.id}
                           parentID={subroot.id}
                           item={subroot}
                           changeTextID={props.changeTextID}

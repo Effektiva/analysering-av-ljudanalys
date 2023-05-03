@@ -42,6 +42,10 @@ const SoundAnalysisPage = (props: Props) => {
   const [clipZoom, setClipZoom] = useState<boolean>(false);
   const [_, setForceRerender] = useState<boolean>(false);
 
+  const updateLists = () => {
+    setForceRerender(prev => !prev);
+  };
+
   /*
    * If a clip is selected in any of the soundfile lists this function is ran
    * and given the ID of that soundfile.
@@ -94,7 +98,8 @@ const SoundAnalysisPage = (props: Props) => {
               header="Filtrerade ljudklipp"
               soundfiles={props.soundchain.soundClips} // TODO: This should be filtered...
               appState={props.appState}
-              updateAppState={props.updateAppState}
+              setAppState={props.updateAppState}
+              forceUpdate={updateLists}
             />
           </div>
 
@@ -104,7 +109,8 @@ const SoundAnalysisPage = (props: Props) => {
               header="Samtliga ljudklipp"
               soundfiles={props.soundchain.soundClips}
               appState={props.appState}
-              updateAppState={props.updateAppState}
+              setAppState={props.updateAppState}
+              forceUpdate={updateLists}
             />
           </div>
         </div>

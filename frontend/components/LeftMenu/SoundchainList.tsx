@@ -25,7 +25,6 @@ const SoundchainList = (props: Props) => {
   const eventHandler = (response: ListEventResponse) => {
     switch(response.event) {
       case ListEvent.ClickOnRoot:
-        log.debug("Goto soundchain:", response.id);
         props.soundChainSelected(response.id);
         break;
       case ListEvent.ContextDelete:

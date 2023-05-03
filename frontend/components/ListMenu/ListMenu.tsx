@@ -5,7 +5,14 @@ import ContextItem from "@/components/ContextMenu/ContextItem";
 import { ItemStatus, ListItemType } from "./ListItemType";
 import { LOG as log } from "@/pages/_app";
 import { ListItem } from "./ListItem";
-import { FaCheckCircle, FaMinusCircle, FaCloud } from "react-icons/fa";
+import {
+  FaRegCircle,
+  FaRegClock,
+  FaRegCheckCircle,
+  FaRegAngry,
+  FaThumbsUp,
+  FaExclamationCircle,
+} from "react-icons/fa";
 
 type Props = {
   items: Array<ListItemType>,
@@ -223,13 +230,19 @@ const ListMenu = (props: Props) => {
   }
 
 const iconForItem = (item: ListItemType): ReactNode => {
-  switch (item.status) {
-    case ItemStatus.Complete:
-      return <FaCheckCircle/>
+  switch (item.state) {
+    case ItemStatus.Untreated:
+      return <FaRegCircle/>;
+    case ItemStatus.AnalysisOngoing:
+      return <FaRegClock/>;
+    case ItemStatus.AnalysisSucceeded:
+      return <FaRegCheckCircle/>;
+    case ItemStatus.AnalysisFailed:
+      return <FaRegAngry/>;
+    case ItemStatus.Treated:
+      return <FaThumbsUp/>;
     case ItemStatus.Rejected:
-        return <FaMinusCircle/>
-    case ItemStatus.Running:
-        return <FaCloud/>
+      return <FaExclamationCircle/>;
     case undefined:
     case ItemStatus.None:
     default:
