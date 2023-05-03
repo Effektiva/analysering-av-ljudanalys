@@ -205,9 +205,17 @@ async def create_investigationsSoundChains(id: int, files: List[UploadFile] = Fi
 
 
 # Ta bort en ljudkedja med ett visst id.
-@router3.delete("/investigations/{id}/soundchains")
-async def remove_investigationsSoundChains(id: int):
-    return session.execute(delete(models.SoundChain).where(models.SoundChain.id == id))
+@router3.delete("/investigations/{id1}/soundchains")
+async def remove_investigationsSoundChains(request: Request):
+    try:
+        data = await request.json()
+    except:
+        return "Ingen data skickas, 'id' behövs"
+
+    if data.get("id") is None:
+        return "'id' Saknas"
+
+    return session.execute(delete(models.SoundChain).where(models.SoundChain.id == data["id"]))
 
 
 
