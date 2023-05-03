@@ -1,8 +1,11 @@
 export enum ItemStatus {
-  None,
-  Running,
+  Untreated,
+  AnalysisOngoing,
+  AnalysisSucceeded,
+  AnalysisFailed,
+  Treated,
   Rejected,
-  Complete
+  None,
 }
 
 export type ListItemType = {
@@ -11,5 +14,5 @@ export type ListItemType = {
   collapsable: boolean,
   subroots?: Array<ListItemType>,
   children?: Array<ListItemType>,
-  status?: ItemStatus
+  state?: ItemStatus
 }

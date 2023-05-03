@@ -1,6 +1,6 @@
 import { ReactElement, useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
-import { ListItemType } from "@/components/ListMenu/ListItemType";
+import { ItemStatus, ListItemType } from "@/components/ListMenu/ListItemType";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import Popup from "@/components/Popup";
@@ -15,7 +15,8 @@ type Props = {
   soundfiles: Array<Soundclip>,
   clipSelected: Function,
   appState: AppState,
-  updateAppState: (appState: AppState) => void
+  setAppState: (appState: AppState) => void,
+  forceUpdate: Function
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -33,12 +34,12 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 
 const SoundfileList = (props: Props) => {
   const [items] = useState<Array<Soundclip>>(props.soundfiles);
-  const [currentParentID, setCurrentParentID] = useState<number>(-1);
+  const [currentParentId, setCurrentParentID] = useState<number>(-1);
   const [currentPopup, setCurrentPopup] = useState<number>(-1);
 
   const { ref: popupContainerReference,
-    isComponentVisible: isPopupVisible,
-    setIsComponentVisible: setIsPopupVisible } = useComponentVisible(false);
+          isComponentVisible: isPopupVisible,
+          setIsComponentVisible: setIsPopupVisible } = useComponentVisible(false);
 
   const eventHandler = (response: ListEventResponse) => {
     switch (response.event) {
@@ -79,12 +80,12 @@ const SoundfileList = (props: Props) => {
     switch (response.event) {
       case ListEvent.ClickOnSubroot:
       case ListEvent.ClickOnRoot:
-        if (currentParentID != -1) {
-          let clip = props.appState.selectedSoundChain?.soundClips.find(clip => clip.id == currentParentID);
+        if (currentParentId != -1) {
+          let clip = props.appState.selectedSoundChain?.soundClips.find(clip => clip.id == currentParentId);
           let newDossiers = DossiersHelper.addFileToDossier(props.appState.dossiers, response.id, clip!);
           let newState = props.appState;
           newState.dossiers = newDossiers;
-          props.updateAppState(newState);
+          props.setAppState(newState);
         } else {
           log.warning("No dossier ID set.")
         }
@@ -109,17 +110,17 @@ const SoundfileList = (props: Props) => {
    */
   const statusPopupContents: ListItemType[] = [
     {
-      id: 0,
+      id: ItemStatus.Untreated,
       text: "Ej behandlad",
       collapsable: false
     },
     {
-      id: 1,
+      id: ItemStatus.Treated,
       text: "Behandlad",
       collapsable: false
     },
     {
-      id: 2,
+      id: ItemStatus.Rejected,
       text: "Avvisad",
       collapsable: false
     },
@@ -129,11 +130,18 @@ const SoundfileList = (props: Props) => {
     switch (response.event) {
       case ListEvent.ClickOnSubroot:
       case ListEvent.ClickOnRoot:
-        log.debug("Add status", statusPopupContents[response.id].text, "to", currentParentID);
-        setIsPopupVisible(false);
         APIService.setStatusOnSoundfile(props.appState.selectedInvestigation?.id!,
                                         props.appState.selectedSoundChain?.id!,
-                                        currentParentID, response.id)
+                                        currentParentId,
+                                        response.id);
+        let newState = props.appState;
+        let index = newState.selectedSoundChain?.soundClips.findIndex((clip) => clip.id === currentParentId);
+        if (index != undefined && newState.selectedSoundChain != undefined) {
+          newState.selectedSoundChain.soundClips[index].state = "" + response.id;
+        }
+        props.setAppState(newState);
+        props.forceUpdate();
+        setIsPopupVisible(false);
         break;
       default:
         log.error("Bad event: ", response.event)
