@@ -82,7 +82,7 @@ def insert_dummy(session):
     print("-------- creating soundfiles --------")
     t1_rw = datetime.datetime(2023, 3, 18, 0, 0, 0);
     t2_rw = datetime.datetime(2023, 3, 18, 0, 2, 5);
-    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M");
+    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M") + ".mp3";
     session.execute(insert(models.SoundFile).values(start_time = time.mktime(t1_rw.timetuple()),
                                                     end_time =   time.mktime(t2_rw.timetuple()),
                                                     file_name = file_name_rw,
@@ -90,7 +90,7 @@ def insert_dummy(session):
                                                     file_state = "0"))
     t1_rw = datetime.datetime(2023, 3, 18, 0, 2, 5);
     t2_rw = datetime.datetime(2023, 3, 18, 0, 7, 44);
-    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M");
+    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M") + ".mp3";
     session.execute(insert(models.SoundFile).values(start_time = time.mktime(t1_rw.timetuple()),
                                                     end_time =   time.mktime(t2_rw.timetuple()),
                                                     file_name = file_name_rw,
@@ -98,7 +98,7 @@ def insert_dummy(session):
                                                     file_state = "1"))
     t1_rw = datetime.datetime(2023, 3, 18, 0, 7, 44);
     t2_rw = datetime.datetime(2023, 3, 18, 0, 11, 30);
-    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M");
+    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M") + ".mp3";
     session.execute(insert(models.SoundFile).values(start_time = time.mktime(t1_rw.timetuple()),
                                                     end_time =   time.mktime(t2_rw.timetuple()),
                                                     file_name = file_name_rw,
@@ -106,7 +106,7 @@ def insert_dummy(session):
                                                     file_state = "2"))
     t1_rw = datetime.datetime(2023, 3, 18, 0, 11, 30);
     t2_rw = datetime.datetime(2023, 3, 18, 0, 16, 47);
-    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M");
+    file_name_rw = t1_rw.strftime("%Y-%m-%d_%H%M") + "_" + t2_rw.strftime("%H%M") + ".mp3";
     session.execute(insert(models.SoundFile).values(start_time = time.mktime(t1_rw.timetuple()),
                                                     end_time =   time.mktime(t2_rw.timetuple()),
                                                     file_name = file_name_rw,

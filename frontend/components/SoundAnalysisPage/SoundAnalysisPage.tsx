@@ -56,7 +56,8 @@ const SoundAnalysisPage = (props: Props) => {
       log.debug("Selected new clip:", newClipId);
       if (playing) { currentClip.audioElement?.pause(); }
       var newState = props.appState;
-      let newClip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(newClipId);
+      let investigationId = newState.selectedInvestigation!.id;
+      let newClip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(investigationId!, newClipId);
       newState.selectedSoundclip = newClip;
       props.updateAppState(newState);
       setForceRerender(prev => !prev);

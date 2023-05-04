@@ -6,6 +6,7 @@ import audio_metadata
 import os
 import datetime
 import time
+import pathlib
 from pydub import AudioSegment
 
 from .helpers import makeList, session
@@ -163,25 +164,23 @@ async def create_investigationsSoundChains(id: int, files: List[UploadFile] = Fi
             safe_word.append(file)
             call_error = True
 
-
     # Om några filer inte har rätt namnform eller att vi inte kan få ut längden av dem på något sätt skapar vi en egen kedja för dem
     if call_error:
         await wierdFiles(id, safe_word)
-
 
     sorted_data = sorted(file_dic, key=lambda d: d['start_time'])  # Sorterar listan efter start_time
     last_time = None # Senaste end_time, behövs för att kolla ifall vi ska skapa en ny ljudkedja eller ej
     curr_SCID = None # Nuvarande ljudkedjan vi håller på att bygga nu
     for object in sorted_data:
-        # Första ljudfilen skapar ny ljudkedja eller om starttiden inte överensstämmer med nuvarande ljudkedjans sluttid, skapa ny ljudkedja
+        # Första ljudfilen skapar ny ljudkedja eller om starttiden inte överensstämmer med nuvarande
+        # ljudkedjans sluttid, skapa ny ljudkedja
         if last_time == None or last_time != object["start_time"]:
             curr_SCID = session.execute(insert(models.SoundChain)
                                         .values(start_time = object["start_time"], investigations_id = object["inv_id"])
                                         .returning(models.SoundChain.id)).fetchone()[0]
 
-            file_path = f"parent/{id}/{curr_SCID}/"
-            os.mkdir(file_path) # Skapar ny map för kedjan
-
+            # Skapa hela sökvägen
+            pathlib.Path("uploads/{id}/{curr_SCID}/files").mkdir(parents=True, exist_ok=True)
 
         path_name = file_path + object["file_name"]
         # Skapar ny ljudfil med innehållet av de vi fick

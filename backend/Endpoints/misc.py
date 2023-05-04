@@ -35,7 +35,6 @@ async def analyze_investigationSoundchains():
     # Doesnt work yet (❁´◡`❁)
     return 0
 
-
 # Skapa en kommentar som är kopplad med en ljudkedja och har en tidpunkt samt text. sound_chain_id: int, time: str, text: str)
 @router4.post("/investigations/{id1}/sound/{id2}/comments")
 async def create_comment(request: Request, id1: int, id2: int):
@@ -65,13 +64,10 @@ async def create_comment(request: Request, id1: int, id2: int):
             break
     return response
 
-
-
 # HÄMTA KOMENTARER FÖR ETT SPECIFIKT LJUDKLIPP
 @router4.get("/investigations/{id1}/soundchains/{id2}/soundfiles/{id3}/comments")
 async def select_comment(id1: int, id2: int, id3: int):
     return makeList(session.execute(select(models.Comments).where(models.Comments.sound_file_id == id3)).fetchall())
-
 
 # Skapa put för kommentarer så man kan redigera
 @router4.put("/investigations/{id1}/sound/{id2}/comments")
@@ -81,9 +77,7 @@ async def update_comment(request: Request):
     except:
         return "Ingen data skickas, saker behövs"
 
-
     return session.execute(update(models.Comments).where(models.Comments.id == data["id"]).values(text = data["text"]))
-
 
 # Ta bort en kommentar
 @router4.delete("/investigations/{id1}/sound/{id2}/comments")
@@ -95,36 +89,24 @@ async def remove_comment(request: Request):
 
     return session.execute(delete(models.Comments).where(models.Comments.id == data["id"]))
 
-
-# Hämta ljuddata som är kopplats med en ljudfils
+# Returnera ljudfilen för ljudfilen kopplat till id3
 @router4.get("/investigations/{id1}/soundchains/{id2}/soundfiles/{id3}")
 async def read_sounddata(id1: int, id2: int, id3: int):
-
-    # Hämta ljudfilen
     soundFile = makeList(session.execute(select(models.SoundFile).where(models.SoundFile.id == id3)).fetchall())
 
     if not soundFile:
         return "Filen finns inte"
 
-    name = soundFile[0].file_name
-    print(name)
+    soundFile = soundFile[0]
+    fileFormat = soundFile.file_name.split(".")[1]
 
-    path = f"./parent/{id1}/{id2}/{name}"
-
-    print(path)
+    path = f"./uploads/{id1}/{id2}/files/{soundFile.id}." + fileFormat
 
     if not os.path.isfile(path):
         return "Vägen till filen gick inte att hitta"
 
-    # Open the sound file as a binary file
-    #path = "./experiment.mp3"
     with open(path, "rb") as file:
         contents = file.read()
 
-    # File formatet
-    file_format = name.split(".")[1]
-    print(file_format)
-    #file_format = "mp3"
-
     # Returnera ljudfilen
-    return Response(contents, media_type=f"audio/{file_format}")
+    return Response(contents, media_type=f"audio/" + fileFormat)

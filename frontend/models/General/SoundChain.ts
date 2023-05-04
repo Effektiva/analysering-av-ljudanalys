@@ -2,6 +2,8 @@ import { ListItemType, ItemStatus } from "@/components/ListMenu/ListItemType";
 import Note from "../SoundAnalysis/Note";
 import ListItemRepresentable from "../ListItemRepresentable";
 import Soundclip from "./Soundclip";
+import APIService from "../APIService";
+import { LOG as log } from "@/pages/_app";
 
 /**
  * A SoundChain is a collection of SoundClips that are played in a specific order.
@@ -115,10 +117,10 @@ class SoundChain implements ListItemRepresentable {
    * Returns a soundclip if it exists in this.soundClips, otherwise returns
    * undefined. Also sets the audioElement for the Soundclip.
    */
-  getSoundclipAndSetAudioElement(id: number): Soundclip | undefined {
-    let index = this.soundClips.findIndex(x => x.id == id);
+  getSoundclipAndSetAudioElement(investigationId: number, fileId: number): Soundclip | undefined {
+    let index = this.soundClips.findIndex(x => x.id == fileId);
     let clip = this.soundClips.at(index);
-    clip?.setAudioElement(new Audio(this.getSoundclipURL(id)));
+    clip?.setAudioElement(new Audio(this.getSoundclipURL(investigationId, fileId)));
     return clip;
   }
 
@@ -126,8 +128,10 @@ class SoundChain implements ListItemRepresentable {
    * Returns the URL for the data of the soundfile that represents
    * the souncdclip with `id`.
    */
-  getSoundclipURL(id: number) {
-    return "clips/" + this.id + "/SoundClips/" + id + ".mp3";
+  getSoundclipURL(investigationId: number, fileId: number) {
+    return APIService.apiURL + "/investigations/" + investigationId +
+                               "/soundchains/" + this.id +
+                               "/soundfiles/" + fileId;
   }
 
   /*
@@ -141,13 +145,13 @@ class SoundChain implements ListItemRepresentable {
   /*
    * Returns the Soundclip after `clip`, if there's none returns undefined.
    */
-  getNextClipAndSetAudioElement(clip: Soundclip): Soundclip | undefined {
+  getNextClipAndSetAudioElement(investigationId: number, clip: Soundclip): Soundclip | undefined {
     let currentIndex = this.soundClips.findIndex(x => x == clip);
     if (currentIndex != undefined) {
       if (this.soundClips.at(currentIndex + 1) != undefined) {
         let newID = this.soundClips.at(currentIndex + 1)?.id;
         if (newID != undefined) {
-          return this.getSoundclipAndSetAudioElement(newID);
+          return this.getSoundclipAndSetAudioElement(investigationId, newID);
         }
       } else {
         return undefined;
