@@ -24,15 +24,17 @@ import shutil
 DEV = True
 
 if DEV:
-    directory = "./parent"
+    directory = "./uploads"
 
     for file_name in os.listdir(directory):
-        file_path = os.path.join(directory, file_name)
-        try:
-            shutil.rmtree(file_path)
-
-        except:
-            print("Something went wrong when removing old files")
+        if file_name == "1":
+            continue
+        else:
+            file_path = os.path.join(directory, file_name)
+            try:
+                shutil.rmtree(file_path)
+            except:
+                print("Something went wrong when removing old files")
 
 
 app = FastAPI()

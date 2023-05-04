@@ -79,23 +79,21 @@ const MainView = (props: Props) => {
         break;
       case Type.SOUNDCHAIN:
         log.debug("Selected soundChain with id: " + id);
-        if (appState.selectedInvestigation?.id != undefined) {
-          APIService.getFullSoundChain(appState.selectedInvestigation.id, id).then((chain) => {
+        let investigationId = appState.selectedInvestigation?.id;
+          APIService.getFullSoundChain(investigationId!, id).then((chain) => {
             var newState = appState;
             newState.selectedSoundChain = chain;
-            newState.selectedSoundclip = chain?.getSoundclipAndSetAudioElement(chain.soundClips[0].id!);
+            newState.selectedSoundclip = chain?.getSoundclipAndSetAudioElement(investigationId!,
+                                                                               chain.soundClips[0].id!);
             setAppState(newState);
             setPage(
               <SoundanalysisPage
-                key={appState.selectedSoundChain?.id}
+                key={investigationId}
                 soundchain={appState.selectedSoundChain!}
                 appState={newState}
                 updateAppState={updateApp}
               />);
           });
-        } else {
-          log.warning("appState.selectedInvestigation.id is undefined");
-        }
         break;
       case Type.DOSSIER:
         log.debug("Selected soundclip:", id);
@@ -108,7 +106,7 @@ const MainView = (props: Props) => {
             }
             newState.selectedInvestigation = investigation;
             newState.selectedSoundChain = chain;
-            let clip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(id);
+            let clip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(investigation?.id!, id);
             newState.selectedSoundclip = clip;
             setAppState(newState);
             setPage(

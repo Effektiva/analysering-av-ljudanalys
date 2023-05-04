@@ -103,7 +103,8 @@ const MediaControl = (props: Props) => {
         log.debug("Soundclip ended...");
 
         if (soundclip) {
-          let newClip = soundchain.getNextClipAndSetAudioElement(soundclip);
+          let newClip = soundchain.getNextClipAndSetAudioElement(props.appState.selectedInvestigation?.id!,
+                                                                 soundclip);
           if (newClip) {
             log.debug("New clip exists, playing:", newClip.id);
             props.clipSelected(newClip.id);
