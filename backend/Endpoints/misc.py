@@ -3,6 +3,7 @@ from sqlalchemy import select, insert, update, delete
 from fastapi import APIRouter, Request, Response
 import models
 import os
+from config import Paths
 
 from .helpers import makeList, session
 
@@ -100,7 +101,7 @@ async def read_sounddata(id1: int, id2: int, id3: int):
     soundFile = soundFile[0]
     fileFormat = soundFile.file_name.split(".")[1]
 
-    path = f"./uploads/{id1}/{id2}/files/{soundFile.id}." + fileFormat
+    path = Paths.uploads + f"{id1}/{id2}/files/{soundFile.id}." + fileFormat
 
     if not os.path.isfile(path):
         return "Vägen till filen gick inte att hitta"
@@ -110,3 +111,8 @@ async def read_sounddata(id1: int, id2: int, id3: int):
 
     # Returnera ljudfilen
     return Response(contents, media_type=f"audio/" + fileFormat)
+
+@router4.get("/brew")
+async def teapot(response: Response):
+    response.status_code = 418
+    return "I'm a teapot"

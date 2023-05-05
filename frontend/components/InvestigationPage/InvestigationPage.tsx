@@ -2,6 +2,7 @@ import SoundClassFilterInput from "../SoundClassFilterInput";
 import SoundchainList from "../LeftMenu/SoundchainList";
 import AppState from "@/state/AppState";
 import { useState } from "react";
+import FileUploader from "./FileUploader";
 
 type Props = {
   appState: AppState,
@@ -30,11 +31,13 @@ const InvestigationPage = (props: Props) => {
     <div className={Style.Container}>
       {/* Left column */}
       <div className={Style.Column}>
-        <div className={Style.LeftButtons}>
-          <button>Ladda upp filer</button>
-          <button>Analysera ej analyserade kedjor</button>
-        </div>
+        <div className={Style.LeftButtons}><button>Analysera filer</button></div>
         <SoundClassFilterInput />
+        <FileUploader
+          appState={props.appState}
+          setAppState={props.setAppState}
+          forceUpdate={updateLists}
+        />
       </div>
 
       {/* Right column */}
