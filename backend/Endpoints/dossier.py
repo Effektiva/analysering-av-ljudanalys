@@ -110,7 +110,7 @@ async def delete_dossier(request: Request):
 
 # Skapa en underdossier till en dossier med ett viss id. Ge underdossiern namnet "name" (name: str ,parent_id : int)
 @router2.post("/dossier/{parent_id}")
-async def create_underdossier(request: Request ,parent_id : int):
+async def create_underdossier(request: Request, parent_id : int):
     try:
         data = await request.json()
     except:
