@@ -6,6 +6,7 @@ import SoundChain from './General/SoundChain';
 
 class APIService {
   static apiURL = "http://localhost:8000";
+  static filehostURL = "http://localhost:8080";
 
   /*
    * Investigations

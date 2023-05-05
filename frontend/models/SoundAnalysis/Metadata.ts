@@ -3,14 +3,20 @@ import Dossier from "../General/Dossier";
 class Metadata {
   fileName: string;
   belongingDossiers: Array<Dossier>;
+  fileFormat: string;
 
   constructor(name: string, belongingDossiers: Array<Dossier>) {
-    this.fileName = name;
+    this.fileName = name.split(".")[0];
     this.belongingDossiers = belongingDossiers;
+    this.fileFormat = name.split(".")[1];
   }
 
   public getFileName(): string {
     return this.fileName;
+  }
+
+  public getFileFormat(): string {
+    return this.fileFormat;
   }
 
   public getDate(): string {

@@ -120,7 +120,7 @@ class SoundChain implements ListItemRepresentable {
   getSoundclipAndSetAudioElement(investigationId: number, fileId: number): Soundclip | undefined {
     let index = this.soundClips.findIndex(x => x.id == fileId);
     let clip = this.soundClips.at(index);
-    clip?.setAudioElement(new Audio(this.getSoundclipURL(investigationId, fileId)));
+    clip?.setAudioElement(new Audio(this.getSoundclipURL(investigationId, clip)));
     return clip;
   }
 
@@ -128,10 +128,10 @@ class SoundChain implements ListItemRepresentable {
    * Returns the URL for the data of the soundfile that represents
    * the souncdclip with `id`.
    */
-  getSoundclipURL(investigationId: number, fileId: number) {
-    return APIService.apiURL + "/investigations/" + investigationId +
-                               "/soundchains/" + this.id +
-                               "/soundfiles/" + fileId;
+  getSoundclipURL(investigationId: number, clip: Soundclip) {
+    return APIService.filehostURL + "/" + investigationId + "/" +
+                                    "/" + this.id + "/" +
+                                    "/files/" + clip.id + "." + clip.metadata.getFileFormat();
   }
 
   /*

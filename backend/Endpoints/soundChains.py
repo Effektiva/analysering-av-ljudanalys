@@ -58,25 +58,6 @@ async def read_investigationsSoundChains(id: int):
 
     return soundChainList
 
-# Hjälpfunktion för post som ligger nedanför, hanterar filer som inte matchar på något sätt så att de ändå lägs in (〜￣▽￣)〜
-async def weird_files(investigation_id, files):
-    soundchain_id = makeList(session.execute(insert(models.SoundChain)
-                                .values(start_time = 1337, investigations_id = investigation_id)
-                                .returning(models.SoundChain.id)).fetchall())[0]
-
-    # Skapa hela sökvägen (uploads/[Investigation.id]/[Soundchain.id]/files/)
-    file_path = os.path.join(Paths.uploads, str(investigation_id), str(soundchain_id), "files")
-    pathlib.Path(file_path).mkdir(parents=True, exist_ok=True)
-
-    # Går igenom alla filer och skapar nya soundfiles i databasen samt lägger in dem i vårt interna filsystem
-    for file in files:
-        content = await file[0].read()
-        file_id = makeList(session.execute(insert(models.SoundFile).values(file_name = file[0].filename, sound_chain_id = soundchain_id).returning(models.SoundFile.id)))[0]
-        file_format = file[0].filename.split(".")[1]
-        path_name = file_path + "/" + str(file_id) + "." + file_format
-        with open(path_name, "wb") as f:
-            f.write(file[1])
-
 # Fixar tid för start och end.
 def calc_time(start_date, start_time, audio_len):
     start_year = int(start_date[0])
@@ -189,6 +170,7 @@ async def create_investigationsSoundChains(investigation_id: int,
         sound_file_id = makeList(session.execute(insert(models.SoundFile).values(start_time = file["start_time"],
                                                                                  end_time = file["end_time"],
                                                                                  file_name = file["file_name"],
+                                                                                 file_state = "0",
                                                                                  sound_chain_id = soundchain_id)
                                                                          .returning(models.SoundFile.id)).fetchall())
 
@@ -206,6 +188,26 @@ async def create_investigationsSoundChains(investigation_id: int,
         # Updatera end_time varje gång så att det blir rätt senare
         session.execute(update(models.SoundChain).where(models.SoundChain.id == soundchain_id).values(end_time = last_time))
     return 1
+
+# Hjälpfunktion för post som ligger nedanför, hanterar filer som inte matchar på något sätt så att de ändå lägs in (〜￣▽￣)〜
+async def weird_files(investigation_id, files):
+    soundchain_id = makeList(session.execute(insert(models.SoundChain)
+                                .values(start_time = 1337, investigations_id = investigation_id)
+                                .returning(models.SoundChain.id)).fetchall())[0]
+
+    # Skapa hela sökvägen (uploads/[Investigation.id]/[Soundchain.id]/files/)
+    file_path = os.path.join(Paths.uploads, str(investigation_id), str(soundchain_id), "files")
+    pathlib.Path(file_path).mkdir(parents=True, exist_ok=True)
+
+    # Går igenom alla filer och skapar nya soundfiles i databasen samt lägger in dem i vårt interna filsystem
+    for file in files:
+        content = await file[0].read()
+        file_id = makeList(session.execute(insert(models.SoundFile).values(file_name = file[0].filename, sound_chain_id = soundchain_id, file_state = "0").returning(models.SoundFile.id)))[0]
+        file_format = file[0].filename.split(".")[1]
+        path_name = file_path + "/" + str(file_id) + "." + file_format
+        with open(path_name, "wb") as f:
+            f.write(file[1])
+
 
 # Ta bort en ljudkedja med ett visst id.
 @router3.delete("/investigations/{id1}/soundchains")
