@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+  # Hosts the backend (API)
   backend:
     container_name: ljud-backend
     build:
@@ -14,6 +15,19 @@ services:
     ports:
       - "8000:8000"
 
+  # Hosts the soundfiles from upload folder in backend
+  filehost:
+    container_name: ljud-filehost
+    build:
+      context: "./docker"
+      dockerfile: "Dockerfile-filehost"
+    image: "ljud-filehost"
+    volumes:
+      - ./backend/uploads:/www/data
+    ports:
+      - "8080:80"
+
+  # Hosts the frontend
   frontend:
     container_name: ljud-frontend
     build:
