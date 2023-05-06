@@ -10,6 +10,7 @@ enum Style {
   Header = STYLE_NAMESPACE + "header",
   MetadataName = STYLE_NAMESPACE + "metadata-name",
   MetadataDate = STYLE_NAMESPACE + "metadata-date",
+  MetadataFormat = STYLE_NAMESPACE + "metadata-format",
   MetadataDossiers = STYLE_NAMESPACE + "metadata-dossiers",
   MetadataDossiersDiv = STYLE_NAMESPACE + "metadata-dossiers-div",
 }
@@ -29,6 +30,7 @@ const MetadataView = (props: Props) => {
         </div>
         <div className={Style.MetadataDossiersDiv}>
           <span> <b>Dossiers:</b> {props.metaData?.getBelongingDossiers().map(dossier => "'" + dossier.name + "'").join(", \n")}</span>
+          <span className={Style.MetadataFormat}> <b>Filformat:</b> {props.metaData?.getFileFormat()}</span>
         </div>
     </div>
   );

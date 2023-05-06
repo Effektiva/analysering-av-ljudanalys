@@ -2,7 +2,7 @@ import SoundfileList from "@/components/SoundfileList";
 import SoundClassFilterInput from "@/components/SoundClassFilterInput";
 import Graph from "./Graph";
 import MetadataView from "./MetaDataView";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MediaControl from "./MediaControl/MediaControl";
 import SoundChain from "@/models/General/SoundChain";
 import Note from "@/models/SoundAnalysis/Note";
@@ -41,6 +41,11 @@ const SoundAnalysisPage = (props: Props) => {
   const [muted, setMuted] = useState<boolean>(false);
   const [clipZoom, setClipZoom] = useState<boolean>(false);
   const [_, setForceRerender] = useState<boolean>(false);
+  const [notes, setNotes] = useState(props.appState.selectedSoundChain?.comments);
+
+  useEffect(() => {
+    updateCommentsByZoom();
+  }, [clipZoom])
 
   const updateLists = () => {
     setForceRerender(prev => !prev);
@@ -60,16 +65,25 @@ const SoundAnalysisPage = (props: Props) => {
       let newClip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(investigationId!, newClipId);
       newState.selectedSoundclip = newClip;
       props.updateAppState(newState);
+      updateCommentsByZoom();
       setForceRerender(prev => !prev);
     } else {
       log.debug("Already playing clip:", newClipId);
     }
   }
 
-  const soundchainCommentsUpdated = (newNotes: Array<Note>) => {
-    props.soundchain.comments = newNotes;
+  const updateNotes = (newNotes: Array<Note>) => {
     log.debug("Updated comments!");
-    // TODO: Send to backend
+    props.appState.selectedSoundChain!.comments = newNotes;
+    updateCommentsByZoom();
+  }
+
+  const updateCommentsByZoom = () => {
+    if (clipZoom) {
+      setNotes(props.appState.selectedSoundChain!.getCommentsForClip(props.appState.selectedSoundclip?.id!));
+    } else {
+      setNotes(props.appState.selectedSoundChain?.comments);
+    }
   }
 
   return (
@@ -148,10 +162,13 @@ const SoundAnalysisPage = (props: Props) => {
           </button>
         </div>
         <MetadataView
-          metaData={props.appState.currentlyPlayingSoundclip?.metadata ??
+          metaData={props.appState.selectedSoundclip?.metadata ??
                     props.appState.selectedSoundChain!.soundClips[0].metadata}
         />
-        <Notes soundchain={props.appState.selectedSoundChain!} soundchainCommentsUpdated={soundchainCommentsUpdated} />
+        <Notes
+          notes={notes ? notes : []}
+          setNotes={updateNotes}
+        />
       </div>
     </div>
   );

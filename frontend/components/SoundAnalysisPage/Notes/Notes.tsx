@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NotesList from "./NoteList";
 import { LOG as log } from "@/pages/_app";
 import Note from "@/models/SoundAnalysis/Note";
 import TimeInClip from "@/models/SoundAnalysis/TimeInClip";
-import SoundChain from "@/models/General/SoundChain";
 
 type Props = {
-  soundchain: SoundChain,
-  soundchainCommentsUpdated: (newNotes: Array<Note>) => void,
+  notes: Array<Note>,
+  setNotes: Function,
 }
 
 const STYLE_NAMESPACE = "notes__";
@@ -24,12 +23,7 @@ enum Style {
  * @returns A list of notes and a form for adding new notes.
  */
 const Notes = (props: Props) => {
-  const [notes, setNotes] = useState(props.soundchain.comments);
   const [id, setId] = useState(1); // TODO: Delete this..
-
-  useEffect(() => {
-    props.soundchainCommentsUpdated(notes);
-  }, [notes]);
 
   /**
    * Adds a new note to the list of notes. The note is created from the values in the form and then sent to the backend.
@@ -46,7 +40,7 @@ const Notes = (props: Props) => {
     try {
       let note = new Note(id + 1, new Date(), TimeInClip.fromTimeString(timeElement!.value), textAreaElement!.value); // Dont care about id since we should not set it here... TODO: Fix this...\
       let sortedNotes = [...notes, note].sort((a, b) => a.timeInClip.getTime() - b.timeInClip.getTime());
-      setNotes(sortedNotes);
+      props.setNotes(sortedNotes);
     } catch (error) {
       log.warning("Got error: " + error);
     }
@@ -58,10 +52,10 @@ const Notes = (props: Props) => {
    */
   const deleteNote = (noteId: number | undefined) => {
     log.debug("Delete note: " + noteId);
-    let newNotes = notes.filter((note) => {
+    let newNotes = props.notes.filter((note) => {
       return note.id !== noteId
     });
-    setNotes(newNotes);
+    props.setNotes(newNotes);
   };
 
   /**
@@ -71,7 +65,7 @@ const Notes = (props: Props) => {
    */
   const saveNewNoteText = (noteId: number | undefined, text: string) => {
     log.debug("saved note: " + noteId + " with text: " + text);
-    let note = notes.find((note) => {
+    let note = props.notes.find((note) => {
       return note.id === noteId;
     });
     if (note === undefined) {
@@ -79,11 +73,11 @@ const Notes = (props: Props) => {
     }
     note.setText(text);
     // replace note in notes
-    let newNotes = notes.filter((note) => {
+    let newNotes = props.notes.filter((note) => {
       return note.id !== noteId
     });
     let sortedNotes = [...newNotes, note].sort((a, b) => a.timeInClip.getTime() - b.timeInClip.getTime());
-    setNotes(sortedNotes);
+    props.setNotes(sortedNotes);
   }
 
   return (
@@ -105,7 +99,7 @@ const Notes = (props: Props) => {
           <button onClick={addNewNote}>Lägg till</button>
         </div>
       </div>
-      <NotesList notes={notes} deleteNote={deleteNote} setNoteText={saveNewNoteText} />
+      <NotesList notes={props.notes} deleteNote={deleteNote} setNoteText={saveNewNoteText} />
     </div>
   );
 }
