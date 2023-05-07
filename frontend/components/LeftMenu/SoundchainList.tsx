@@ -4,6 +4,7 @@ import { LOG as log } from "@/pages/_app";
 import SoundChain from "@/models/General/SoundChain";
 import APIService from "@/models/APIService";
 import AppState from "@/state/AppState";
+import DossiersHelper from "@/models/DossiersHelper";
 
 type Props = {
   appState: AppState,
@@ -24,18 +25,21 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundchainList = (props: Props) => {
-  const eventHandler = (response: ListEventResponse) => {
+  const eventHandler = async (response: ListEventResponse) => {
     switch(response.event) {
       case ListEvent.ClickOnRoot:
         props.soundChainSelected(response.id);
         break;
       case ListEvent.ContextDelete:
         {
-          APIService.deleteSoundchain(props.appState.selectedInvestigation?.id!, response.id);
           let newState = props.appState;
           newState.soundChains = [...props.appState.soundChains];
           let index = newState.soundChains.findIndex((elem: SoundChain) => elem.id == response.id);
+          let chain = await APIService.getFullSoundChain(props.appState.selectedInvestigation?.id!, response.id);
+          newState.dossiers = DossiersHelper.removeSoundfiles(props.appState.dossiers,
+                                                              chain?.soundClips!);
           newState.soundChains.splice(index, 1);
+          APIService.deleteSoundchain(props.appState.selectedInvestigation?.id!, response.id);
           props.setAppState(newState);
           props.forceUpdate();
         }
