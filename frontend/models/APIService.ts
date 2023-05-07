@@ -139,6 +139,18 @@ class APIService {
     return result;
   }
 
+  static setSoundchainState = async (investigationId: number, soundchainId: number, state: number) => {
+    log.debug("Change state of", soundchainId, "to", state);
+    await axios.put(this.apiURL + "/investigations/" + investigationId +
+                                  "/soundchains/",
+                    {"id": soundchainId, "state": state})
+               .then((response: any) => {
+        if (response.status !== 200) {
+          log.warning("Couldn't set status of soundchain:", response);
+        }
+    });
+  }
+
   /*
    * Dossiers
    */
