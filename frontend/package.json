@@ -21,7 +21,8 @@
     "react-dom": "18.2.0",
     "sass": "^1.62.0",
     "react-icons": "^4.8.0",
-    "react-async": "10.0.1"
+    "react-async": "10.0.1",
+    "fuzzysort": "2.0.0"
   },
   "devDependencies": {
     "typescript": "^5.0.2"
