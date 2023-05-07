@@ -28,10 +28,6 @@ const MetadataView = (props: Props) => {
           <span className={Style.MetadataName}> <b>Filnamn:</b> {props.metaData?.getFileName()}</span>
           <span className={Style.MetadataDate}> <b>Datum:</b> {props.metaData?.getDate()}</span>
         </div>
-        <div className={Style.MetadataDossiersDiv}>
-          <span> <b>Dossiers:</b> {props.metaData?.getBelongingDossiers().map(dossier => "'" + dossier.name + "'").join(", \n")}</span>
-          <span className={Style.MetadataFormat}> <b>Filformat:</b> {props.metaData?.getFileFormat()}</span>
-        </div>
     </div>
   );
 }

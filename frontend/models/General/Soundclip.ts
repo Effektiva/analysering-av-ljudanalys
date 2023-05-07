@@ -69,7 +69,7 @@ class Soundclip implements ListItemRepresentable {
         json.state === undefined) {
       throw new Error("Invalid json object");
     }
-    let meta = new Metadata(json.fileName, []);
+    let meta = new Metadata(json.fileName);
     return new Soundclip(json.id, meta, new Date(json.startTime*1000), new Date(json.endTime*1000), json.state);
   }
 }
