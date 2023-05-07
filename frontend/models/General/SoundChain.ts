@@ -158,6 +158,16 @@ class SoundChain implements ListItemRepresentable {
       }
     }
   }
+
+  getCommentsForClip(clipId: number): Array<Note> {
+    let comments: Array<Note> = [];
+    this.comments.forEach((note: Note) => {
+      if (note.soundfileId == clipId) {
+        comments.push(note);
+      }
+    });
+    return comments;
+  }
 }
 
 export default SoundChain;
