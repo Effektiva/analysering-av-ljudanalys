@@ -9,6 +9,7 @@ import { FaCommentDots } from "react-icons/fa";
 type Props = {
   selected: Function,
   appState: AppState,
+  setAppState: Function,
   forceUpdate: boolean
 }
 
@@ -56,6 +57,7 @@ const LeftMenu = (props: Props) => {
         selected={selectedInvestigationHandler}
         investigations={investigations}
         appState={props.appState}
+        setAppState={props.setAppState}
       />
       <DossierList
         key={"dosss:" + dossiers.join(',')}

@@ -82,6 +82,24 @@ class DossiersHelper {
     return newDossiers;
   }
 
+  static removeSoundfiles = (dossiers: Array<Dossier>, soundfiles: Array<Soundclip>): Dossier[] => {
+    let newDossiers = [...dossiers];
+    newDossiers.forEach((dos: Dossier) => {
+      soundfiles.forEach((file) => {
+        let index = dos.soundfiles.findIndex((f) => f.id == file.id);
+        if (index != -1) dos.soundfiles.splice(index, 1);
+      });
+
+      dos.subdossiers.forEach((subdos: Dossier) => {
+        soundfiles.forEach((file) => {
+          let index = subdos.soundfiles.findIndex((f) => f.id == file.id);
+          if (index != -1) subdos.soundfiles.splice(index, 1);
+        });
+      });
+    });
+    return newDossiers;
+  }
+
   static addFileToDossier(dossiers: Array<Dossier>, dossierId: number, soundfile: Soundclip): Dossier[] {
     let newDossiers = [...dossiers];
     let indexes = DossiersHelper.findDossier(dossiers, dossierId);

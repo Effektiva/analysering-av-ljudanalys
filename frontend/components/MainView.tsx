@@ -131,6 +131,7 @@ const MainView = (props: Props) => {
         forceUpdate={forceUpdateLeftMenu}
         selected={selectedHandler}
         appState={appState}
+        setAppState={updateApp}
       />
       {page}
     </div>
