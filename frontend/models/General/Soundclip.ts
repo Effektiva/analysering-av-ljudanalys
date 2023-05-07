@@ -34,11 +34,11 @@ class Soundclip implements ListItemRepresentable {
       id: this.id ?? -1,
       text: this.metadata.fileName,
       collapsable: false,
-      state: this.currentItemStatus()
+      state: this.getCurrentItemStatus()
     }
   }
 
-  private currentItemStatus(): ItemStatus {
+  getCurrentItemStatus(): ItemStatus {
     switch(this.state) {
       case "0":
         return ItemStatus.Untreated;

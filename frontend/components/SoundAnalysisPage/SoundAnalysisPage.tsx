@@ -9,6 +9,8 @@ import Note from "@/models/SoundAnalysis/Note";
 import Notes from "./Notes/Notes";
 import AppState from "@/state/AppState";
 import { LOG as log } from "@/pages/_app";
+import { ItemStatus } from "../ListMenu/ListItemType";
+import APIService from "@/models/APIService";
 
 type Props = {
   soundchain: SoundChain,
@@ -72,6 +74,12 @@ const SoundAnalysisPage = (props: Props) => {
     // TODO: Send to backend
   }
 
+  const soundchainStateChange = (event: any) => {
+    APIService.setSoundchainState(props.appState.selectedInvestigation?.id!,
+                                  props.soundchain.id!,
+                                  event.target.value);
+  }
+
   return (
     <div className={Style.Container}>
 
@@ -82,10 +90,14 @@ const SoundAnalysisPage = (props: Props) => {
 
           <div>
             <label htmlFor="statusPicker">Markerad som</label>
-            <select id="statusPicker" className={Style.SetStatus +  " form-select"}>
-              <option>Ej behandlad</option>
-              <option>Behandlad</option>
-              <option>Avvisad</option>
+            <select
+              defaultValue={props.soundchain.getCurrentItemStatus()}
+              onChange={soundchainStateChange}
+              id="statusPicker" className={Style.SetStatus +  " form-select"}
+            >
+              <option value={ItemStatus.AnalysisSucceeded}>Analyserad</option>
+              <option value={ItemStatus.Treated}>Behandlad</option>
+              <option value={ItemStatus.Rejected}>Avvisad</option>
             </select>
           </div>
         </div>

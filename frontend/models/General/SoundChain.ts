@@ -75,7 +75,7 @@ class SoundChain implements ListItemRepresentable {
     }
   }
 
-  private currentItemStatus(): ItemStatus {
+  getCurrentItemStatus(): ItemStatus {
     switch(this.state) {
       case "0":
         return ItemStatus.Untreated;
@@ -99,7 +99,7 @@ class SoundChain implements ListItemRepresentable {
       id: this.id ?? -1,
       text: this.name,
       collapsable: false,
-      state: this.currentItemStatus()
+      state: this.getCurrentItemStatus()
     }
   }
 
