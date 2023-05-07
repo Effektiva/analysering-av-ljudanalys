@@ -257,65 +257,55 @@ async def update_state_soundfile(request: Request):
 # Hämta all data som en ljudkedja har
 @router3.get("/investigations/{id1}/soundchains/{id2}")
 async def read_soundchaindata(id1: int, id2: int):
-    # Data från ljudkedjan
     soundchain = makeList(session.execute(select(models.SoundChain)
                                           .where(models.SoundChain.id == id2)).fetchall())[0]
 
-    # Ljudfilerna i ljudkedjan
     soundfiles = makeList(session.execute(select(models.SoundFile)
                                           .where(models.SoundFile.sound_chain_id == id2)).fetchall())
-    # Lista med alla ljudklasser i ljudkedjan
     soundClassList = []
-
-    # Lista med alla taggar i ljudkedjan (ex avlyssnad och analyserad)
-    #tagList = []
-
-    # Lista med alla kommentarer till ljudfilerna
     commentList = []
-
-    # Om vi ska skicka med ljudfilerna eller ej
     soundFileList = []
 
     # Gå igenom alla ljudfiler som ljudkedjan har
-    for soundFile in soundfiles:
+    for file in soundfiles:
         # hämta ut alla ljud intervall som ljudfilen har
         soundIntervals = makeList(session.execute(select(models.SoundInterval)
-                                                  .where(models.SoundInterval.sound_file_id == soundFile.id)))
+                                                  .where(models.SoundInterval.sound_file_id == file.id)))
         soundIntervalList = []
-
+        soundClassesInFile = []
 
         # Gå igenom alla ljudintervall för att hitta vilka ljudklasser som de innehåller
-        for soundInter in soundIntervals:
-            soundIntervalObject = {"start_time" : soundInter.start_time, "end_time" : soundInter.end_time, "highest_volume" : soundInter.highest_volume}
+        for interval in soundIntervals:
+            soundIntervalObject = {"start_time" : interval.start_time,
+                                   "end_time" : interval.end_time,
+                                   "highest_volume" : interval.highest_volume}
             soundClass = makeList(session.execute(select(models.Sound)
-                                         .where(models.Sound.sound_interval_id == soundInter.id)).fetchall())
+                                         .where(models.Sound.sound_interval_id == interval.id)).fetchall())
             if soundClass:
                 soundsList = []
                 for sound in soundClass:
                     soundsList.append({"sound_class" : sound.sound_class, "trust_value" : sound.trust_value})
-                    if sound.sound_class not in soundClassList: # Lägg till de ljudklasser som inte har lagts till än
+                    if sound.sound_class not in soundClassList:
                         soundClassList.append(sound.sound_class)
+                    if sound.sound_class not in soundClassesInFile:
+                        soundClassesInFile.append(sound.sound_class)
                 soundIntervalObject["sounds"] = soundsList
             soundIntervalList.append(soundIntervalObject)
 
-        # Hämta alla taggar som är kopplade med ljudfilen
-        #tags = makeList(session.execute(select(models.Tags)
-         #                               .where(models.Tags.sound_file_id == soundFile.id)).fetchall())
-
-        # Sätt ihop en lista med alla taggar utan upprepning
-        #for tag in tags:
-         #   if tag.tag_id not in tagList:
-          #      tagList.append(tag.tag_id)
-
-
         # Hämtar alla kommentarer som hör till ljudfilen
-        comments = makeList(session.execute(select(models.Comments).where(models.Comments.sound_file_id == soundFile.id)).fetchall())
+        comments = makeList(session.execute(select(models.Comments)
+                                            .where(models.Comments.sound_file_id == file.id)).fetchall())
 
         for comment in comments: # Tar ut tid och text från alla kommentarer
             commentList.append(comment)
 
-        # Detta är hur vi tror att det ska vara (Backendteamet)
-        soundFileList.append({"id": soundFile.id, "startTime": soundFile.start_time, "endTime": soundFile.end_time, "fileName": soundFile.file_name, "state": soundFile.file_state, "soundIntervals" : soundIntervalList})
+        soundFileList.append({"id": file.id,
+                              "startTime": file.start_time,
+                              "endTime": file.end_time,
+                              "fileName": file.file_name,
+                              "state": file.file_state,
+                              "soundClasses": soundClassesInFile,
+                              "soundIntervals" : soundIntervalList})
 
     response = {"id": soundchain.id, "startTime": soundchain.start_time,
                  "endTime": soundchain.end_time, "soundClasses": soundClassList,

@@ -8,6 +8,8 @@ import AppState from "@/state/AppState";
 type Props = {
   appState: AppState,
   setAppState: Function,
+  title: string,
+  soundchains: SoundChain[],
   soundChainSelected: (id: number) => void,
   forceUpdate: Function
 }
@@ -50,11 +52,11 @@ const SoundchainList = (props: Props) => {
         className="listMenuHeader"
       >
         <div className="listItemButton">
-          Samtliga ljudkedjor
+          {props.title}
         </div>
       </div>
         <ListMenu
-          items={props.appState.soundChains.map(soundchain => soundchain.asListItem())}
+          items={props.soundchains.map(soundchain => soundchain.asListItem())}
           contextMenus={CONTEXT_MENUS}
           eventHandler={eventHandler}
         />

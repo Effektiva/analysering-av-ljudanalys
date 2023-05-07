@@ -9,6 +9,7 @@ import Note from "@/models/SoundAnalysis/Note";
 import Notes from "./Notes/Notes";
 import AppState from "@/state/AppState";
 import { LOG as log } from "@/pages/_app";
+import Soundclip from "@/models/General/Soundclip";
 import { ItemStatus } from "../ListMenu/ListItemType";
 import APIService from "@/models/APIService";
 
@@ -43,15 +44,39 @@ const SoundAnalysisPage = (props: Props) => {
   const [muted, setMuted] = useState<boolean>(false);
   const [clipZoom, setClipZoom] = useState<boolean>(false);
   const [_, setForceRerender] = useState<boolean>(false);
+  const [filters, setFilters] = useState<any[]>([]);
+  const [filteredFiles, setFilteredFiles] = useState<any[]>([]);
   const [notes, setNotes] = useState(props.appState.selectedSoundChain?.comments);
 
   useEffect(() => {
     updateCommentsByZoom();
-  }, [clipZoom])
+  }, [clipZoom]);
 
   const updateLists = () => {
     setForceRerender(prev => !prev);
   };
+
+  /*
+   * When the chosen filters are updated, then we'll have to update
+   * what chains we'll show in the filtered list. Only chains that have
+   * all (or a subset) of the filters are shown.
+   */
+  useEffect(() => {
+    let newFiltered: any[] = [];
+    props.appState.selectedSoundChain?.soundClips.forEach((clip: Soundclip) => {
+      let include = true;
+
+      filters.forEach((filter) => {
+        if (clip.soundClasses.find((aClass) => filter.name == aClass) == undefined) {
+          include = false;
+        }
+      });
+
+      if (include) newFiltered.push(clip);
+    });
+    setFilteredFiles(newFiltered);
+    setForceRerender(prev => !prev);
+  }, [filters]);
 
   /*
    * If a clip is selected in any of the soundfile lists this function is ran
@@ -117,13 +142,16 @@ const SoundAnalysisPage = (props: Props) => {
         </div>
 
         <div className={Style.SoundchainList}>
-          <SoundClassFilterInput />
+          <SoundClassFilterInput
+            filters={filters}
+            setFilters={setFilters}
+          />
 
           <div className={Style.Filtered}>
             <SoundfileList
               clipSelected={clipSelected}
               header="Filtrerade ljudklipp"
-              soundfiles={props.soundchain.soundClips} // TODO: This should be filtered...
+              soundfiles={filteredFiles}
               appState={props.appState}
               setAppState={props.updateAppState}
               forceUpdate={updateLists}

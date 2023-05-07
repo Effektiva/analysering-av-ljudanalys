@@ -33,7 +33,6 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundfileList = (props: Props) => {
-  const [items] = useState<Array<Soundclip>>(props.soundfiles);
   const [currentParentId, setCurrentParentID] = useState<number>(-1);
   const [currentPopup, setCurrentPopup] = useState<number>(-1);
 
@@ -171,8 +170,8 @@ const SoundfileList = (props: Props) => {
         </div>
       </div>
       <ListMenu
-        key={items.length}
-        items={items.map((soundclip) => soundclip.asListItem())}
+        key={props.soundfiles.length}
+        items={props.soundfiles.map((soundclip) => soundclip.asListItem())}
         contextMenus={CONTEXT_MENUS}
         eventHandler={eventHandler}
         selectedId={props.appState.selectedSoundclip?.id}

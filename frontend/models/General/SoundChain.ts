@@ -17,6 +17,7 @@ class SoundChain implements ListItemRepresentable {
   state: string;
   comments: Array<Note>;
   soundClips: Array<Soundclip>;
+  soundClasses: Array<any>;
 
   constructor(
     id: number | undefined,
@@ -25,7 +26,8 @@ class SoundChain implements ListItemRepresentable {
     endTime: Date,
     state: string,
     comments: Array<Note>,
-    soundClips: Array<Soundclip>
+    soundClips: Array<Soundclip>,
+    soundClasses: Array<any>
   ) {
     this.id = id;
     this.name = name;
@@ -35,6 +37,7 @@ class SoundChain implements ListItemRepresentable {
     this.state = state;
     this.comments = comments;
     this.soundClips = soundClips;
+    this.soundClasses = soundClasses;
   }
 
   static initFromJSON(json: any): SoundChain | undefined {
@@ -42,6 +45,7 @@ class SoundChain implements ListItemRepresentable {
     let startTime = new Date(json.startTime*1000);
     let endTime = new Date(json.endTime*1000);
     let state = json.state as string;
+    let soundClasses = json.soundClasses;
 
     let name = "undefined starttime";
     if (startTime != undefined) {
@@ -63,13 +67,14 @@ class SoundChain implements ListItemRepresentable {
     }
 
     if (id !== undefined &&
-      name !== undefined &&
-      startTime !== undefined &&
-      endTime !== undefined &&
-      state !== undefined &&
-      comments !== undefined &&
-      soundClips !== undefined) {
-      return new SoundChain(id, name, startTime, endTime, state, comments, soundClips);
+        name !== undefined &&
+        startTime !== undefined &&
+        endTime !== undefined &&
+        state !== undefined &&
+        comments !== undefined &&
+        soundClips !== undefined &&
+        soundClasses !== undefined) {
+      return new SoundChain(id, name, startTime, endTime, state, comments, soundClips, soundClasses);
     } else {
       return undefined;
     }

@@ -59,14 +59,34 @@ def insert_dummy(session):
     session.execute(insert(models.Investigations).values(name = "Kalles Knarkaffärer"))
     session.execute(insert(models.Investigations).values(name = "Länsmansjäveln"))
 
-
     ######## CREATE SOUNDCLASSES ########
     print("-------- creating soundclasses --------")
-    session.execute(insert(models.SoundClass).values(name = "OUCH"))
-    session.execute(insert(models.SoundClass).values(name = "BOOM"))
-    session.execute(insert(models.SoundClass).values(name = "BAAM"))
-    session.execute(insert(models.SoundClass).values(name = "CRASH"))
-
+    session.execute(insert(models.SoundClass).values(name = "Speech"))
+    session.execute(insert(models.SoundClass).values(name = "Whispering"))
+    session.execute(insert(models.SoundClass).values(name = "Shout"))
+    session.execute(insert(models.SoundClass).values(name = "Yell"))
+    session.execute(insert(models.SoundClass).values(name = "Screaming"))
+    session.execute(insert(models.SoundClass).values(name = "Laughter"))
+    session.execute(insert(models.SoundClass).values(name = "Crying"))
+    session.execute(insert(models.SoundClass).values(name = "Cough"))
+    session.execute(insert(models.SoundClass).values(name = "Crack"))
+    session.execute(insert(models.SoundClass).values(name = "Slap"))
+    session.execute(insert(models.SoundClass).values(name = "Breaking"))
+    session.execute(insert(models.SoundClass).values(name = "Crushing"))
+    session.execute(insert(models.SoundClass).values(name = "Music"))
+    session.execute(insert(models.SoundClass).values(name = "Television"))
+    session.execute(insert(models.SoundClass).values(name = "Alarm"))
+    session.execute(insert(models.SoundClass).values(name = "Telephone"))
+    session.execute(insert(models.SoundClass).values(name = "Ringtone"))
+    session.execute(insert(models.SoundClass).values(name = "Alarm clock"))
+    session.execute(insert(models.SoundClass).values(name = "Radio"))
+    session.execute(insert(models.SoundClass).values(name = "Vehicle"))
+    session.execute(insert(models.SoundClass).values(name = "Car alarm"))
+    session.execute(insert(models.SoundClass).values(name = "Traffic noise"))
+    session.execute(insert(models.SoundClass).values(name = "Explosion"))
+    session.execute(insert(models.SoundClass).values(name = "Gunshot"))
+    session.execute(insert(models.SoundClass).values(name = "Boom"))
+    session.execute(insert(models.SoundClass).values(name = "Door"))
 
     ######## CREATE SOUNDCHAINS ########
     print("-------- creating soundchains --------")
@@ -117,7 +137,6 @@ def insert_dummy(session):
     session.execute(insert(models.SoundFile).values(start_time =  time4, end_time =  time5, file_name = "soundfile_5", sound_chain_id = 2, file_state = "0"))
     session.execute(insert(models.SoundFile).values(start_time =  time5, end_time =  time6, file_name = "soundfile_6", sound_chain_id = 2, file_state = "0"))
 
-
     session.execute(insert(models.SoundFile).values(start_time =  time7, end_time =  time8, file_name = "soundfile_7", sound_chain_id = 3, file_state = "0"))
     session.execute(insert(models.SoundFile).values(start_time =  time8, end_time =  time9, file_name = "soundfile_8", sound_chain_id = 3, file_state = "0"))
     session.execute(insert(models.SoundFile).values(start_time =  time10, end_time =  time11, file_name = "soundfile_9", sound_chain_id = 4, file_state = "0"))
@@ -143,11 +162,13 @@ def insert_dummy(session):
             session.execute(insert(models.SoundInterval).values(start_time = start_t, end_time = end_t, highest_volume = 5000, sound_file_id = i + 1))
 
 
-
      ######## CREATE SOUNDS ########
     print("-------- creating sounds --------")
-    session.execute(insert(models.Sound).values(trust_value = 0.6, sound_class = "BOOM", sound_interval_id = 1))
-    session.execute(insert(models.Sound).values(trust_value = 0.6, sound_class = "BAAM", sound_interval_id = 1))
+    session.execute(insert(models.Sound).values(trust_value = 0.6, sound_class = "Speech", sound_interval_id = 1))
+    session.execute(insert(models.Sound).values(trust_value = 0.6, sound_class = "Shout", sound_interval_id = 1))
+    session.execute(insert(models.Sound).values(trust_value = 0.6, sound_class = "Whispering", sound_interval_id = 7))
+    session.execute(insert(models.Sound).values(trust_value = 0.6, sound_class = "Laughter", sound_interval_id = 8))
+    session.execute(insert(models.Sound).values(trust_value = 0.6, sound_class = "Crying", sound_interval_id = 9))
 
 
     ######## CREATE TAGS ########

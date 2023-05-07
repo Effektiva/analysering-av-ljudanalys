@@ -278,6 +278,22 @@ class APIService {
           }
       });
   }
+
+  /*
+   * Misc
+   */
+  static getAllSoundClasses = async (): Promise<any[]> => {
+    let data: any[] = [];
+    await axios.get(this.apiURL + "/sound_class").then((response: any) => {
+      if (response.status !== 200) {
+        log.warning("Couldn't fetch all soundclasses:", response);
+      }
+
+      data = response.data;
+    });
+
+    return data;
+  }
 }
 
 export default APIService;
