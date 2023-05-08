@@ -281,15 +281,16 @@ async def read_soundchaindata(id1: int, id2: int):
                                    "highest_volume" : interval.highest_volume}
             soundClass = makeList(session.execute(select(models.Sound)
                                          .where(models.Sound.sound_interval_id == interval.id)).fetchall())
+            soundsList = []
             if soundClass:
-                soundsList = []
                 for sound in soundClass:
                     soundsList.append({"sound_class" : sound.sound_class, "trust_value" : sound.trust_value})
                     if sound.sound_class not in soundClassList:
                         soundClassList.append(sound.sound_class)
                     if sound.sound_class not in soundClassesInFile:
                         soundClassesInFile.append(sound.sound_class)
-                soundIntervalObject["sounds"] = soundsList
+            soundIntervalObject["sounds"] = soundsList
+
             soundIntervalList.append(soundIntervalObject)
 
         # Hämtar alla kommentarer som hör till ljudfilen
