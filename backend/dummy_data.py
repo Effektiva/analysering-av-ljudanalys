@@ -145,11 +145,17 @@ def insert_dummy(session):
 
     ######## CREATE COMMENTS ########
     print("-------- creating comments --------")
-    session.execute(insert(models.Comments).values(time = time1 + 40, text = "SKOTT_i_soundfile1", sound_file_id = 1))
-    session.execute(insert(models.Comments).values(time = time1 + 50, text = "PRAT_i_soundfile1", sound_file_id = 1))
+    t1_rw = datetime.datetime(2023, 3, 18, 0, 0, 0)
+    comment_time1 = time.mktime(t1_rw.timetuple())
+    session.execute(insert(models.Comments).values(time = comment_time1 + 40, text = "SKOTT_i_soundfile1", sound_file_id = 1))
+    session.execute(insert(models.Comments).values(time = comment_time1 + 50, text = "PRAT_i_soundfile1", sound_file_id = 1))
 
-    session.execute(insert(models.Comments).values(time = time7 + 5, text = "SKOTT_i_soundfile2", sound_file_id = 2))
-    session.execute(insert(models.Comments).values(time = time7 + 10, text = "PRAT_i_soundfile2", sound_file_id = 2))
+    t1_rw = datetime.datetime(2023, 3, 18, 0, 2, 5)
+    comment_time2 = time.mktime(t1_rw.timetuple())
+    session.execute(insert(models.Comments).values(time = comment_time2 + 5, text = "SKOTT_i_soundfile2", sound_file_id = 2))
+    session.execute(insert(models.Comments).values(time = comment_time2 + 10, text = "PRAT_i_soundfile2", sound_file_id = 2))
+    file_2 = makeList(session.execute(select(models.SoundFile).where(models.SoundFile.id == 2)).fetchall())
+
 
 
     ######## CREATE SOUNDINTERVALS ########

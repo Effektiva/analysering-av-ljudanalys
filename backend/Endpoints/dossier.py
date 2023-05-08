@@ -195,12 +195,14 @@ async def read_exportDossier(id: int):
     dossier_csv = dossier_name + ".csv"
     with open(dossier_csv, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile, quoting=csv.QUOTE_NONE)
-        csvwriter.writerow(["Kommentar "] + ["Tid "] + ["Ljudklipp "])
+        csvwriter.writerow(["Kommentar "] + ["Tid in i klipp"] + ["Ljudklipp "])
         for file in files:
+
             comments = makeList(session.execute(select(models.Comments).where(models.Comments.sound_file_id == file.id)).fetchall())
+
             # Om ljdfilen inte har något kommentar kopplat till sig
             if not comments:
-                csvwriter.writerow([''] + [''] + [file.file_name])
+                csvwriter.writerow(['---'] + ['---'] + [file.file_name])
 
             else:
                 for comment in comments:
