@@ -50,6 +50,7 @@ const InvestigationPage = (props: Props) => {
   }, [filters]);
 
   const updateLists = () => {
+    setFilteredChains(props.appState.soundChains);
     setForceUpdateLists(prev => !prev);
   };
 
