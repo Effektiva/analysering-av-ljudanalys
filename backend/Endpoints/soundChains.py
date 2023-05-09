@@ -79,7 +79,7 @@ def time_interval(soundFileId, path):
     if not SoundFile:
         return "Something went wrong"
 
-    path = path + f"{SoundFile.file_name}"
+    path = path
 
     # load the audio file
     audio_file = AudioSegment.from_file(path)
@@ -87,8 +87,12 @@ def time_interval(soundFileId, path):
     # set the interval duration in milliseconds
     interval_duration = 10000
 
+
     # calculate the number of intervals
     num_intervals = int(audio_file.duration_seconds * 1000 / interval_duration)
+
+    # last interval that might be shorter then 10 seconds
+    modulo = int(audio_file.duration_seconds * 1000 % interval_duration)
 
     # iterate over the intervals
     for i in range(num_intervals):
@@ -99,11 +103,35 @@ def time_interval(soundFileId, path):
         # get the audio data for the interval
         interval_audio = audio_file[start_time:end_time]
 
+
         # calculate the maximum volume of the interval
         max_volume = interval_audio.max_dBFS
 
         # Skapa nytt tidsintervall
-        session.execute(insert(models.SoundInterval).values(start_time = start_time/1000, end_time = end_time/1000, highest_volume = max_volume, sound_file_id = soundFileId))
+        if SoundFile.start_time:
+            start_time = SoundFile.start_time + (start_time / 1000)
+            end_time = SoundFile.start_time + (end_time / 1000)
+        else:
+            start_time = start_time / 1000
+            end_time = end_time / 1000
+        session.execute(insert(models.SoundInterval).values(start_time = start_time, end_time = end_time, highest_volume = max_volume, sound_file_id = soundFileId))
+
+    # Fix the last interval
+    if modulo != 0:
+        start_time = num_intervals * interval_duration
+        end_time = start_time + modulo
+        interval_audio = audio_file[start_time:end_time]
+        max_volume = interval_audio.max_dBFS
+        # Skapa nytt tidsintervall
+        if SoundFile.start_time:
+            start_time = SoundFile.start_time + (start_time / 1000)
+            end_time = SoundFile.start_time + (end_time / 1000)
+        else:
+            start_time = start_time / 1000
+            end_time = end_time / 1000
+        session.execute(insert(models.SoundInterval).values(start_time = start_time, end_time = end_time, highest_volume = max_volume, sound_file_id = soundFileId))
+
+
 
 # Skapar nya ljudkedjor med hjälp av massor av ljudfiler, skapar också ljudfiler
 # Indata får gärna se ut såhär tex
@@ -181,7 +209,7 @@ async def create_investigationsSoundChains(investigation_id: int,
             f.write(file["content"])
 
         # Lägg till tidsintervall för ljudfilerna
-        #time_interval(sound_file_id[0], file_path)
+        time_interval(sound_file_id[0], file_path)
 
         last_time = file["end_time"]
 
@@ -207,6 +235,8 @@ async def weird_files(investigation_id, files):
         path_name = file_path + "/" + str(file_id) + "." + file_format
         with open(path_name, "wb") as f:
             f.write(file[1])
+
+        time_interval(file_id, path_name)
 
 
 # Ta bort en ljudkedja med ett visst id.
