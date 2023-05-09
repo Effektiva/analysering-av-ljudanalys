@@ -64,6 +64,7 @@ const LeftMenu = (props: Props) => {
         selected={selectedDossierHandler}
         dossiers={props.appState.dossiers}
         appState={props.appState}
+        setAppState={props.setAppState}
       />
     </div>
   )

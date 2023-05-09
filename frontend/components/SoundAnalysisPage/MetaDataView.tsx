@@ -20,13 +20,13 @@ enum Style {
  * @param props - The metadata to display.
  */
 const MetadataView = (props: Props) => {
-  //
   return (
     <div className={Style.Container}>
       <div className={Style.Header}>Metadata</div>
         <div>
           <span className={Style.MetadataName}> <b>Filnamn:</b> {props.metaData?.getFileName()}</span>
           <span className={Style.MetadataDate}> <b>Datum:</b> {props.metaData?.getDate()}</span>
+          <span className={Style.MetadataDate}> <b>Filformat:</b> {props.metaData?.getFileFormat()}</span>
         </div>
     </div>
   );
