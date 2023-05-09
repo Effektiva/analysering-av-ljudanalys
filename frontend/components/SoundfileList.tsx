@@ -35,7 +35,6 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 const SoundfileList = (props: Props) => {
   const [currentParentId, setCurrentParentID] = useState<number>(-1);
   const [currentPopup, setCurrentPopup] = useState<number>(-1);
-
   const { ref: popupContainerReference,
           isComponentVisible: isPopupVisible,
           setIsComponentVisible: setIsPopupVisible } = useComponentVisible(false);

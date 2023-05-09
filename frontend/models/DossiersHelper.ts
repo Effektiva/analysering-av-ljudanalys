@@ -6,12 +6,24 @@ import Soundclip from "./General/Soundclip";
 // TODO: Maybe remake into a DossierCollection class that appState owns instead of an array of
 // dossiers?
 class DossiersHelper {
+  static addDossier = async (dossiers: Array<Dossier>): Promise<Dossier[]> => {
+    let newDossiers = [...dossiers];
+    let text = "Ny dossier " + dossiers.length;
+    let id = await APIService.createDossier(text);
+    if (id != -1) {
+      newDossiers.push(new Dossier(id, text));
+    } else {
+      log.warning("Couldn't create dossier.");
+    }
+
+    return newDossiers;
+  }
+
   static changeText = (dossiers: Array<Dossier>, dossierId: number, text: string): Dossier[] => {
     let newDossiers = [...dossiers];
     let indexes = DossiersHelper.findDossier(dossiers, dossierId);
     let root = (indexes.root != -1 && indexes.subroot == -1);
     let found = ((indexes.root != -1 && indexes.subroot != -1) || root);
-
 
     if (!found) {
       log.warning("Couldn't find dossier:", dossierId);

@@ -40,7 +40,7 @@ class Dossier implements ListItemRepresentable {
 
     let soundfiles: Soundclip[] = [];
     json.soundFiles.forEach((file: any) => {
-      soundfiles.push(new Soundclip(file.id, new Metadata(file.fileName, []), new Date(0), new Date(0)));
+      soundfiles.push(new Soundclip(file.id, new Metadata(file.fileName), new Date(0), new Date(0), "0", []));
     });
 
     if (id !== undefined && name !== undefined && subdossiers !== undefined && soundfiles !== undefined) {

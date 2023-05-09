@@ -11,6 +11,7 @@ type Props = {
   selected: Function,
   dossiers: Array<Dossier>,
   appState: AppState,
+  setAppState: Function
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -96,17 +97,6 @@ const DossierList = (props: Props) => {
     }
   }
 
-  const addNewItem = async () => {
-    let id = await APIService.createDossier("Ny dossier " + dossiers.length);
-    if (id != -1) {
-      setDossiers(prev => [...prev, new Dossier(id, "Ny dossier " + dossiers.length)]);
-    }
-  }
-
-  const toggleVisibility = () => {
-    setMenuVisible(!menuVisible);
-  }
-
   return (
     <>
       <div className="dossier_listmenu">
@@ -114,7 +104,7 @@ const DossierList = (props: Props) => {
           className={"listMenuHeader listItemCollapsable" + ( !menuVisible ? " collapsed" : "")}
         >
           <div className="listItemButton"
-            onClick={toggleVisibility}
+            onClick={() => {setMenuVisible(!menuVisible)}}
           >
             Dossier
           </div>
@@ -128,7 +118,14 @@ const DossierList = (props: Props) => {
             toggleableRoots={true}
             selectedId={props.appState.selectedSoundclip?.id}
           />
-          <button className="listAddButton" onClick={addNewItem}>Ny dossier</button>
+          <button
+            className="listAddButton"
+            onClick={async () => {
+              let newState = props.appState;
+              newState.dossiers = await DossiersHelper.addDossier(props.appState.dossiers);
+              props.setAppState(newState);
+            }}
+          >Ny dossier</button>
         </div>
       </div>
     </>
