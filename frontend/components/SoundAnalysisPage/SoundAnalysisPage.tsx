@@ -101,7 +101,9 @@ const SoundAnalysisPage = (props: Props) => {
 
   const updateNotes = (newNotes: Array<Note>) => {
     log.debug("Updated comments!");
-    props.appState.selectedSoundChain!.comments = newNotes;
+    let newState = props.appState;
+    newState.selectedSoundChain!.comments = newNotes;
+    props.updateAppState(newState);
     updateCommentsByZoom();
   }
 
@@ -206,6 +208,8 @@ const SoundAnalysisPage = (props: Props) => {
                     props.appState.selectedSoundChain!.soundClips[0].metadata}
         />
         <Notes
+          clipZoom={clipZoom}
+          appState={props.appState}
           notes={notes ? notes : []}
           setNotes={updateNotes}
         />

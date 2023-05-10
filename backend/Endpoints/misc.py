@@ -2,7 +2,9 @@ from queue import Empty
 from sqlalchemy import select, insert, update, delete
 from fastapi import APIRouter, Request, Response
 import models
+import datetime
 import os
+import time
 from config import Paths
 
 from .helpers import makeList, session
@@ -37,7 +39,7 @@ async def analyze_investigationSoundchains():
     return 0
 
 # Skapa en kommentar som är kopplad med en ljudkedja och har en tidpunkt samt text. sound_chain_id: int, time: str, text: str)
-@router4.post("/investigations/{id1}/sound/{id2}/comments")
+@router4.post("/investigations/{id1}/soundchains/{id2}/comments")
 async def create_comment(request: Request, id1: int, id2: int):
     response = "Inget ljudklipp här :("
     try:
@@ -45,25 +47,42 @@ async def create_comment(request: Request, id1: int, id2: int):
     except:
         return "Ingen data skickas, saker behövs"
 
-    # Ljudkedjan i fråga
+    # Ljudkedjan
     soundchain = makeList(session.execute(select(models.SoundChain).where(models.SoundChain.id == id2)).fetchall())
     if not soundchain:
         return response
     chain_starttime = soundchain[0].start_time
 
-    # Tid för komentaren in i ljudkedjan
-    comment_time = int(data["time"]) + chain_starttime
+    # Ljudfilen
+    soundfile = soundchain = makeList(session.execute(select(models.SoundFile).where(models.SoundFile.id == data["fileId"])).fetchall())
+    if not soundfile:
+        return response
 
-    # Ljudfilerna i den angivna ljudkedjan
-    soundfiles = makeList(session.execute(select(models.SoundFile).where(models.SoundFile.sound_chain_id == id2)).fetchall())
-    for file in soundfiles:
-        if file.start_time <= comment_time <= file.end_time:
+    # Tid för komentaren in i ljudfilen
+    file_time = int(data["time"])
+    if file_time > soundfile[0].end_time - soundfile[0].start_time:
+        return response
 
-            # Tid för kommentaren in i ljudfilen
-            file_time = comment_time - file.start_time
-            response = makeList(session.execute(insert(models.Comments).values(time = file_time, text = data["text"], sound_file_id = file.id).returning(models.Comments)).fetchall())
-            break
-    return response
+    # TId för kommentaren in i ljudkedjan
+    chain_time = (soundfile[0].start_time + file_time) - chain_starttime
+
+
+    # Tid när kommentaren är skapad
+    time_stamp = datetime.datetime.now()
+    time_zone_add = datetime.timedelta(hours=2)  # Rätt tidszon
+    new_time_stamp = time_stamp + time_zone_add
+    time_stamp_unix = time.mktime(new_time_stamp.timetuple())
+
+
+    # Lägg till kommentaren i databasen
+    comment = makeList(session.execute(insert(models.Comments).values(time_file = file_time,
+                                                time_chain = chain_time,
+                                                text = data["text"],
+                                                time_stamp = time_stamp_unix,
+                                                sound_file_id = soundfile[0].id).returning(models.Comments)).fetchall())[0]
+
+    return {"comment": comment}
+
 
 # HÄMTA KOMENTARER FÖR ETT SPECIFIKT LJUDKLIPP
 @router4.get("/investigations/{id1}/soundchains/{id2}/soundfiles/{id3}/comments")
@@ -71,7 +90,7 @@ async def select_comment(id1: int, id2: int, id3: int):
     return makeList(session.execute(select(models.Comments).where(models.Comments.sound_file_id == id3)).fetchall())
 
 # Skapa put för kommentarer så man kan redigera
-@router4.put("/investigations/{id1}/sound/{id2}/comments")
+@router4.put("/investigations/{id1}/soundchains/{id2}/comments")
 async def update_comment(request: Request):
     try:
         data = await request.json()
@@ -81,7 +100,7 @@ async def update_comment(request: Request):
     return session.execute(update(models.Comments).where(models.Comments.id == data["id"]).values(text = data["text"]))
 
 # Ta bort en kommentar
-@router4.delete("/investigations/{id1}/sound/{id2}/comments")
+@router4.delete("/investigations/{id1}/soundchains/{id2}/comments")
 async def remove_comment(request: Request):
     try:
         data = await request.json()

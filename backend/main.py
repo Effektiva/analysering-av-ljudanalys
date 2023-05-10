@@ -62,6 +62,8 @@ def main():
     initializeFolders()
     #runTests()
 
+    models.Base.metadata.create_all(bind=engine)
+
     if DEV:
         cleanUp()
         dummy_data.insert_dummy(session)
@@ -83,7 +85,5 @@ def main():
     app.include_router(router2)
     app.include_router(router3)
     app.include_router(router4)
-
-    models.Base.metadata.create_all(bind=engine)
 
 main()

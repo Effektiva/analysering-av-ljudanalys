@@ -7,6 +7,7 @@ import { FaSave as IconSave,
          FaEdit as IconEdit             } from "react-icons/fa";
 
 type Props = {
+  clipZoom: boolean,
   notes: Array<Note>,
   deleteNote: (noteId: number | undefined) => void,
   setNoteText: (noteId: number | undefined, text: string) => void
@@ -36,24 +37,31 @@ const NotesList = (props: Props) => {
    * @param noteId - The id of the note to edit.
    */
   const setEditingNoteId = (noteId: number | undefined) => {
-    log.debug("Editing note: " + noteId);
     setEditingNote(noteId);
   }
 
-  /** HELO TIM!!!!!!!!!!!!
+  /**
    * Saves the edited text of a note. The text is saved by calling the setNoteText function that is passed in as a prop.
    * @param noteId - The id of the note to save the edited text of.
    */
   const saveEditedText = (noteId: number | undefined) => {
-    setEditingNoteId(undefined);
-    const divElement = document.getElementById(""+noteId) as HTMLDivElement | null;
+    const divElement = document.getElementById("note_"+noteId) as HTMLDivElement | null;
     const textArea = divElement?.firstChild as HTMLTextAreaElement | null;
     if (textArea != null) {
-      log.debug("Editing note: " + noteId + " with text: " + textArea?.textContent);
+      log.debug(textArea.textContent);
       props.setNoteText(noteId, textArea.textContent ?? "");
     } else {
       log.debug("Could not find textArea for note: " + noteId);
     }
+    setEditingNoteId(undefined);
+  }
+
+  const formatSeconds = (seconds: number): string => {
+    if (seconds == undefined) {
+      return "--:--:--";
+    }
+
+    return new Date(seconds*1000).toISOString().slice(11, 19);
   }
 
   return (
@@ -63,9 +71,13 @@ const NotesList = (props: Props) => {
           return  <div key={note.id} className={Style.Note}>
                     <div className={Style.Header}>
                       <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
-                      <span className={Style.Time}>Tid i klipp: {note.timeInClip.formattedString()}</span>
+                      { props.clipZoom ?
+                        <span className={Style.Time}>Tid i klipp: {formatSeconds(note.timeInClip)}</span>
+                        :
+                        <span className={Style.Time}>Tid i kedja: {formatSeconds(note.timeInChain)}</span>
+                      }
                     </div>
-                    <div id={""+note.id} className={Style.Text}>
+                    <div id={"note_"+note.id} className={Style.Text}>
                       <EditableTextField defaultText={note.text} isEditing={editingNoteId === note.id}/>
                       <div className={Style.Buttons}>
                         <>
