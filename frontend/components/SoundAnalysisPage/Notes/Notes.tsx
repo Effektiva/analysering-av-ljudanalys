@@ -1,10 +1,12 @@
-import { useState } from "react";
 import NotesList from "./NoteList";
 import { LOG as log } from "@/pages/_app";
 import Note from "@/models/SoundAnalysis/Note";
-import TimeInClip from "@/models/SoundAnalysis/TimeInClip";
+import APIService from "@/models/APIService";
+import AppState from "@/state/AppState";
 
 type Props = {
+  clipZoom: boolean,
+  appState: AppState,
   notes: Array<Note>,
   setNotes: Function,
 }
@@ -23,26 +25,46 @@ enum Style {
  * @returns A list of notes and a form for adding new notes.
  */
 const Notes = (props: Props) => {
-  const [id, setId] = useState(1); // TODO: Delete this..
-
   /**
    * Adds a new note to the list of notes. The note is created from the values in the form and then sent to the backend.
    */
-  const addNewNote = () => {
-    const timeElement = document.getElementById('newNoteTime') as HTMLInputElement | null;
-    const textAreaElement = document.getElementById('newNoteText') as HTMLTextAreaElement | null;
+  const addNewNote = async () => {
+    const timeElement = document.getElementById("newNoteTime") as HTMLInputElement | null;
+    const textAreaElement = document.getElementById("newNoteText") as HTMLTextAreaElement | null;
+    let timeString = timeElement?.value!;
+    let time = 0;
 
-    if (timeElement?.value == null && textAreaElement?.value == null) {
-      log.debug("Something wong man...");
+    if (textAreaElement?.value == "") {
+      log.warning("Can't create empty note.");
       return;
     }
-    setId(id + 1);
-    try {
-      let note = new Note(id + 1, new Date(), TimeInClip.fromTimeString(timeElement!.value), textAreaElement!.value); // Dont care about id since we should not set it here... TODO: Fix this...\
-      let sortedNotes = [...notes, note].sort((a, b) => a.timeInClip.getTime() - b.timeInClip.getTime());
+
+    if (timeString) {
+      let split = timeString.split(":");
+      time = parseInt(split[0])*60 + parseInt(split[1]);
+    }
+
+    let maxTime = props.appState.selectedSoundclip?.audioElement?.duration;
+    let currentTime = props.appState.selectedSoundclip?.audioElement?.currentTime;
+    // use the current time of the clip if no time is given
+    if (time == 0 && currentTime != undefined) {
+      time = props.appState.selectedSoundclip?.audioElement?.currentTime!;
+    } else if (time < 0 || (maxTime && time > maxTime)) {
+      log.warning("Trying to add a note with time (", time, ") that'll surpass max time (", maxTime, ") of currently playing clip.");
+      return;
+    }
+
+    let newNote = await APIService.addComment(props.appState.selectedInvestigation!.id!,
+                                              props.appState.selectedSoundChain!.id!,
+                                              props.appState.selectedSoundclip!.id!,
+                                              Math.round(time),
+                                              textAreaElement!.value);
+    let note = Note.fromJson(newNote);
+    if (note != undefined) {
+      let sortedNotes = [...props.notes, note].sort((a, b) => a.timeInClip - b.timeInClip);
       props.setNotes(sortedNotes);
-    } catch (error) {
-      log.warning("Got error: " + error);
+    } else {
+      log.warning("Backend couldn't create comment.")
     }
   };
 
@@ -51,11 +73,13 @@ const Notes = (props: Props) => {
    * @param noteId - The id of the note to delete.
    */
   const deleteNote = (noteId: number | undefined) => {
-    log.debug("Delete note: " + noteId);
     let newNotes = props.notes.filter((note) => {
       return note.id !== noteId
     });
     props.setNotes(newNotes);
+    APIService.deleteComment(props.appState.selectedInvestigation!.id!,
+                             props.appState.selectedSoundChain!.id!,
+                             noteId!);
   };
 
   /**
@@ -64,7 +88,6 @@ const Notes = (props: Props) => {
    * @param text - The text to save to the note.
    */
   const saveNewNoteText = (noteId: number | undefined, text: string) => {
-    log.debug("saved note: " + noteId + " with text: " + text);
     let note = props.notes.find((note) => {
       return note.id === noteId;
     });
@@ -76,8 +99,12 @@ const Notes = (props: Props) => {
     let newNotes = props.notes.filter((note) => {
       return note.id !== noteId
     });
-    let sortedNotes = [...newNotes, note].sort((a, b) => a.timeInClip.getTime() - b.timeInClip.getTime());
+    let sortedNotes = [...newNotes, note].sort((a, b) => a.timeInClip - b.timeInClip);
     props.setNotes(sortedNotes);
+    APIService.updateComment(props.appState.selectedInvestigation!.id!,
+                             props.appState.selectedSoundChain!.id!,
+                             noteId!,
+                             text);
   }
 
   return (
@@ -87,8 +114,11 @@ const Notes = (props: Props) => {
         <div>
           <h3 id="newNoteHead">Skapa ny anteckning</h3>
           <div className={Style.NewNoteTime}>
-            <label htmlFor="newNoteTime">Tidpunkt:</label>
-            <input id="newNoteTime" placeholder="12:34" />
+            <label htmlFor="newNoteTime">Tidpunkt i klipp:<br />(tomt innebär nuvarande tid)</label>
+            <input
+              id="newNoteTime"
+              placeholder="00:00"
+            />
           </div>
         </div>
         <div>
@@ -99,7 +129,12 @@ const Notes = (props: Props) => {
           <button onClick={addNewNote}>Lägg till</button>
         </div>
       </div>
-      <NotesList notes={props.notes} deleteNote={deleteNote} setNoteText={saveNewNoteText} />
+      <NotesList
+        clipZoom={props.clipZoom}
+        notes={props.notes}
+        deleteNote={deleteNote}
+        setNoteText={saveNewNoteText}
+      />
     </div>
   );
 }

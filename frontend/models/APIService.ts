@@ -280,6 +280,63 @@ class APIService {
   }
 
   /*
+   * Notes
+   */
+  static addComment = async (investigationId: number,
+                             soundchainId: number,
+                             clipId: number,
+                             time: number,
+                             text: string): Promise<any> => {
+    let comment = undefined;
+    await axios.post(this.apiURL + "/investigations/" + investigationId +
+                                   "/soundchains/" + soundchainId +
+                                   "/comments",
+                    {"time": time, "text": text, "fileId": clipId})
+                .then((response: any) => {
+      if (response.status === 200) {
+        comment = response.data.comment;
+      } else {
+        log.warning("Couldn't create comment:", response);
+      }
+    });
+    if (comment != undefined) {
+      log.debug("New note:", comment);
+    }
+    return comment;
+  }
+
+  static deleteComment = async (investigationId: number,
+                                soundchainId: number,
+                                commentId: number) => {
+    log.debug("Deleting note of id:", commentId);
+    await axios.delete(this.apiURL + "/investigations/" + investigationId +
+                                     "/soundchains/" + soundchainId +
+                                     "/comments",
+                    {data: {"id": commentId}})
+                .then((response: any) => {
+      if (response.status !== 200) {
+        log.warning("Couldn't delete comment:", response);
+      }
+    });
+  }
+
+  static updateComment = async (investigationId: number,
+                                soundchainId: number,
+                                commentId: number,
+                                text: string) => {
+    log.debug("Changing text of note of id", commentId, "with text:", text);
+    await axios.put(this.apiURL + "/investigations/" + investigationId +
+                                  "/soundchains/" + soundchainId +
+                                  "/comments",
+                    {"id": commentId, "text": text})
+               .then((response: any) => {
+                if (response.status !== 200) {
+                  log.warning("Couldn't update comment:", response);
+                }
+               })
+  }
+
+  /*
    * Misc
    */
   static getAllSoundClasses = async (): Promise<any[]> => {

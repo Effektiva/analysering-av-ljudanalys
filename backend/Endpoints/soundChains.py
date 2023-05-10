@@ -17,7 +17,6 @@ router3 = APIRouter()
 # Hämta alla ljudkedjor (med ljudklasser och tags) som tillhör en viss investigation
 @router3.get("/investigations/{id}/soundchains")
 async def read_investigationsSoundChains(id: int):
-
     soundChains = makeList(session.execute(select(models.SoundChain).where(models.SoundChain.investigations_id == id)).fetchall())
     soundChainList = []
 
