@@ -47,6 +47,7 @@ const SoundAnalysisPage = (props: Props) => {
   const [filters, setFilters] = useState<any[]>([]);
   const [filteredFiles, setFilteredFiles] = useState<any[]>([]);
   const [notes, setNotes] = useState(props.appState.selectedSoundChain?.comments);
+  const [mediaPlayerTime, setMediaPlayerTime] = useState<number>(0);
 
   useEffect(() => {
     updateCommentsByZoom();
@@ -175,7 +176,7 @@ const SoundAnalysisPage = (props: Props) => {
 
       {/* Right column */}
       <div className={Style.Col}>
-        <Graph />
+        <Graph filters={filters} mediaPlayerTime={mediaPlayerTime} />
         <MediaControl
           playing={playing}
           setPlaying={setPlaying}
@@ -186,6 +187,8 @@ const SoundAnalysisPage = (props: Props) => {
           appState={props.appState}
           clipSelected={clipSelected}
           clipZoom={clipZoom}
+          currentTime={mediaPlayerTime}
+          setCurrentTime={setMediaPlayerTime}
         />
         <div className={Style.Buttons}>
           <div className={Style.Zoom}>

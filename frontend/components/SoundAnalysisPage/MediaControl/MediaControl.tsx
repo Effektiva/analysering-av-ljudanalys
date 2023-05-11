@@ -3,7 +3,8 @@ import {
   FaBackward as BackwardIcon,
   FaPlay as PlayIcon,
   FaPause as PauseIcon,
-  FaForward as ForwardIcon } from "react-icons/fa";
+  FaForward as ForwardIcon
+} from "react-icons/fa";
 import { LOG as log } from "@/pages/_app";
 import ProgressBar from "./ProgressBar";
 import VolumeBar from "./VolumeBar";
@@ -19,6 +20,8 @@ type Props = {
   clipZoom: boolean,
   appState: AppState,
   clipSelected: Function,
+  currentTime: number,
+  setCurrentTime: Function
 }
 
 const STYLE_NAMESPACE = "mediaControl__";
@@ -54,7 +57,6 @@ export enum Event {
  */
 const MediaControl = (props: Props) => {
   const [playable, setPlayable] = useState(false);
-  const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [newClipSeek, setNewClipSeek] = useState<number>(0);
 
@@ -81,7 +83,7 @@ const MediaControl = (props: Props) => {
           // the currently playing clip, then seek is set to where in the
           // newly chosen clip we want to start at.
           if (newClipSeek && soundclip.audioElement != undefined) {
-            let str = new Date(newClipSeek*1000).toISOString().slice(11,19);
+            let str = new Date(newClipSeek * 1000).toISOString().slice(11, 19);
             log.debug("Switched clip, seeking to:", str)
             soundclip.audioElement.currentTime = newClipSeek;
             setNewClipSeek(0);
@@ -91,7 +93,7 @@ const MediaControl = (props: Props) => {
 
           // <obj>.oncanplay is ran whenever the clip is playable, not only when it
           // "initialised", which is what we wish to use it for. So we unset it after init.
-          soundclip.audioElement.oncanplay = () => {};
+          soundclip.audioElement.oncanplay = () => { };
         } else {
           log.error("Soundclip or audioElement is undefined.");
         }
@@ -106,7 +108,7 @@ const MediaControl = (props: Props) => {
 
         if (soundclip) {
           let newClip = soundchain.getNextClipAndSetAudioElement(props.appState.selectedInvestigation?.id!,
-                                                                 soundclip);
+            soundclip);
           if (newClip) {
             log.debug("New clip exists, playing:", newClip.id);
             props.clipSelected(newClip.id);
@@ -147,11 +149,11 @@ const MediaControl = (props: Props) => {
     } else if (soundchain == undefined) {
       log.warning("Updating times: Soundchain is undefined", soundchain);
     } else if (props.clipZoom) {
-      setCurrentTime(soundclip.audioElement.currentTime);
+      props.setCurrentTime(soundclip.audioElement.currentTime);
       setDuration(soundclip.duration);
     } else {
       let current = soundchain.getSecondsToStartOfClip(soundclip) + soundclip.audioElement.currentTime;
-      setCurrentTime(current);
+      props.setCurrentTime(current);
       setDuration(soundchain.duration);
     }
   }
@@ -172,7 +174,7 @@ const MediaControl = (props: Props) => {
       return;
     }
 
-    switch(event) {
+    switch (event) {
       case Event.Backward:
         progressEventHandler(Event.Backward, 0);
         break;
@@ -241,7 +243,7 @@ const MediaControl = (props: Props) => {
 
     let seekTo = 0;
     if (props.clipZoom) {
-      switch(event) {
+      switch (event) {
         case Event.Forward:
           seekTo = soundchain.getSecondsToStartOfClip(soundclip) + currentTime + 30;
           break;
@@ -249,7 +251,7 @@ const MediaControl = (props: Props) => {
           seekTo = soundchain.getSecondsToStartOfClip(soundclip) + currentTime - 30;
           break;
         case Event.ProgressBar:
-          seekTo = duration * (perc/100);
+          seekTo = duration * (perc / 100);
           soundclip.audioElement.currentTime = seekTo;
           return;
         default:
@@ -257,15 +259,15 @@ const MediaControl = (props: Props) => {
           break;
       }
     } else {
-      switch(event) {
+      switch (event) {
         case Event.Forward:
-            seekTo = currentTime + 30;
+          seekTo = props.currentTime + 30;
           break;
         case Event.Backward:
-            seekTo = currentTime - 30;
+          seekTo = props.currentTime - 30;
           break;
         case Event.ProgressBar:
-          seekTo = (perc/100) * soundchain.duration;
+          seekTo = (perc / 100) * soundchain.duration;
           break;
         default:
           log.error("Unhandled event:", event);
@@ -274,7 +276,7 @@ const MediaControl = (props: Props) => {
     }
 
     // In seconds, where are we ending up because of the seek?
-    let str = new Date(seekTo*1000).toISOString().slice(11,19);
+    let str = new Date(seekTo * 1000).toISOString().slice(11, 19);
     log.debug("chain seek:", str);
 
     // Do we need to switch clips?
@@ -297,12 +299,12 @@ const MediaControl = (props: Props) => {
       // remove the time upto this clip.
       if (newClipID != 0) {
         let clip = soundchain.getSoundclip(newClipID);
-        if (clip) {
+        if (clip) {
           seekTo = seekTo - soundchain.getSecondsToStartOfClip(clip);
         }
       }
 
-      str = new Date(seekTo*1000).toISOString().slice(11,19);
+      str = new Date(seekTo * 1000).toISOString().slice(11, 19);
       log.debug("clip seek:", str);
 
       if (switchClips) {
@@ -353,7 +355,7 @@ const MediaControl = (props: Props) => {
       <ProgressBar
         key={props.appState.selectedSoundclip?.id}
         playable={playable}
-        currentTime={currentTime}
+        currentTime={props.currentTime}
         duration={duration}
         progressEventHandler={progressEventHandler}
       />
