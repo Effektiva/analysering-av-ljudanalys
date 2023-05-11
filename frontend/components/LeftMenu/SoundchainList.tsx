@@ -1,14 +1,18 @@
-import { useState } from "react";
 import ListMenu, { ListEvent, ListEventResponse } from "@/components/ListMenu/ListMenu";
 import ContextItem from "@/components/ContextMenu/ContextItem";
 import { LOG as log } from "@/pages/_app";
 import SoundChain from "@/models/General/SoundChain";
 import APIService from "@/models/APIService";
+import AppState from "@/state/AppState";
+import DossiersHelper from "@/models/DossiersHelper";
 
 type Props = {
-  soundchains: Array<SoundChain>,
+  appState: AppState,
+  setAppState: Function,
+  title: string,
+  soundchains: SoundChain[],
   soundChainSelected: (id: number) => void,
-  investigationID: number | undefined
+  forceUpdate: Function
 }
 
 const CONTEXT_MENUS: Array<ContextItem[]> = [
@@ -21,53 +25,45 @@ const CONTEXT_MENUS: Array<ContextItem[]> = [
 ]
 
 const SoundchainList = (props: Props) => {
-  const [soundchains, setSoundchains] = useState(props.soundchains);
-  const [menuVisible, setMenuVisible] = useState<boolean>(true);
-
-  const eventHandler = (response: ListEventResponse) => {
+  const eventHandler = async (response: ListEventResponse) => {
     switch(response.event) {
       case ListEvent.ClickOnRoot:
-        log.debug("Goto soundchain:", response.id);
         props.soundChainSelected(response.id);
         break;
-
-      case ListEvent.ContextDelete: {
-        if (props.investigationID) {
-          APIService.deleteSoundchain(props.investigationID, response.id);
-          let newSoundchains = [...soundchains];
-          let index = soundchains.findIndex((elem: SoundChain) => elem.id == response.id);
-          newSoundchains.splice(index, 1);
-          setSoundchains(soundchains);
+      case ListEvent.ContextDelete:
+        {
+          let newState = props.appState;
+          newState.soundChains = [...props.appState.soundChains];
+          let index = newState.soundChains.findIndex((elem: SoundChain) => elem.id == response.id);
+          let chain = await APIService.getFullSoundChain(props.appState.selectedInvestigation?.id!, response.id);
+          newState.dossiers = DossiersHelper.removeSoundfiles(props.appState.dossiers,
+                                                              chain?.soundClips!);
+          newState.soundChains.splice(index, 1);
+          APIService.deleteSoundchain(props.appState.selectedInvestigation?.id!, response.id);
+          props.setAppState(newState);
+          props.forceUpdate();
         }
         break;
-      }
-
       default:
         log.error("Bad event: ", response.event)
         break;
     }
   }
 
-  const toggleVisibility = () => {
-    setMenuVisible(!menuVisible);
-  }
-
   return (
     <>
-      <span
+      <div
         className="listMenuHeader"
-        onClick={toggleVisibility}
       >
-        Samtliga ljudkedjor
-      </span>
-      { menuVisible &&
+        <div className="listItemButton">
+          {props.title}
+        </div>
+      </div>
         <ListMenu
-          key={soundchains.length}
-          items={soundchains.map(soundchain => soundchain.asListItem())}
+          items={props.soundchains.map(soundchain => soundchain.asListItem())}
           contextMenus={CONTEXT_MENUS}
           eventHandler={eventHandler}
         />
-      }
     </>
   )
 }

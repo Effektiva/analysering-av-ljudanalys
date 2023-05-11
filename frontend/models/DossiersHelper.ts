@@ -6,6 +6,19 @@ import Soundclip from "./General/Soundclip";
 // TODO: Maybe remake into a DossierCollection class that appState owns instead of an array of
 // dossiers?
 class DossiersHelper {
+  static addDossier = async (dossiers: Array<Dossier>): Promise<Dossier[]> => {
+    let newDossiers = [...dossiers];
+    let text = "Ny dossier " + dossiers.length;
+    let id = await APIService.createDossier(text);
+    if (id != -1) {
+      newDossiers.push(new Dossier(id, text));
+    } else {
+      log.warning("Couldn't create dossier.");
+    }
+
+    return newDossiers;
+  }
+
   static changeText = (dossiers: Array<Dossier>, dossierId: number, text: string): Dossier[] => {
     let newDossiers = [...dossiers];
     let indexes = DossiersHelper.findDossier(dossiers, dossierId);
@@ -17,10 +30,10 @@ class DossiersHelper {
       log.warning("Dossiers:", newDossiers);
     } else if (root) {
       newDossiers[indexes.root].name = text;
-      APIService.changeDossierName(indexes.root, text);
+      APIService.changeDossierName(dossierId, text);
     } else {
       newDossiers[indexes.root].subdossiers[indexes.subroot].name = text;
-      APIService.changeDossierName(indexes.subroot, text);
+      APIService.changeDossierName(dossierId, text);
     }
 
     return newDossiers;
@@ -78,6 +91,24 @@ class DossiersHelper {
       APIService.deleteSoundfileFromDossier(dossierID!, fileId)
     }
 
+    return newDossiers;
+  }
+
+  static removeSoundfiles = (dossiers: Array<Dossier>, soundfiles: Array<Soundclip>): Dossier[] => {
+    let newDossiers = [...dossiers];
+    newDossiers.forEach((dos: Dossier) => {
+      soundfiles.forEach((file) => {
+        let index = dos.soundfiles.findIndex((f) => f.id == file.id);
+        if (index != -1) dos.soundfiles.splice(index, 1);
+      });
+
+      dos.subdossiers.forEach((subdos: Dossier) => {
+        soundfiles.forEach((file) => {
+          let index = subdos.soundfiles.findIndex((f) => f.id == file.id);
+          if (index != -1) subdos.soundfiles.splice(index, 1);
+        });
+      });
+    });
     return newDossiers;
   }
 

@@ -4,11 +4,12 @@ import AppState from "@/state/AppState";
 import { useEffect, useState } from "react";
 import Investigation from "@/models/General/Investigation";
 import Dossier from "@/models/General/Dossier";
-import { LOG as log } from "@/pages/_app";
+import { FaCommentDots } from "react-icons/fa";
 
 type Props = {
   selected: Function,
   appState: AppState,
+  setAppState: Function,
   forceUpdate: boolean
 }
 
@@ -22,10 +23,6 @@ export enum Type {
 const LeftMenu = (props: Props) => {
   const [investigations, setInvestigations] = useState<Investigation[]>(props.appState.investigations);
   const [dossiers, setDossiers] = useState<Dossier[]>(props.appState.dossiers);
-
-  useEffect(() => {
-    log.debug("Forced rerender leftmenu");
-  }, [props.forceUpdate])
 
   useEffect(() => {
     setInvestigations(props.appState.investigations);
@@ -45,17 +42,29 @@ const LeftMenu = (props: Props) => {
 
   return (
     <div className="left-menu">
+      <div className="left-menu__top">
+        <div className="left-menu__button">
+          <p>
+            Utredningsassistansprogram
+          </p>
+          <div className="left-menu__icon">
+            <FaCommentDots/>
+          </div>
+        </div>
+      </div>
       <InvestigationList
         key={"invs:" + investigations.join(',')}
         selected={selectedInvestigationHandler}
         investigations={investigations}
         appState={props.appState}
+        setAppState={props.setAppState}
       />
       <DossierList
         key={"dosss:" + dossiers.join(',')}
         selected={selectedDossierHandler}
         dossiers={props.appState.dossiers}
         appState={props.appState}
+        setAppState={props.setAppState}
       />
     </div>
   )

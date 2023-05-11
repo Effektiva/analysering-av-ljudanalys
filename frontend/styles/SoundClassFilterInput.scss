@@ -28,9 +28,19 @@
 
 .soundClassFilter__listRemove {
     font-weight: bold;
-    float: left;
-    margin-right: 4%;
-    border-radius: 20%;
-    padding-left: 2%;
-    padding-right: 2%;
+    float: right;
+    margin-right: 30%;
+}
+
+.soundClassFilterInput__popup {
+    background: white;
+    border: 1px solid black;
+    position: fixed;
+    height: auto;
+    max-height: 25%;
+    overflow: scroll;
+}
+
+.soundClassFilterInput__popupChoice:hover {
+    background: lightblue;
 }

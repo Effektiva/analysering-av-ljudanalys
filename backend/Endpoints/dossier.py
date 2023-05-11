@@ -110,7 +110,7 @@ async def delete_dossier(request: Request):
 
 # Skapa en underdossier till en dossier med ett viss id. Ge underdossiern namnet "name" (name: str ,parent_id : int)
 @router2.post("/dossier/{parent_id}")
-async def create_underdossier(request: Request ,parent_id : int):
+async def create_underdossier(request: Request, parent_id : int):
     try:
         data = await request.json()
     except:
@@ -168,15 +168,12 @@ async def delete_soundInDossier(request: Request, id: int):
     return session.execute(delete(models.Folder).where(models.Folder.dossier_id == data["id"], models.Folder.sound_file_id == id))
 
 
-# Exporterar en dossier med ett viss id. Ska vara i CVS fil format HUR SKA RETURNEN VARA? VAR SKA FILEN SPARAS?
+# Exporterar en dossier med ett viss id. Ska vara i CVS fil format.
 @router2.get("/dossier/export/{id}")
 async def read_exportDossier(id: int):
     dossier_name = makeList(session.execute(select(models.Dossier.name).where(models.Dossier.id == id)).fetchall())[0]
-
     underdossier = makeList(session.execute(select(models.Dossier).where(models.Dossier.parent_folder_id == id)).fetchall())
-
     soundfilesids = makeList(session.execute(select(models.Folder.sound_file_id).where(models.Folder.dossier_id == id)).fetchall())
-
 
     files = []
 
@@ -194,25 +191,22 @@ async def read_exportDossier(id: int):
             for file in new_files:
                 files.append(file)
 
-
     # CSV file grejer, kolla python doc ifall ni osäker hur det fungerar https://docs.python.org/3/library/csv.html
     dossier_csv = dossier_name + ".csv"
     with open(dossier_csv, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile, quoting=csv.QUOTE_NONE)
-        csvwriter.writerow(["Kommentar "] + ["Tid "] + ["Ljudklipp "])
+        csvwriter.writerow(["Kommentar "] + ["Tid in i klipp"] + ["Ljudklipp "])
         for file in files:
+
             comments = makeList(session.execute(select(models.Comments).where(models.Comments.sound_file_id == file.id)).fetchall())
+
             # Om ljdfilen inte har något kommentar kopplat till sig
             if not comments:
-                csvwriter.writerow([''] + [''] + [file.file_name])
+                csvwriter.writerow(['---'] + ['---'] + [file.file_name])
 
             else:
                 for comment in comments:
                     csvwriter.writerow([comment.text] + [comment.time - file.start_time] + [file.file_name])
-
-
-
-
 
     print(csvfile)
     return FileResponse(dossier_csv)

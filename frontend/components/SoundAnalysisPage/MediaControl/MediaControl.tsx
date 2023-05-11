@@ -56,7 +56,7 @@ const MediaControl = (props: Props) => {
   const [playable, setPlayable] = useState(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
-  const [seek, setSeek] = useState<number>(0);
+  const [newClipSeek, setNewClipSeek] = useState<number>(0);
 
   // Run when soundclip changes (e.g. new clip is chosen/seeked to).
   useEffect(() => {
@@ -77,18 +77,20 @@ const MediaControl = (props: Props) => {
       soundclip.audioElement.oncanplay = () => {
         setPlayable(true);
         if (soundclip != undefined && soundclip.audioElement != undefined) {
-          if (props.playing) soundclip.audioElement.play();
-
           // When we want to seek somewhere which requires us to change
           // the currently playing clip, then seek is set to where in the
           // newly chosen clip we want to start at.
-          if (seek && soundclip.audioElement != undefined) {
-            soundclip.audioElement.currentTime = seek;
-            setSeek(0);
+          if (newClipSeek && soundclip.audioElement != undefined) {
+            let str = new Date(newClipSeek*1000).toISOString().slice(11,19);
+            log.debug("Switched clip, seeking to:", str)
+            soundclip.audioElement.currentTime = newClipSeek;
+            setNewClipSeek(0);
           }
 
+          if (props.playing) soundclip.audioElement.play();
+
           // <obj>.oncanplay is ran whenever the clip is playable, not only when it
-          // "initialised", which is what we wish to use it for.
+          // "initialised", which is what we wish to use it for. So we unset it after init.
           soundclip.audioElement.oncanplay = () => {};
         } else {
           log.error("Soundclip or audioElement is undefined.");
@@ -103,7 +105,8 @@ const MediaControl = (props: Props) => {
         log.debug("Soundclip ended...");
 
         if (soundclip) {
-          let newClip = soundchain.getNextClipAndSetAudioElement(soundclip);
+          let newClip = soundchain.getNextClipAndSetAudioElement(props.appState.selectedInvestigation?.id!,
+                                                                 soundclip);
           if (newClip) {
             log.debug("New clip exists, playing:", newClip.id);
             props.clipSelected(newClip.id);
@@ -216,8 +219,11 @@ const MediaControl = (props: Props) => {
   }
 
   /*
-   * Called either from ProgressBar.tsx whenever the bar is pressed, or
-   * from this file when forward/backwards buttons are pressed.
+   * This function is called when the progress bar is pressed or when
+   * the forward/backwards buttons are pressed. It handles the seeking
+   * in the clip depending on where the user pressed in the bar. It also
+   * switches to the correct clip if there's a need to switch clips to seek
+   * correctly.
    */
   const progressEventHandler = (event: Event, perc: number) => {
     const soundclip = props.appState.selectedSoundclip;
@@ -244,7 +250,7 @@ const MediaControl = (props: Props) => {
           break;
         case Event.ProgressBar:
           seekTo = duration * (perc/100);
-          soundclip.audioElement.fastSeek(seekTo);
+          soundclip.audioElement.currentTime = seekTo;
           return;
         default:
           log.error("Unhandled event:", event);
@@ -302,10 +308,10 @@ const MediaControl = (props: Props) => {
       if (switchClips) {
         soundclip.audioElement.pause();
         props.clipSelected(newClipID);
-        setSeek(seekTo); // where we want to start on the new clip when it initialises
+        setNewClipSeek(seekTo); // where we want to start on the new clip when it initialises
         setPlayable(false);
       } else {
-        soundclip.audioElement.fastSeek(seekTo);
+        soundclip.audioElement.currentTime = seekTo;
         updateTimes();
       }
     } else {

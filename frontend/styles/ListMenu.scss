@@ -3,14 +3,15 @@
 /* Each list should have a describing header with this class */
 .listMenuHeader {
     width: 100%;
-    padding: 3px 5px;
+    padding: 10px 0;
 
     font-weight: bold;
 }
 
 /* The actual list is contained within a ul with this class  */
 .listMenu {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
 
     width: 100%;
     margin: 0;
@@ -22,44 +23,62 @@
     }
 }
 
+/* All inner elements of listItems */
+.listItemButton {
+    padding-left: 5px;
+}
+
 /* All interactable items in a .listMenu */
 .listItemCollapsable, .listItemAction {
-    .listMenu & {
+    & .listItemButton {
+        width: 100%;
+
         @include palette.interactable;
     }
 }
 
-/* Creating the lines in the list */
 .listItemRoot, .listItemChild, .listItemSubroot {
+    display: flex;
 
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 
+    &.selected .listItemButton {
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+
+    /* Creating the lines in the list */
     li li li &::before {
-        content: "│  ├─ ";
+        content: "│  ├─";
     }
 
     li li li:last-child &::before {
-        content: "│  └─ ";
+        content: "│  └─";
     }
 
     li li:last-child li &::before {
-        content: "   ├─ ";
+        content: "   ├─";
     }
 
     li li:last-child li:last-child &::before {
-        content: "   └─ ";
+        content: "   └─";
     }
 
     li li &::before {
-        content: "├─ ";
+        content: "├─";
     }
 
     li li:last-child &::before {
-        content: "└─ ";
+        content: "└─";
     }
 
     li &::before {
         @include palette.list-lines;
+
+        flex-shrink: 0;
 
         white-space: pre;
         line-height: 1;
@@ -73,36 +92,52 @@
 
 /* When a ListItem is collapsed */
 .listItemCollapsable {
+
+    .listItemButton {
     position: relative;
+    padding-right: 1.2em;
 
-    &::after {
-        position: absolute;
-        right: .5em;
+        &::after {
+            position: absolute;
+            right: .5em;
 
-        content: "-";
+            content: "-";
+
+            font-weight: normal;
+        }
     }
 
-    &.collapsed {
+    &.collapsed .listItemButton {
         &::after {
             content: "+";
         }
     }
+
+    // If in a popup, prevent the collapseable icon to appear
+    .popup & .listItemButton::after {
+        content: "" !important;
+    }
 }
 
-.listItemCollapsable+ul {
-    display: block;
+.listItemCollapsable+* {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
     overflow: hidden;
+
+    width: 100%;
 }
 
-.listItemCollapsable.collapsed+ul {
-    height: 0;
+.listItemCollapsable.collapsed+* {
+    display: none;
 }
 
 
 
 /* Button to add to list */
 .listAddButton {
-    margin-top: 1rem;
+    margin: 1rem auto 0;
     width: 10rem;
 }
 

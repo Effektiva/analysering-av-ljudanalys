@@ -1,4 +1,4 @@
-import { ListItemType } from "@/components/ListMenu/ListItemType";
+import { ItemStatus, ListItemType } from "@/components/ListMenu/ListItemType";
 import Metadata from "../SoundAnalysis/Metadata";
 import ListItemRepresentable from "../ListItemRepresentable";
 
@@ -12,25 +12,51 @@ class Soundclip implements ListItemRepresentable {
   startTime: Date;
   endTime: Date;
   duration: number;
+  state: string;
+  soundClasses: Array<any>;
 
   constructor(
     id: number | undefined,
     metadata: Metadata,
     startTime: Date,
     endTime: Date,
+    state: string,
+    soundClasses: Array<any>,
   ) {
     this.id = id;
     this.metadata = metadata;
     this.startTime = startTime;
     this.endTime = endTime;
     this.duration = (this.endTime.valueOf() - this.startTime.valueOf())/1000; // in seconds
+    this.state = state;
+    this.soundClasses = soundClasses;
   }
 
   asListItem(): ListItemType {
     return {
       id: this.id ?? -1,
       text: this.metadata.fileName,
-      collapsable: false
+      collapsable: false,
+      state: this.getCurrentItemStatus()
+    }
+  }
+
+  getCurrentItemStatus(): ItemStatus {
+    switch(this.state) {
+      case "0":
+        return ItemStatus.Untreated;
+      case "1":
+        return ItemStatus.AnalysisOngoing;
+      case "2":
+        return ItemStatus.AnalysisSucceeded;
+      case "3":
+        return ItemStatus.AnalysisFailed;
+      case "4":
+        return ItemStatus.Treated;
+      case "5":
+        return ItemStatus.Rejected;
+      default:
+        return ItemStatus.None;
     }
   }
 
@@ -39,11 +65,16 @@ class Soundclip implements ListItemRepresentable {
   }
 
   static fromJson(json: any) {
-    if (json.id === undefined || json.startTime === undefined || json.endTime === undefined || json.fileName === undefined) {
+    if (json.id === undefined ||
+        json.startTime === undefined ||
+        json.endTime === undefined ||
+        json.fileName === undefined ||
+        json.state === undefined ||
+        json.soundClasses === undefined) {
       throw new Error("Invalid json object");
     }
-    let meta = new Metadata(json.fileName, []);
-    return new Soundclip(json.id, meta, new Date(json.startTime*1000), new Date(json.endTime*1000));
+    let meta = new Metadata(json.fileName);
+    return new Soundclip(json.id, meta, new Date(json.startTime*1000), new Date(json.endTime*1000), json.state, json.soundClasses);
   }
 }
 

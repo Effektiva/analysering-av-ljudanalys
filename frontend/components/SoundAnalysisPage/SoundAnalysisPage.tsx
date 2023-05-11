@@ -2,13 +2,16 @@ import SoundfileList from "@/components/SoundfileList";
 import SoundClassFilter from "@/components/SoundClassFilter";
 import Graph from "./Graph";
 import MetadataView from "./MetaDataView";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MediaControl from "./MediaControl/MediaControl";
 import SoundChain from "@/models/General/SoundChain";
 import Note from "@/models/SoundAnalysis/Note";
 import Notes from "./Notes/Notes";
 import AppState from "@/state/AppState";
 import { LOG as log } from "@/pages/_app";
+import Soundclip from "@/models/General/Soundclip";
+import { ItemStatus } from "../ListMenu/ListItemType";
+import APIService from "@/models/APIService";
 
 type Props = {
   soundchain: SoundChain,
@@ -41,6 +44,39 @@ const SoundAnalysisPage = (props: Props) => {
   const [muted, setMuted] = useState<boolean>(false);
   const [clipZoom, setClipZoom] = useState<boolean>(false);
   const [_, setForceRerender] = useState<boolean>(false);
+  const [filters, setFilters] = useState<any[]>([]);
+  const [filteredFiles, setFilteredFiles] = useState<any[]>([]);
+  const [notes, setNotes] = useState(props.appState.selectedSoundChain?.comments);
+
+  useEffect(() => {
+    updateCommentsByZoom();
+  }, [clipZoom]);
+
+  const updateLists = () => {
+    setForceRerender(prev => !prev);
+  };
+
+  /*
+   * When the chosen filters are updated, then we'll have to update
+   * what chains we'll show in the filtered list. Only chains that have
+   * all (or a subset) of the filters are shown.
+   */
+  useEffect(() => {
+    let newFiltered: any[] = [];
+    props.appState.selectedSoundChain?.soundClips.forEach((clip: Soundclip) => {
+      let include = true;
+
+      filters.forEach((filter) => {
+        if (clip.soundClasses.find((aClass) => filter.name == aClass) == undefined) {
+          include = false;
+        }
+      });
+
+      if (include) newFiltered.push(clip);
+    });
+    setFilteredFiles(newFiltered);
+    setForceRerender(prev => !prev);
+  }, [filters]);
 
   /*
    * If a clip is selected in any of the soundfile lists this function is ran
@@ -52,19 +88,37 @@ const SoundAnalysisPage = (props: Props) => {
       log.debug("Selected new clip:", newClipId);
       if (playing) { currentClip.audioElement?.pause(); }
       var newState = props.appState;
-      let newClip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(newClipId);
+      let investigationId = newState.selectedInvestigation!.id;
+      let newClip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(investigationId!, newClipId);
       newState.selectedSoundclip = newClip;
       props.updateAppState(newState);
+      updateCommentsByZoom();
       setForceRerender(prev => !prev);
     } else {
       log.debug("Already playing clip:", newClipId);
     }
   }
 
-  const soundchainCommentsUpdated = (newNotes: Array<Note>) => {
-    props.soundchain.comments = newNotes;
+  const updateNotes = (newNotes: Array<Note>) => {
     log.debug("Updated comments!");
-    // TODO: Send to backend
+    let newState = props.appState;
+    newState.selectedSoundChain!.comments = newNotes;
+    props.updateAppState(newState);
+    updateCommentsByZoom();
+  }
+
+  const updateCommentsByZoom = () => {
+    if (clipZoom) {
+      setNotes(props.appState.selectedSoundChain!.getCommentsForClip(props.appState.selectedSoundclip?.id!));
+    } else {
+      setNotes(props.appState.selectedSoundChain?.comments);
+    }
+  }
+
+  const soundchainStateChange = (event: any) => {
+    APIService.setSoundchainState(props.appState.selectedInvestigation?.id!,
+                                  props.soundchain.id!,
+                                  event.target.value);
   }
 
   return (
@@ -77,24 +131,32 @@ const SoundAnalysisPage = (props: Props) => {
 
           <div>
             <label htmlFor="statusPicker">Markerad som</label>
-            <select id="statusPicker" className={Style.SetStatus +  " form-select"}>
-              <option>Ej behandlad</option>
-              <option>Behandlad</option>
-              <option>Avvisad</option>
+            <select
+              defaultValue={props.soundchain.getCurrentItemStatus()}
+              onChange={soundchainStateChange}
+              id="statusPicker" className={Style.SetStatus +  " form-select"}
+            >
+              <option value={ItemStatus.AnalysisSucceeded}>Analyserad</option>
+              <option value={ItemStatus.Treated}>Behandlad</option>
+              <option value={ItemStatus.Rejected}>Avvisad</option>
             </select>
           </div>
         </div>
 
         <div className={Style.SoundchainList}>
-          <SoundClassFilter />
+          <SoundClassFilterInput
+            filters={filters}
+            setFilters={setFilters}
+          />
 
           <div className={Style.Filtered}>
             <SoundfileList
               clipSelected={clipSelected}
               header="Filtrerade ljudklipp"
-              soundfiles={props.soundchain.soundClips} // TODO: This should be filtered...
+              soundfiles={filteredFiles}
               appState={props.appState}
-              updateAppState={props.updateAppState}
+              setAppState={props.updateAppState}
+              forceUpdate={updateLists}
             />
           </div>
 
@@ -104,7 +166,8 @@ const SoundAnalysisPage = (props: Props) => {
               header="Samtliga ljudklipp"
               soundfiles={props.soundchain.soundClips}
               appState={props.appState}
-              updateAppState={props.updateAppState}
+              setAppState={props.updateAppState}
+              forceUpdate={updateLists}
             />
           </div>
         </div>
@@ -141,10 +204,15 @@ const SoundAnalysisPage = (props: Props) => {
           </button>
         </div>
         <MetadataView
-          metaData={props.appState.currentlyPlayingSoundclip?.metadata ??
+          metaData={props.appState.selectedSoundclip?.metadata ??
                     props.appState.selectedSoundChain!.soundClips[0].metadata}
         />
-        <Notes soundchain={props.appState.selectedSoundChain!} soundchainCommentsUpdated={soundchainCommentsUpdated} />
+        <Notes
+          clipZoom={clipZoom}
+          appState={props.appState}
+          notes={notes ? notes : []}
+          setNotes={updateNotes}
+        />
       </div>
     </div>
   );

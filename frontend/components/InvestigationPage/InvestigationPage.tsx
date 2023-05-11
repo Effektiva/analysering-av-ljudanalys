@@ -1,11 +1,14 @@
-import Investigation from "@/models/General/Investigation";
-import SoundClassFilterInput from "../Filter/SoundClassFilterInput";
+import SoundClassFilterInput from "../SoundClassFilterInput";
 import SoundchainList from "../LeftMenu/SoundchainList";
+import AppState from "@/state/AppState";
+import { useEffect, useState } from "react";
+import FileUploader from "./FileUploader";
+import { LOG as log } from "@/pages/_app";
 import SoundChain from "@/models/General/SoundChain";
 
 type Props = {
-  investigation: Investigation,
-  soundChains: Array<SoundChain>,
+  appState: AppState,
+  setAppState: Function,
   soundChainSelected: (id: number) => void
 }
 
@@ -20,32 +23,74 @@ enum Style {
 }
 
 const InvestigationPage = (props: Props) => {
+  const [_, setForceUpdateLists] = useState<boolean>(false);
+  const [filters, setFilters] = useState<any[]>([]);
+  const [filteredChains, setFilteredChains] = useState<SoundChain[]>(props.appState.soundChains);
+
+  /*
+   * When the chosen filters are updated, then we'll have to update
+   * what chains we'll show in the filtered list. Only chains that have
+   * all (or a subset) of the filters are shown.
+   */
+  useEffect(() => {
+    let newFiltered: any[] = [];
+    props.appState.soundChains.forEach((chain: SoundChain) => {
+      let include = true;
+
+      filters.forEach((filter) => {
+        if (chain.soundClasses.find((aClass) => filter.name == aClass) == undefined) {
+          include = false;
+        }
+      });
+
+      if (include) newFiltered.push(chain);
+    });
+    setFilteredChains(newFiltered);
+    setForceUpdateLists(prev => !prev);
+  }, [filters]);
+
+  const updateLists = () => {
+    setFilteredChains(props.appState.soundChains);
+    setForceUpdateLists(prev => !prev);
+  };
+
   return <>
     <div className={Style.Container}>
       {/* Left column */}
       <div className={Style.Column}>
-        <div className={Style.LeftButtons}>
-          <button>Ladda upp filer</button>
-          <button>Analysera ej analyserade kedjor</button>
-        </div>
-        <SoundClassFilterInput />
+        <div className={Style.LeftButtons}><button>Analysera filer</button></div>
+        <SoundClassFilterInput
+          filters={filters}
+          setFilters={setFilters}
+        />
+        <FileUploader
+          appState={props.appState}
+          setAppState={props.setAppState}
+          forceUpdate={updateLists}
+        />
       </div>
 
       {/* Right column */}
       <div className={Style.Column}>
         <div className={Style.Filtered}>
           <SoundchainList
-            soundchains={props.soundChains}
+            title={"Filtrerade ljudkedjor"}
+            appState={props.appState}
+            setAppState={props.setAppState}
+            soundchains={filteredChains}
             soundChainSelected={props.soundChainSelected}
-            investigationID={props.investigation.id}
+            forceUpdate={updateLists}
           />
         </div>
 
         <div className={Style.All}>
           <SoundchainList
-            soundchains={props.soundChains}
+            title={"Samtliga ljudkedjor"}
+            appState={props.appState}
+            setAppState={props.setAppState}
+            soundchains={props.appState.soundChains}
             soundChainSelected={props.soundChainSelected}
-            investigationID={props.investigation.id}
+            forceUpdate={updateLists}
           />
         </div>
       </div>

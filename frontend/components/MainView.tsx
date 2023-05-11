@@ -24,12 +24,25 @@ const MainView = (props: Props) => {
   const [page, setPage] = useState(<FrontPage />);
   const [forceUpdateLeftMenu, setForceUpdateLeftMenu] = useState<boolean>(false);
 
+  // For debugging purposes, to see how often the whole app rerenders.
+  useEffect(() => {
+    log.debug("MainView rerender");
+  }, []);
+
   const updateApp = (newState: AppState) => {
-    setForceUpdateLeftMenu(prev => !prev); // TODO: See issue #104
+    log.debug("appState updated");
     setAppState(newState);
+
+    // The LeftMenu contains dossiers which is a nested array. When it updates
+    // useEffect doesn't seem to be able to pick it up. It can be updated from
+    // both within the list itself, but also from SoundAnalysisPage when we add
+    // a soundfile to a dossier. So we need a way to update the LeftMenu when
+    // that happens. This is the way.
+    setForceUpdateLeftMenu(prev => !prev); // TODO: See issue #104
   }
 
   const soundChainSelectedHandler = (id: number) => {
+    log.debug("Open soundchain:", id);
     selectedHandler(Type.SOUNDCHAIN, id);
   };
 
@@ -58,31 +71,29 @@ const MainView = (props: Props) => {
           setPage(
             <InvestigationPage
               key={appState.selectedInvestigation?.id}
-              investigation={appState.selectedInvestigation!}
-              soundChains={appState.soundChains}
+              appState={newState}
+              setAppState={updateApp}
               soundChainSelected={soundChainSelectedHandler}
             />);
         });
         break;
       case Type.SOUNDCHAIN:
         log.debug("Selected soundChain with id: " + id);
-        if (appState.selectedInvestigation?.id != undefined) {
-          APIService.getFullSoundChain(appState.selectedInvestigation.id, id).then((chain) => {
+        let investigationId = appState.selectedInvestigation?.id;
+          APIService.getFullSoundChain(investigationId!, id).then((chain) => {
             var newState = appState;
             newState.selectedSoundChain = chain;
-            newState.selectedSoundclip = chain?.getSoundclipAndSetAudioElement(chain.soundClips[0].id!);
+            newState.selectedSoundclip = chain?.getSoundclipAndSetAudioElement(investigationId!,
+                                                                               chain.soundClips[0].id!);
             setAppState(newState);
             setPage(
-              <SoundAnalysisPage
-                key={appState.selectedSoundChain?.id}
+              <SoundanalysisPage
+                key={investigationId}
                 soundchain={appState.selectedSoundChain!}
-                appState={appState}
+                appState={newState}
                 updateAppState={updateApp}
               />);
           });
-        } else {
-          log.warning("appState.selectedInvestigation.id is undefined");
-        }
         break;
       case Type.DOSSIER:
         log.debug("Selected soundclip:", id);
@@ -95,14 +106,14 @@ const MainView = (props: Props) => {
             }
             newState.selectedInvestigation = investigation;
             newState.selectedSoundChain = chain;
-            let clip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(id);
+            let clip = newState.selectedSoundChain?.getSoundclipAndSetAudioElement(investigation?.id!, id);
             newState.selectedSoundclip = clip;
             setAppState(newState);
             setPage(
-              <SoundAnalysisPage
-                key={appState.selectedSoundChain?.id}
-                soundchain={appState.selectedSoundChain!}
-                appState={appState}
+              <SoundanalysisPage
+                key={newState.selectedSoundChain?.id}
+                soundchain={newState.selectedSoundChain!}
+                appState={newState}
                 updateAppState={updateApp}
               />);
           });
@@ -120,6 +131,7 @@ const MainView = (props: Props) => {
         forceUpdate={forceUpdateLeftMenu}
         selected={selectedHandler}
         appState={appState}
+        setAppState={updateApp}
       />
       {page}
     </div>

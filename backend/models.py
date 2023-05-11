@@ -70,8 +70,10 @@ class Comments(Base):
     __tablename__ = "comments"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement = True)
-    time = Column(Integer)
+    time_file = Column(Integer)
+    time_chain = Column(Integer)
     text = Column(String)
+    time_stamp = Column(Integer)
 
     sound_file_id = Column(Integer, ForeignKey("sound_file.id"))
     #sound_chain = relationship("SoundChain", back_populates = "comments")

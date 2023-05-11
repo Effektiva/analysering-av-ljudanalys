@@ -9,3 +9,4 @@ def makeList(object):
         listObject.append(row[0])
 
     return listObject
+

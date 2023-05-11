@@ -2,23 +2,23 @@ import Dossier from "../General/Dossier";
 
 class Metadata {
   fileName: string;
-  belongingDossiers: Array<Dossier>;
+  fileFormat: string;
 
-  constructor(name: string, belongingDossiers: Array<Dossier>) {
-    this.fileName = name;
-    this.belongingDossiers = belongingDossiers;
+  constructor(name: string) {
+    this.fileName = name.split(".")[0];
+    this.fileFormat = name.split(".")[1];
   }
 
   public getFileName(): string {
     return this.fileName;
   }
 
-  public getDate(): string {
-    return this.fileName.replace(/(\d{4})-(\d{2})-(\d{2})_(\d{2})(\d{2})_(\d{2})(\d{2})/, "$3-$2-$1");
+  public getFileFormat(): string {
+    return this.fileFormat;
   }
 
-  public getBelongingDossiers(): Array<Dossier> {
-    return this.belongingDossiers;
+  public getDate(): string {
+    return this.fileName.replace(/(\d{4})-(\d{2})-(\d{2})_(\d{2})(\d{2})_(\d{2})(\d{2})/, "$1-$2-$3");
   }
 }
 

@@ -7,7 +7,9 @@
     flex-direction: column;
 
     padding: 1rem;
-    min-width: 20em;
+    width: 20em;
+
+    flex: 0 0 25em;
 
     @include palette.left-menu;
 
@@ -18,6 +20,32 @@
         padding-bottom: 15px;
         border-bottom: 2px solid;
         margin-bottom: 15px;
+    }
+
+    .left-menu__top {
+        .left-menu__button {
+            display: flex;
+            justify-content: center;
+            flex-wrap: nowrap;
+
+            width: 100%;
+            height: 100%;
+            padding: 20px 10px;
+            margin: 0;
+
+            font-size: 1.3rem;
+
+            @include palette.interactable;
+            @include palette.left-menu-button;
+
+            p {
+                margin: 0;
+            }
+
+            .left-menu__icon {
+                transform: rotate(20deg) translate(1px, -7px);
+            }
+        }
     }
 
     /* The lists of left-menu */
@@ -38,6 +66,8 @@
 
     /* All interactable list items in left-menu */
     .listItemCollapsable, .listItemAction {
-        @include palette.left-menu-button;
+        .listItemButton {
+            @include palette.left-menu-button;
+        }
     }
 }
