@@ -24,8 +24,8 @@ enum Style {
 const SoundClassFilterInput = (props: Props) => {
   const [availableClasses, setAvailableClasses] = useState<any[]>([]);
   const { ref: popupRef,
-          isComponentVisible: popupVisible,
-          setIsComponentVisible: setPopupVisible } = useComponentVisible(false);
+    isComponentVisible: popupVisible,
+    setIsComponentVisible: setPopupVisible } = useComponentVisible(false);
   const [popupPosition, setPopupPosition] = useState<[number, number, number, number]>([0, 0, 0, 0]);
   const [useInputFilter, setUseInputFilter] = useState<boolean>(false);
   const [inputFilteredClasses, setInputFilteredClasses] = useState<Fuzzysort.KeyResults<any>>();
@@ -57,7 +57,7 @@ const SoundClassFilterInput = (props: Props) => {
     }
 
     // We use fuzzysort to find the best candidates.
-    const results = fuzzysort.go(input, choosableClasses, {key:"name"});
+    const results = fuzzysort.go(input, choosableClasses, { key: "name" });
     setInputFilteredClasses(results);
   }
 
@@ -113,15 +113,15 @@ const SoundClassFilterInput = (props: Props) => {
           <div className={Style.ListHeader}>Aktiva filter</div>
           <div className={Style.List}>
             <ul>
-              { props.filters.length != 0 ?
-                  props.filters.map(elem => {
+              {props.filters.length != 0 ?
+                props.filters.map(elem => {
                   return <li key={elem.id}>
-                          {elem.name}
-                          <div
-                            onClick={() => { removeHandler(elem.id) }}
-                            className={Style.ListRemove}
-                          >X</div>
-                         </li>;
+                    {elem.name}
+                    <div
+                      onClick={() => { removeHandler(elem.id) }}
+                      className={Style.ListRemove}
+                    >X</div>
+                  </li>;
                 })
                 : "Inga filter valda."
               }
@@ -139,24 +139,24 @@ const SoundClassFilterInput = (props: Props) => {
           width: popupPosition[3],
         }}
       >
-        { useInputFilter ?
-            inputFilteredClasses!.map((aClass: any) => {
-              return <div
-                        key={aClass.obj.id}
-                        id={aClass.obj.id}
-                        className={Style.PopupChoice}
-                        onClick={() => { clickHandler(aClass.obj.id) }}
-                      >{aClass.obj.name}</div>;
-            })
+        {useInputFilter ?
+          inputFilteredClasses!.map((aClass: any) => {
+            return <div
+              key={aClass.obj.id}
+              id={aClass.obj.id}
+              className={Style.PopupChoice}
+              onClick={() => { clickHandler(aClass.obj.id) }}
+            >{aClass.obj.name}</div>;
+          })
           :
-            choosableClasses.map((aClass) => {
-              return <div
-                        key={aClass.id}
-                        id={aClass.id}
-                        className={Style.PopupChoice}
-                        onClick={() => { clickHandler(aClass.id) }}
-                      >{aClass.name}</div>;
-            })
+          choosableClasses.map((aClass) => {
+            return <div
+              key={aClass.id}
+              id={aClass.id}
+              className={Style.PopupChoice}
+              onClick={() => { clickHandler(aClass.id) }}
+            >{aClass.name}</div>;
+          })
         }
       </div>
     </>

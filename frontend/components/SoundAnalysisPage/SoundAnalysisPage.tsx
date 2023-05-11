@@ -1,5 +1,5 @@
 import SoundfileList from "@/components/SoundfileList";
-import SoundClassFilter from "@/components/SoundClassFilter";
+import SoundClassFilterInput from "../SoundClassFilterInput";
 import Graph from "./Graph";
 import MetadataView from "./MetaDataView";
 import { useEffect, useState } from "react";
@@ -117,8 +117,8 @@ const SoundAnalysisPage = (props: Props) => {
 
   const soundchainStateChange = (event: any) => {
     APIService.setSoundchainState(props.appState.selectedInvestigation?.id!,
-                                  props.soundchain.id!,
-                                  event.target.value);
+      props.soundchain.id!,
+      event.target.value);
   }
 
   return (
@@ -134,7 +134,7 @@ const SoundAnalysisPage = (props: Props) => {
             <select
               defaultValue={props.soundchain.getCurrentItemStatus()}
               onChange={soundchainStateChange}
-              id="statusPicker" className={Style.SetStatus +  " form-select"}
+              id="statusPicker" className={Style.SetStatus + " form-select"}
             >
               <option value={ItemStatus.AnalysisSucceeded}>Analyserad</option>
               <option value={ItemStatus.Treated}>Behandlad</option>
@@ -192,11 +192,11 @@ const SoundAnalysisPage = (props: Props) => {
             Zoom
             <button
               onClick={() => { setClipZoom(false) }}
-              style={{border: clipZoom ? "0" : "1px solid black"}}
+              style={{ border: clipZoom ? "0" : "1px solid black" }}
             >Hela kedjan</button>
             <button
               onClick={() => { setClipZoom(true) }}
-              style={{border: clipZoom ? "1px solid black" : "0"}}
+              style={{ border: clipZoom ? "1px solid black" : "0" }}
             >Nuvarande klipp</button>
           </div>
           <button className={Style.AutoVolume}>
@@ -205,7 +205,7 @@ const SoundAnalysisPage = (props: Props) => {
         </div>
         <MetadataView
           metaData={props.appState.selectedSoundclip?.metadata ??
-                    props.appState.selectedSoundChain!.soundClips[0].metadata}
+            props.appState.selectedSoundChain!.soundClips[0].metadata}
         />
         <Notes
           clipZoom={clipZoom}
