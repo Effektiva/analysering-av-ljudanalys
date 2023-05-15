@@ -28,9 +28,13 @@ const STYLE_NAMESPACE = "mediaControl__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
   buttonsContainer = STYLE_NAMESPACE + "buttonsContainer",
+  Controller = STYLE_NAMESPACE + "controller",
   BackwardsButton = STYLE_NAMESPACE + "backwardsButton",
   StopPlayButton = STYLE_NAMESPACE + "stopPlayButton",
   ForwardButton = STYLE_NAMESPACE + "forwardButton",
+  TimeStamps = STYLE_NAMESPACE + "timeStamps",
+  CurrentTime = STYLE_NAMESPACE + "currentTime",
+  EndTime = STYLE_NAMESPACE + "endTime",
 }
 
 export enum Event {
@@ -321,26 +325,56 @@ const MediaControl = (props: Props) => {
     }
   }
 
+  /*
+  * Takes seconds and returns a HH:MM:SS string from it.
+  */
+  const secondsToTimeString = (seconds: number): string => {
+    if (isNaN(seconds) || seconds < 0) {
+      return "--:--:--";
+    }
+
+    // date takes a time in ms
+    let str = new Date(seconds*1000).toISOString().slice(11,19);
+    return str;
+  }
+
   return (
     <div className={Style.Container}>
 
+      <ProgressBar
+        key={props.appState.selectedSoundclip?.id}
+        playable={playable}
+        currentTime={props.currentTime}
+        duration={duration}
+        progressEventHandler={progressEventHandler}
+      />
+
       {/* Media buttons */}
       <div className={Style.buttonsContainer}>
-        <div
-          className={Style.BackwardsButton}
-          onClick={() => buttonHandler(Event.Backward)}
-          disabled={!playable}
-        ><BackwardIcon /></div>
-        <div
-          className={Style.StopPlayButton}
-          onClick={() => buttonHandler(Event.TogglePlay)}
-          disabled={!playable}
-        >{props.playing ? <PauseIcon /> : <PlayIcon />}</div>
-        <div
-          className={Style.ForwardButton}
-          onClick={() => buttonHandler(Event.Forward)}
-          disabled={!playable}
-        ><ForwardIcon /></div>
+
+        <div className={Style.TimeStamps}>
+          <div className={Style.CurrentTime}>{secondsToTimeString(props.currentTime)}</div>
+          <span> / </span>
+          <div className={Style.EndTime}>{secondsToTimeString(duration)}</div>
+        </div>
+
+        <div className={Style.Controller}>
+          <div
+            className={Style.BackwardsButton}
+            onClick={() => buttonHandler(Event.Backward)}
+            disabled={!playable}
+          ><BackwardIcon /></div>
+          <div
+            className={Style.StopPlayButton}
+            onClick={() => buttonHandler(Event.TogglePlay)}
+            disabled={!playable}
+          >{props.playing ? <PauseIcon /> : <PlayIcon />}</div>
+          <div
+            className={Style.ForwardButton}
+            onClick={() => buttonHandler(Event.Forward)}
+            disabled={!playable}
+          ><ForwardIcon /></div>
+        </div>
 
         <VolumeBar
           key={props.appState.selectedSoundclip?.id}
@@ -351,14 +385,6 @@ const MediaControl = (props: Props) => {
           setMuted={muteHandler}
         />
       </div>
-
-      <ProgressBar
-        key={props.appState.selectedSoundclip?.id}
-        playable={playable}
-        currentTime={props.currentTime}
-        duration={duration}
-        progressEventHandler={progressEventHandler}
-      />
     </div>
   );
 }

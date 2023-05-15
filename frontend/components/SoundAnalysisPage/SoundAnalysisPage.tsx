@@ -27,6 +27,7 @@ enum Style {
   SoundchainList = "lists",
   Filtered = STYLE_NAMESPACE + "filtered",
   All = STYLE_NAMESPACE + "all",
+  Player = STYLE_NAMESPACE + "player",
   Zoom = STYLE_NAMESPACE + "zoom",
   Buttons = STYLE_NAMESPACE + "buttons",
   AutoVolume = STYLE_NAMESPACE + "autoVolume",
@@ -176,20 +177,22 @@ const SoundAnalysisPage = (props: Props) => {
 
       {/* Right column */}
       <div className={Style.Col}>
-        <Graph filters={filters} mediaPlayerTime={mediaPlayerTime} />
-        <MediaControl
-          playing={playing}
-          setPlaying={setPlaying}
-          volumePercentage={volumePercentage}
-          setVolumePercentage={setVolumePercentage}
-          muted={muted}
-          setMuted={setMuted}
-          appState={props.appState}
-          clipSelected={clipSelected}
-          clipZoom={clipZoom}
-          currentTime={mediaPlayerTime}
-          setCurrentTime={setMediaPlayerTime}
-        />
+        <div className={Style.Player}>
+          <Graph filters={filters} mediaPlayerTime={mediaPlayerTime} />
+          <MediaControl
+            playing={playing}
+            setPlaying={setPlaying}
+            volumePercentage={volumePercentage}
+            setVolumePercentage={setVolumePercentage}
+            muted={muted}
+            setMuted={setMuted}
+            appState={props.appState}
+            clipSelected={clipSelected}
+            clipZoom={clipZoom}
+            currentTime={mediaPlayerTime}
+            setCurrentTime={setMediaPlayerTime}
+          />
+        </div>
         <div className={Style.Buttons}>
           <div className={Style.Zoom}>
             Zoom

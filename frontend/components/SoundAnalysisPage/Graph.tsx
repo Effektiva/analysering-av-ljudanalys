@@ -246,22 +246,15 @@ const Graph = (props: Props) => {
 
   return (
     <div className={Style.Container}>
-      {Math.round(props.mediaPlayerTime)}
-      <ResponsiveContainer width="100%" height={"100%"}>
+      {/*Math.round(props.mediaPlayerTime)*/}
+      <ResponsiveContainer>
         <AreaChart
-          width={500}
-          height={400}
           data={data}
-          margin={{
-            top: 10,
-            right: 97, // Need to be fixed with css so that the graph is
-            left: 37,  // aligned with the mediaplayer progressbar!
-            bottom: 0,
-          }}
+          margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
+          <XAxis dataKey="name" hide="true" />
+          <YAxis hide="true" />
           <Tooltip />
           {props.filters.map(elem => {
             return <Area

@@ -8,6 +8,8 @@
 
     /* The progressBar */
     .progressBar__bar {
+        overflow: hidden;
+
         width: 100%;
         height: 20px;
 
@@ -18,22 +20,11 @@
         .progressBar__progress {
             height: 100%;
             width: 0%;
-
-            border-radius: 5px;
         }
 
         &:not([disabled]) {
             @include palette.interactable;
         }
-    }
-
-    /* The time stamps at the beginning and end. */
-    .progressBar__currentTime, .progressBar__endTime {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        padding: 0 15px;
     }
 }
 

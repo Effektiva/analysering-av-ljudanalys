@@ -55,18 +55,12 @@
         align-items: center;
 
         margin-bottom: 15px;
-
-        .listMenuHeader {
-            @extend .listItemAction;
-
-            // Should not require these. Extend should cover them from ListMenu.scss as well
-            @include palette.interactable;
-        }
     }
 
     /* All interactable list items in left-menu */
     .listItemCollapsable, .listItemAction {
         .listItemButton {
+            @include palette.interactable;
             @include palette.left-menu-button;
         }
     }

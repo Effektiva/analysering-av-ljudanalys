@@ -94,7 +94,7 @@ $left-menu-text: color-contrast($left-menu-bg);
     }
 }
 
-@mixin media-control {
+@mixin media-player {
     @extend %component;
 }
 @mixin media-control-button {
