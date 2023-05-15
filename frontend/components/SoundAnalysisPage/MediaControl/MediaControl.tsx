@@ -336,13 +336,18 @@ const MediaControl = (props: Props) => {
     }
 
     // date takes a time in ms
-    let str = new Date(seconds*1000).toISOString().slice(11,19);
+    let str = new Date(seconds * 1000).toISOString().slice(11, 19);
     return str;
   }
 
   return (
     <>
-      <Graph filters={props.filters} mediaPlayerTime={props.currentTime} mediaDuration={duration} />
+      <Graph
+        filters={props.filters}
+        mediaPlayerTime={props.currentTime}
+        mediaDuration={duration}
+        clipZoom={props.clipZoom}
+      />
 
       <div className={Style.Container}>
 
