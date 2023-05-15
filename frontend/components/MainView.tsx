@@ -93,6 +93,9 @@ const MainView = (props: Props) => {
                 appState={newState}
                 updateAppState={updateApp}
               />);
+          })
+          .catch((error) => {
+            log.warning(error);
           });
         break;
       case Type.DOSSIER:
@@ -116,7 +119,13 @@ const MainView = (props: Props) => {
                 appState={newState}
                 updateAppState={updateApp}
               />);
+          })
+          .catch((error) => {
+            log.warning(error);
           });
+        })
+        .catch((error) => {
+          log.warning("Couldn't get soundfile info:", error);
         });
         break;
       default:
