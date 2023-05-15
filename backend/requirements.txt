@@ -2,6 +2,8 @@ sqlalchemy==2.0.4
 fastapi==0.68.1
 uvicorn==0.20.0
 aiofiles
+numpy
 python-multipart
 audio-metadata
 pydub
+

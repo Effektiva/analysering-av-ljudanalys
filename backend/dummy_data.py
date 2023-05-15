@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import models
 from database import SessionLocal, engine
-from Endpoints.helpers import session, makeList
+from Endpoints.helpers import session, makeList, Soundclass
 from Endpoints.investigations import router1
 from Endpoints.dossier import router2
 from Endpoints.soundChains import router3
@@ -64,32 +64,10 @@ def insert_dummy(session):
 
     ######## CREATE SOUNDCLASSES ########
     print("-------- creating soundclasses --------")
-    session.execute(insert(models.SoundClass).values(name = "Speech"))
-    session.execute(insert(models.SoundClass).values(name = "Whispering"))
-    session.execute(insert(models.SoundClass).values(name = "Shout"))
-    session.execute(insert(models.SoundClass).values(name = "Yell"))
-    session.execute(insert(models.SoundClass).values(name = "Screaming"))
-    session.execute(insert(models.SoundClass).values(name = "Laughter"))
-    session.execute(insert(models.SoundClass).values(name = "Crying"))
-    session.execute(insert(models.SoundClass).values(name = "Cough"))
-    session.execute(insert(models.SoundClass).values(name = "Crack"))
-    session.execute(insert(models.SoundClass).values(name = "Slap"))
-    session.execute(insert(models.SoundClass).values(name = "Breaking"))
-    session.execute(insert(models.SoundClass).values(name = "Crushing"))
-    session.execute(insert(models.SoundClass).values(name = "Music"))
-    session.execute(insert(models.SoundClass).values(name = "Television"))
-    session.execute(insert(models.SoundClass).values(name = "Alarm"))
-    session.execute(insert(models.SoundClass).values(name = "Telephone"))
-    session.execute(insert(models.SoundClass).values(name = "Ringtone"))
-    session.execute(insert(models.SoundClass).values(name = "Alarm clock"))
-    session.execute(insert(models.SoundClass).values(name = "Radio"))
-    session.execute(insert(models.SoundClass).values(name = "Vehicle"))
-    session.execute(insert(models.SoundClass).values(name = "Car alarm"))
-    session.execute(insert(models.SoundClass).values(name = "Traffic noise"))
-    session.execute(insert(models.SoundClass).values(name = "Explosion"))
-    session.execute(insert(models.SoundClass).values(name = "Gunshot"))
-    session.execute(insert(models.SoundClass).values(name = "Boom"))
-    session.execute(insert(models.SoundClass).values(name = "Door"))
+
+    for column in list(Soundclass):
+        session.execute(insert(models.SoundClass).values(name = column.name))
+
 
     ######## CREATE SOUNDCHAINS ########
     print("-------- creating soundchains --------")
