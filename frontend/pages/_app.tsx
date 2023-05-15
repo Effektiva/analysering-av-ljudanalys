@@ -13,6 +13,7 @@ import "@/styles/LeftMenu.scss"
 import "@/styles/MainView.scss"
 import "@/styles/MediaControl.scss"
 import "@/styles/FrontPage.scss"
+import "@/styles/FileUploader.scss"
 import type { AppProps } from "next/app"
 import "bootstrap/dist/css/bootstrap.css"
 import { Logger, LogLevel } from "@/modules/logger";

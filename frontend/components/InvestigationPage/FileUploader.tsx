@@ -9,7 +9,7 @@ type Props = {
   forceUpdate: Function
 }
 
-const STYLE_NAMESPACE = "investigationPage__fileUploader";
+const STYLE_NAMESPACE = "investigationPage__fileUploader__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
   Header = STYLE_NAMESPACE + "header",
@@ -24,13 +24,15 @@ const FileUploader = (props: Props) => {
 
   const handleUpload = async () => {
     if (fileList) {
-      let success = await APIService.createSoundchain(props.appState.selectedInvestigation?.id!, fileList);
-      if (success) {
+      try {
+        await APIService.createSoundchain(props.appState.selectedInvestigation?.id!, fileList);
         let newState = props.appState;
         let chains = await APIService.getSoundChainsForInvestigation(props.appState.selectedInvestigation?.id!);
         newState.soundChains = chains;
         props.setAppState(newState);
         props.forceUpdate();
+      } catch (error) {
+        log.error("Error uploading files...");
       }
     } else {
       log.warning("Can't upload when no files are selected.")
@@ -39,7 +41,7 @@ const FileUploader = (props: Props) => {
 
   return (
     <div className={Style.Container}>
-      <div className={Style.Header}><h5>Skapa ny ljudkedja</h5></div>
+      <div className={Style.Header}>Skapa ny ljudkedja</div>
       <input type="file" onChange={handleFileChange} multiple />
       <br/><br/>
       <button onClick={handleUpload}>Ladda upp filer</button>

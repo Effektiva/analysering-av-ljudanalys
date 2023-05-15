@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import APIService from "@/models/APIService";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import fuzzysort from "fuzzysort"
+import { LOG as log } from '@/pages/_app';
 
 type Props = {
   filters: any[],
@@ -33,13 +34,12 @@ const SoundClassFilterInput = (props: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    async function fetchMyAPI() {
-      const data = await APIService.getAllSoundClasses();
+    APIService.getAllSoundClasses().then((data) => {
       setAvailableClasses(structuredClone(data));
       setChoosableClasses(structuredClone(data));
-    }
-
-    fetchMyAPI();
+    }).catch((error) => {
+      log.warning("Couldn't fetch all soundclasses:", error);
+    });
     const rect = inputRef.current!.getBoundingClientRect();
     setPopupPosition([rect.x, rect.y + rect.height, rect.height, rect.width]);
   }, []);

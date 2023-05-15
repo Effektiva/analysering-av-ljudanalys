@@ -128,10 +128,15 @@ const SoundfileList = (props: Props) => {
     switch (response.event) {
       case ListEvent.ClickOnSubroot:
       case ListEvent.ClickOnRoot:
-        APIService.setStatusOnSoundfile(props.appState.selectedInvestigation?.id!,
-                                        props.appState.selectedSoundChain?.id!,
-                                        currentParentId,
-                                        response.id);
+        APIService.setStatusOnSoundfile(
+          props.appState.selectedInvestigation?.id!,
+          props.appState.selectedSoundChain?.id!,
+          currentParentId,
+          response.id
+        )
+        .catch((error) => {
+          log.error("Failed to set status on soundfile: ", error);
+        });
         let newState = props.appState;
         let index = newState.selectedSoundChain?.soundClips.findIndex((clip) => clip.id === currentParentId);
         if (index != undefined && newState.selectedSoundChain != undefined) {

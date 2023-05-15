@@ -31,36 +31,27 @@ class APIService {
   }
 
   static createInvestigation = async (name: String): Promise<number> => {
-    let result = -1;
-
-    await axios.post(this.apiURL + "/investigations", { "name": name })
-               .then((response: any) => {
-      if (response.status === 200) {
-        result = response.data.id;
-      } else {
-        log.warning("Couldn't create investigation:", response);
-      }
-    });
-
-    return result;
+    return await axios.post(this.apiURL + "/investigations", { "name": name })
+      .then((response: any) => {
+        if (response.status === 200) {
+          return response.data.id;
+        } else {
+          return Promise.reject(response);
+        }
+      });
   }
 
   static changeInvestigationName = async (id: number, name: string) => {
-    await axios.put(this.apiURL + "/investigations", {"id": id, "name": name})
-               .then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't change investigation name:", response);
-      }
-    });
+    await axios.put(this.apiURL + "/investigationss", { "id": id, "name": name })
+      .then((response: any) => {
+        if (response.status !== 200) {
+          log.warning("Couldn't change investigation name:", response);
+        }
+      });
   }
 
   static deleteInvestigation = async (id: number) => {
-    await axios.delete(this.apiURL + "/investigations", {data: {"id": id}})
-               .then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't remove investigation:", response);
-      }
-    });
+    await axios.delete(this.apiURL + "/investigations", { data: { "id": id } });
   }
 
   /*
@@ -87,68 +78,51 @@ class APIService {
     }
   }
 
-  static getFullSoundChain = async (investigationId: number, soundchainId: number): Promise<SoundChain | undefined> => {
-      const result = await axios.get(this.apiURL + "/investigations/" + investigationId + "/soundchains/" + soundchainId);
-      const jsonData = result.data;
-
-      if (jsonData !== undefined) {
-        let soundchain: SoundChain | undefined = SoundChain.initFromJSON(jsonData);
-        if (soundchain !== undefined) {
+  static getFullSoundChain = async (investigationId: number, soundchainId: number): Promise<SoundChain> => {
+    return await axios.get(this.apiURL + "/investigations/" + investigationId + "/soundchains/" + soundchainId)
+      .then((result: any) => {
+        const jsonData = result.data;
+        if (jsonData !== undefined) {
+          let soundchain = SoundChain.initFromJSON(jsonData);
+          if (soundchain !== undefined) {
             return soundchain;
-        } else {
-          log.warning("Couldn't create soundchain from:", jsonData);
+          }
         }
-      }
+        return Promise.reject("Couldn't create soundchain from:" + jsonData);
+      });
   }
 
   static deleteSoundchain = async (investigationId: number, soundchainId: number) => {
     log.debug("Delete from investigation", investigationId, "soundchain", soundchainId)
-    await axios.delete(this.apiURL + "/investigations/" + investigationId + "/soundchains",
-                       {data: {"id": soundchainId}})
-               .then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't remove soundchain:", response);
-      }
-    });
+    return await axios.delete(
+      this.apiURL + "/investigations/" + investigationId + "/soundchains",
+      { data: { "id": soundchainId } }
+    );
   }
 
-  static createSoundchain = async (investigationId: number, fileList: FileList): Promise<boolean> => {
+  static createSoundchain = async (investigationId: number, fileList: FileList) => {
     log.debug("Creating soundchain out of:", fileList);
-    let result = false;
     const data = new FormData();
     Array.prototype.forEach.call(fileList, (file: any) => {
       data.append("files", file);
     });
-    await axios({
-                method: "post",
-                url: this.apiURL + "/investigations/" + investigationId + "/soundchains",
-                data: data,
-                headers: {
-                  "Accept": "application/json",
-                  "Content-Type": "multipart/form-data"
-                }
-          })
-          .then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't create soundchain:", response);
-      } else {
-        result = true;
+    return await axios({
+      method: "post",
+      url: this.apiURL + "/investigations/" + investigationId + "/soundchains",
+      data: data,
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "multipart/form-data"
       }
     });
-
-    return result;
   }
 
   static setSoundchainState = async (investigationId: number, soundchainId: number, state: number) => {
     log.debug("Change state of", soundchainId, "to", state);
-    await axios.put(this.apiURL + "/investigations/" + investigationId +
-                                  "/soundchains/",
-                    {"id": soundchainId, "state": state})
-               .then((response: any) => {
-        if (response.status !== 200) {
-          log.warning("Couldn't set status of soundchain:", response);
-        }
-    });
+    return await axios.put(
+      this.apiURL + "/investigations/" + investigationId + "/soundchains/",
+      { "id": soundchainId, "state": state }
+    )
   }
 
   /*
@@ -174,71 +148,48 @@ class APIService {
   }
 
   static createDossier = async (name: String): Promise<number> => {
-    let result = -1;
-
-    await axios.post(this.apiURL + "/dossier", { "name": name })
-               .then((response: any) => {
-      if (response.status === 200) {
-        result = response.data.id;
-      } else {
-        log.warning("Couldn't create dossier:", response);
-      }
-    });
-
-    return result;
+    return await axios.post(this.apiURL + "/dossier", { "name": name })
+      .then((response: any) => {
+        if (response.status === 200) {
+          return response.data.id;
+        } else {
+          return Promise.reject(response);
+        }
+      });
   }
 
   static createSubDossier = async (parentId: number, subName: string): Promise<number> => {
-    let result = -1;
-
-    await axios.post(this.apiURL + "/dossier/" + parentId, {"name": subName})
-               .then((response: any) => {
-      if (response.status === 200) {
-        result = response.data.id;
-      } else {
-        log.warning("Couldn't create subdossier:", response);
-      }
-    });
-
-    return result;
+    return await axios.post(this.apiURL + "/dossier/" + parentId, { "name": subName })
+      .then((response: any) => {
+        if (response.status === 200) {
+          return response.data.id;
+        } else {
+          return Promise.reject(response);
+        }
+      });
   }
 
 
   static changeDossierName = async (id: number, name: string) => {
     log.debug("Change name of", id, "to", name);
-    await axios.put(this.apiURL + "/dossier", {"id": id, "name": name})
-               .then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't change dossier name:", response);
-      }
-    });
+    return await axios.put(this.apiURL + "/dossier", { "id": id, "name": name });
   }
 
   static deleteDossier = async (id: number) => {
-    await axios.delete(this.apiURL + "/dossier", {data: {"id": id}})
-               .then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't remove dossier:", response);
-      }
-    });
+    await axios.delete(this.apiURL + "/dossier", { data: { "id": id } });
   }
 
   static addSoundfileToDossier = async (dossierId: number, soundfileId: number) => {
-    await axios.post(this.apiURL + "/dossier/add/" + soundfileId, {"id": dossierId})
-               .then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't add soundfile to dossier:", response);
-      }
-    });
+    await axios.post(this.apiURL + "/dossier/add/" + soundfileId, { "id": dossierId });
   }
 
   static deleteSoundfileFromDossier = async (dossierId: number, soundfileId: number) => {
-    await axios.delete(this.apiURL + "/dossier/delete/" + soundfileId, {data: {"id": dossierId}})
-               .then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't remove soundfile from dossier:", response);
-      }
-    });
+    await axios.delete(this.apiURL + "/dossier/delete/" + soundfileId, { data: { "id": dossierId } })
+      .then((response: any) => {
+        if (response.status !== 200) {
+          log.warning("Couldn't remove soundfile from dossier:", response);
+        }
+      });
   }
 
   static exportDossier = async (dossierId: number) => {
@@ -249,107 +200,98 @@ class APIService {
   /*
    * Soundfiles
    */
-  static getSoundfileInfo = async (id: number): Promise<{investigation: number, soundchain: number}> => {
-    let result = {investigation: -1, soundchain: -1};
-    await axios.get(this.apiURL + "/info/soundfile/" + id)
-               .then((response: any) => {
-      if (response.status === 200) {
-        result = response.data;
-      } else {
-        log.warning("Couldn't get soundfile info:", response);
-      }
-    });
-
-    return result;
+  static getSoundfileInfo = async (id: number): Promise<{ investigation: number, soundchain: number }> => {
+    return await axios.get(this.apiURL + "/info/soundfile/" + id)
+      .then((response: any) => {
+        if (response.status === 200) {
+          return response.data;
+        } else {
+          return Promise.reject(response.status);
+        }
+      });
   }
 
-  static setStatusOnSoundfile = async (investigationId: number,
-                                       soundchainId: number,
-                                       soundfileId: number,
-                                       state: number) => {
-      log.debug("Change status of", soundfileId, "to", state);
-      await axios.put(this.apiURL + "/investigations/" + investigationId +
-                                    "/soundchains/" + soundchainId +
-                                    "/soundfiles/" + soundfileId,
-                      {"id": soundfileId, "state": state})
-                 .then((response: any) => {
-          if (response.status !== 200) {
-            log.warning("Couldn't set status of soundfile:", response);
-          }
-      });
+  static setStatusOnSoundfile = async (
+    investigationId: number,
+    soundchainId: number,
+    soundfileId: number,
+    state: number
+  ) => {
+    log.debug("Change status of", soundfileId, "to", state);
+    await axios.put(
+      this.apiURL + "/investigations/" + investigationId +
+      "/soundchains/" + soundchainId +
+      "/soundfiles/" + soundfileId,
+      { "id": soundfileId, "state": state }
+    );
   }
 
   /*
    * Notes
    */
-  static addComment = async (investigationId: number,
-                             soundchainId: number,
-                             clipId: number,
-                             time: number,
-                             text: string): Promise<any> => {
-    let comment = undefined;
-    await axios.post(this.apiURL + "/investigations/" + investigationId +
-                                   "/soundchains/" + soundchainId +
-                                   "/comments",
-                    {"time": time, "text": text, "fileId": clipId})
-                .then((response: any) => {
-      if (response.status === 200) {
-        comment = response.data.comment;
-      } else {
-        log.warning("Couldn't create comment:", response);
-      }
-    });
-    if (comment != undefined) {
-      log.debug("New note:", comment);
-    }
-    return comment;
+  static addComment = async (
+    investigationId: number,
+    soundchainId: number,
+    clipId: number,
+    time: number,
+    text: string
+  ): Promise<any> => {
+    return await axios.post(
+      this.apiURL + "/investigations/" + investigationId +
+      "/soundchains/" + soundchainId + "/comments",
+      { "time": time, "text": text, "fileId": clipId })
+      .then((response: any) => {
+        if (response.status === 200) {
+          const comment = response.data.comment;
+          if (comment != undefined) {
+            log.debug("New note:", comment);
+          }
+          return comment;
+        } else {
+          return Promise.reject(response.status);
+        }
+      });
   }
 
-  static deleteComment = async (investigationId: number,
-                                soundchainId: number,
-                                commentId: number) => {
+  static deleteComment = async (
+    investigationId: number,
+    soundchainId: number,
+    commentId: number
+  ) => {
     log.debug("Deleting note of id:", commentId);
-    await axios.delete(this.apiURL + "/investigations/" + investigationId +
-                                     "/soundchains/" + soundchainId +
-                                     "/comments",
-                    {data: {"id": commentId}})
-                .then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't delete comment:", response);
-      }
-    });
+    return await axios.delete(
+      this.apiURL + "/investigations/" + investigationId +
+      "/soundchains/" + soundchainId +
+      "/comments",
+      { data: { "id": commentId } }
+    );
   }
 
-  static updateComment = async (investigationId: number,
-                                soundchainId: number,
-                                commentId: number,
-                                text: string) => {
+  static updateComment = async (
+    investigationId: number,
+    soundchainId: number,
+    commentId: number,
+    text: string
+  ) => {
     log.debug("Changing text of note of id", commentId, "with text:", text);
-    await axios.put(this.apiURL + "/investigations/" + investigationId +
-                                  "/soundchains/" + soundchainId +
-                                  "/comments",
-                    {"id": commentId, "text": text})
-               .then((response: any) => {
-                if (response.status !== 200) {
-                  log.warning("Couldn't update comment:", response);
-                }
-               })
+    await axios.put(
+      this.apiURL + "/investigations/" + investigationId +
+      "/soundchains/" + soundchainId + "/comments",
+      { "id": commentId, "text": text }
+    );
   }
 
   /*
    * Misc
    */
   static getAllSoundClasses = async (): Promise<any[]> => {
-    let data: any[] = [];
-    await axios.get(this.apiURL + "/sound_class").then((response: any) => {
-      if (response.status !== 200) {
-        log.warning("Couldn't fetch all soundclasses:", response);
+    return await axios.get(this.apiURL + "/sound_class").then((response: any) => {
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return Promise.reject(response.status);
       }
-
-      data = response.data;
     });
-
-    return data;
   }
 }
 

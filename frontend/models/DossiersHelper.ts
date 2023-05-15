@@ -9,11 +9,11 @@ class DossiersHelper {
   static addDossier = async (dossiers: Array<Dossier>): Promise<Dossier[]> => {
     let newDossiers = [...dossiers];
     let text = "Ny dossier " + dossiers.length;
-    let id = await APIService.createDossier(text);
-    if (id != -1) {
+    try {
+      let id = await APIService.createDossier(text);
       newDossiers.push(new Dossier(id, text));
-    } else {
-      log.warning("Couldn't create dossier.");
+    } catch (error) {
+      log.warning("Couldn't create dossier:", error);
     }
 
     return newDossiers;
@@ -28,12 +28,18 @@ class DossiersHelper {
     if (!found) {
       log.warning("Couldn't find dossier:", dossierId);
       log.warning("Dossiers:", newDossiers);
-    } else if (root) {
+      return newDossiers;
+    }
+
+    if (root) {
       newDossiers[indexes.root].name = text;
-      APIService.changeDossierName(dossierId, text);
     } else {
       newDossiers[indexes.root].subdossiers[indexes.subroot].name = text;
+    }
+    try {
       APIService.changeDossierName(dossierId, text);
+    } catch (error) {
+      log.warning("Couldn't change dossier name:", error);
     }
 
     return newDossiers;
@@ -43,8 +49,12 @@ class DossiersHelper {
     let newDossiers = [...dossiers];
     let index = dossiers.findIndex((elem) => elem.id === parentId);
     let name = "Ny subdossier " + dossiers[index].subdossiers.length;
-    let id = await APIService.createSubDossier(parentId, name);
-    newDossiers[index].subdossiers.push(new Dossier(id, name, [], []));
+    try {
+      let id = await APIService.createSubDossier(parentId, name);
+      newDossiers[index].subdossiers.push(new Dossier(id, name, [], []));
+    } catch (error) {
+      log.warning("Couldn't create subdossier:", error);
+    }
     return newDossiers;
   }
 
@@ -57,15 +67,21 @@ class DossiersHelper {
     if (!found) {
       log.warning("Couldn't find dossier:", dossierId);
       log.warning("Dossiers:", newDossiers);
-    } else if (root) {
+      return newDossiers;
+    }
+
+    if (root) {
       let index = dossiers.findIndex((dos) => dos.id == dossierId);
       newDossiers.splice(index, 1);
-      APIService.deleteDossier(dossierId);
     } else {
       let parent = newDossiers[indexes.root];
       let childIndex = parent.subdossiers!.findIndex((elem) => elem.id == dossierId);
       parent.subdossiers.splice(childIndex, 1);
+    }
+    try {
       APIService.deleteDossier(dossierId);
+    } catch (error) {
+      log.warning("Couldn't delete dossier:", error);
     }
 
     return newDossiers;
@@ -84,11 +100,11 @@ class DossiersHelper {
     } else if (rootChild) {
       newDossiers[indexes.root].soundfiles.splice(indexes.child, 1);
       let dossierID = newDossiers[indexes.root].id;
-      APIService.deleteSoundfileFromDossier(dossierID!, fileId)
+      APIService.deleteSoundfileFromDossier(dossierID!, fileId);
     } else {
       newDossiers[indexes.root].subdossiers[indexes.subroot].soundfiles.splice(indexes.child, 1);
       let dossierID = newDossiers[indexes.root].subdossiers[indexes.subroot].id;
-      APIService.deleteSoundfileFromDossier(dossierID!, fileId)
+      APIService.deleteSoundfileFromDossier(dossierID!, fileId);
     }
 
     return newDossiers;
@@ -122,17 +138,25 @@ class DossiersHelper {
       log.warning("Couldn't find the dossier (", dossierId, ".", soundfile.id, ") to add the soundfile to:", indexes);
       log.warning("Dossiers:", newDossiers);
       return newDossiers;
-    } else if (rootDossier) {
-      if (newDossiers[indexes.root].soundfiles.findIndex((clip: Soundclip) => clip.id == soundfile.id) == -1) {
+    }
+
+    if (rootDossier) {
+      const rootSoundfiles = newDossiers[indexes.root].soundfiles;
+      if (!rootSoundfiles.some((clip: Soundclip) => clip.id == soundfile.id)) {
         newDossiers[indexes.root].soundfiles.push(soundfile);
-        APIService.addSoundfileToDossier(dossierId, soundfile.id!);
+        APIService.addSoundfileToDossier(dossierId, soundfile.id!)
+          .catch((error) => {
+            log.warning("Couldn't add soundfile to dossier:", error);
+          });
       }
     } else {
-      if (newDossiers[indexes.root].
-          subdossiers[indexes.subroot].
-          soundfiles.findIndex((clip: Soundclip) => clip.id == soundfile.id) == -1) {
+      const subrootSoundfiles = newDossiers[indexes.root].subdossiers[indexes.subroot].soundfiles;
+      if (!subrootSoundfiles.some((clip: Soundclip) => clip.id == soundfile.id)) {
         newDossiers[indexes.root].subdossiers[indexes.subroot].soundfiles.push(soundfile);
-        APIService.addSoundfileToDossier(dossierId, soundfile.id!);
+        APIService.addSoundfileToDossier(dossierId, soundfile.id!)
+          .catch((error) => {
+            log.warning("Couldn't add soundfile to dossier:", error);
+          });
       }
     }
 
