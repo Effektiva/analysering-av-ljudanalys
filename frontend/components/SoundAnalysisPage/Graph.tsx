@@ -229,7 +229,8 @@ const referenceLinePoints = [60, 120, 180, 240, 300]
 
 type Props = {
   filters: any[]
-  mediaPlayerTime: number
+  mediaPlayerTime: number,
+  duration: number
 }
 
 const Graph = (props: Props) => {
@@ -247,13 +248,14 @@ const Graph = (props: Props) => {
   return (
     <div className={Style.Container}>
       {/*Math.round(props.mediaPlayerTime)*/}
+      {props.duration}
       <ResponsiveContainer>
         <AreaChart
           data={data}
           margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" hide="true" />
+          <XAxis dataKey="name" orientation="top" type="number" domain={[0, props.duration]} />
           <YAxis hide="true" />
           <Tooltip />
           {props.filters.map(elem => {
@@ -273,7 +275,7 @@ const Graph = (props: Props) => {
               stroke={"black"}
             />;
           })}
-          <ReferenceLine x={Math.round(props.mediaPlayerTime / 10) * 10} stroke={"red"} />
+          <ReferenceLine x={Math.round(props.mediaPlayerTime)} stroke={"red"} />
         </AreaChart>
       </ResponsiveContainer >
     </div>

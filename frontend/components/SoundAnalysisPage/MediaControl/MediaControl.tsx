@@ -9,6 +9,7 @@ import { LOG as log } from "@/pages/_app";
 import ProgressBar from "./ProgressBar";
 import VolumeBar from "./VolumeBar";
 import AppState from "@/state/AppState";
+import Graph from "../Graph";
 
 type Props = {
   playing: boolean,
@@ -21,7 +22,8 @@ type Props = {
   appState: AppState,
   clipSelected: Function,
   currentTime: number,
-  setCurrentTime: Function
+  setCurrentTime: Function,
+  filters: any[]
 }
 
 const STYLE_NAMESPACE = "mediaControl__";
@@ -339,53 +341,57 @@ const MediaControl = (props: Props) => {
   }
 
   return (
-    <div className={Style.Container}>
+    <>
+      <Graph filters={props.filters} mediaPlayerTime={props.currentTime} mediaDuration={duration} />
 
-      <ProgressBar
-        key={props.appState.selectedSoundclip?.id}
-        playable={playable}
-        currentTime={props.currentTime}
-        duration={duration}
-        progressEventHandler={progressEventHandler}
-      />
+      <div className={Style.Container}>
 
-      {/* Media buttons */}
-      <div className={Style.buttonsContainer}>
-
-        <div className={Style.TimeStamps}>
-          <div className={Style.CurrentTime}>{secondsToTimeString(props.currentTime)}</div>
-          <span> / </span>
-          <div className={Style.EndTime}>{secondsToTimeString(duration)}</div>
-        </div>
-
-        <div className={Style.Controller}>
-          <div
-            className={Style.BackwardsButton}
-            onClick={() => buttonHandler(Event.Backward)}
-            disabled={!playable}
-          ><BackwardIcon /></div>
-          <div
-            className={Style.StopPlayButton}
-            onClick={() => buttonHandler(Event.TogglePlay)}
-            disabled={!playable}
-          >{props.playing ? <PauseIcon /> : <PlayIcon />}</div>
-          <div
-            className={Style.ForwardButton}
-            onClick={() => buttonHandler(Event.Forward)}
-            disabled={!playable}
-          ><ForwardIcon /></div>
-        </div>
-
-        <VolumeBar
+        <ProgressBar
           key={props.appState.selectedSoundclip?.id}
           playable={playable}
-          volumePercentage={props.volumePercentage}
-          setVolumePercentage={volumeEventHandler}
-          muted={props.muted}
-          setMuted={muteHandler}
+          currentTime={props.currentTime}
+          duration={duration}
+          progressEventHandler={progressEventHandler}
         />
+
+        {/* Media buttons */}
+        <div className={Style.buttonsContainer}>
+
+          <div className={Style.TimeStamps}>
+            <div className={Style.CurrentTime}>{secondsToTimeString(props.currentTime)}</div>
+            <span> / </span>
+            <div className={Style.EndTime}>{secondsToTimeString(duration)}</div>
+          </div>
+
+          <div className={Style.Controller}>
+            <div
+              className={Style.BackwardsButton}
+              onClick={() => buttonHandler(Event.Backward)}
+              disabled={!playable}
+            ><BackwardIcon /></div>
+            <div
+              className={Style.StopPlayButton}
+              onClick={() => buttonHandler(Event.TogglePlay)}
+              disabled={!playable}
+            >{props.playing ? <PauseIcon /> : <PlayIcon />}</div>
+            <div
+              className={Style.ForwardButton}
+              onClick={() => buttonHandler(Event.Forward)}
+              disabled={!playable}
+            ><ForwardIcon /></div>
+          </div>
+
+          <VolumeBar
+            key={props.appState.selectedSoundclip?.id}
+            playable={playable}
+            volumePercentage={props.volumePercentage}
+            setVolumePercentage={volumeEventHandler}
+            muted={props.muted}
+            setMuted={muteHandler}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

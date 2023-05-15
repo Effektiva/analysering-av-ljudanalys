@@ -104,6 +104,10 @@ $left-menu-text: color-contrast($left-menu-bg);
     @extend %bar;
 }
 
+@mixin graph {
+    background-color: white;
+}
+
 @mixin zoom-panel {
     @extend %component;
 }

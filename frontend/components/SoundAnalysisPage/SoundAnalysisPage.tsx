@@ -1,6 +1,5 @@
 import SoundfileList from "@/components/SoundfileList";
 import SoundClassFilterInput from "../SoundClassFilterInput";
-import Graph from "./Graph";
 import MetadataView from "./MetaDataView";
 import { useEffect, useState } from "react";
 import MediaControl from "./MediaControl/MediaControl";
@@ -178,7 +177,6 @@ const SoundAnalysisPage = (props: Props) => {
       {/* Right column */}
       <div className={Style.Col}>
         <div className={Style.Player}>
-          <Graph filters={filters} mediaPlayerTime={mediaPlayerTime} />
           <MediaControl
             playing={playing}
             setPlaying={setPlaying}
@@ -191,6 +189,7 @@ const SoundAnalysisPage = (props: Props) => {
             clipZoom={clipZoom}
             currentTime={mediaPlayerTime}
             setCurrentTime={setMediaPlayerTime}
+            filters={filters}
           />
         </div>
         <div className={Style.Buttons}>
