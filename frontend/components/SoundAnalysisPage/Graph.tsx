@@ -12,8 +12,6 @@ enum Style {
   TooltipRow = STYLE_NAMESPACE + "tooltipRow",
 }
 
-const referenceLinePoints = [60, 120, 180, 240, 300]
-
 const DUMMY_SOUNDFILES_DATA = [
   {
     id: 0,

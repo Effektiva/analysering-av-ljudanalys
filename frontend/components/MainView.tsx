@@ -85,6 +85,8 @@ const MainView = (props: Props) => {
           newState.selectedSoundChain = chain;
           newState.selectedSoundclip = chain?.getSoundclipAndSetAudioElement(investigationId!,
             chain.soundClips[0].id!);
+          
+          log.debug("soundClips: ", chain.soundClips); // Temporary
           setAppState(newState);
           setPage(
             <SoundAnalysisPage

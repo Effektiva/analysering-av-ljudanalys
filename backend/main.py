@@ -140,6 +140,17 @@ def main():
     if DEV:
         cleanUp()
         dummy_data.insert_dummy(session)
+        id = makeList(session.execute(insert(models.SoundFile).values(start_time = 0,
+                                                                                 end_time = 210,
+                                                                                 file_name = "Test",
+                                                                                 file_state = "0",
+                                                                                 sound_chain_id = 1)
+                                                                         .returning(models.SoundFile.id)).fetchall())[0]
+
+        for i in range(21):
+            session.execute(insert(models.SoundInterval).values(start_time = i * 10, end_time = i * 10 + 10, highest_volume = 10, sound_file_id = id))
+
+        npy_to_database(id, "./testNPYfiles/test.npy")
 
     origins = [
         "http://localhost:3000",

@@ -14,6 +14,7 @@ class Soundclip implements ListItemRepresentable {
   duration: number;
   state: string;
   soundClasses: Array<any>;
+  soundIntervals: Array<any>;
 
   constructor(
     id: number | undefined,
@@ -22,6 +23,7 @@ class Soundclip implements ListItemRepresentable {
     endTime: Date,
     state: string,
     soundClasses: Array<any>,
+    soundIntervals: Array<any>
   ) {
     this.id = id;
     this.metadata = metadata;
@@ -30,6 +32,7 @@ class Soundclip implements ListItemRepresentable {
     this.duration = (this.endTime.valueOf() - this.startTime.valueOf())/1000; // in seconds
     this.state = state;
     this.soundClasses = soundClasses;
+    this.soundIntervals = soundIntervals;
   }
 
   asListItem(): ListItemType {
@@ -70,11 +73,12 @@ class Soundclip implements ListItemRepresentable {
         json.endTime === undefined ||
         json.fileName === undefined ||
         json.state === undefined ||
-        json.soundClasses === undefined) {
+        json.soundClasses === undefined ||
+        json.soundIntervals === undefined) {
       throw new Error("Invalid json object");
     }
     let meta = new Metadata(json.fileName);
-    return new Soundclip(json.id, meta, new Date(json.startTime*1000), new Date(json.endTime*1000), json.state, json.soundClasses);
+    return new Soundclip(json.id, meta, new Date(json.startTime*1000), new Date(json.endTime*1000), json.state, json.soundClasses, json.soundIntervals);
   }
 }
 
