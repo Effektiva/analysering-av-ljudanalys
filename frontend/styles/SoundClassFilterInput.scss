@@ -1,46 +1,88 @@
-.soundClassFilter__container {
-    padding-top: 10px;
-}
+@use "palette.scss";
 
-.soundClassFilter__header {
-    font-size: 30px;
-}
+/* The filter section. Includes searchbar and list of active filters */
+.soundClassFilterInput__container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
-.soundClassFilter__input {
-    padding: 3px;
-    font-size: 20px;
-}
+    /* Top of filter section. Title and searchbar. */
+    .soundClassFilterInput__top {
+        display: flex;
 
-.soundClassFilter__input::placeholder {
-    font-style: italic;
-}
+        /* The title */
+        .soundClassFilterInput__header {
+            font-size: 1.2em;
+            padding-right: .5em;
+        }
 
-.soundClassFilter__listContainer {
-    list-style: none;
-}
+        /* The input and its wrapper */
+        .soundClassFilterInput__inputWrapper {
+            position: relative;
 
-.soundClassFilter__listHeader {
-    padding-top: 5px;
-    font-size: 20px;
-}
+            width: 100%;
 
-.soundClassFilter__list {}
+            /* The searchbar */
+            .soundClassFilterInput__input {
+                width: 100%;
+                padding: 3px;
 
-.soundClassFilter__listRemove {
-    font-weight: bold;
-    float: right;
-    margin-right: 30%;
-}
+                &::placeholder {
+                    font-style: italic;
+                }
+            }
 
 .soundClassFilterInput__popup {
     background: white;
-    border: 1px solid black;
     position: fixed;
     height: auto;
     max-height: 25%;
     overflow: scroll;
 }
+                    @include palette.interactable;
 
-.soundClassFilterInput__popupChoice:hover {
-    background: lightblue;
+    /* The container for the list of active filters. Including some text */
+    .soundClassFilterInput__listContainer {
+
+        /* Title for container */
+        .soundClassFilterInput__listHeader {
+            font-size: 1.1em;
+        }
+
+        /* Actual list of active filters */
+        ul.soundClassFilterInput__list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+
+            padding: 0;
+            margin: 0;
+
+            list-style: none;
+
+            /* The filter boxes that is choosen as active filters */
+            li {
+                display: flex;
+                align-items: flex-start;
+
+                padding: 4px;
+
+                border-radius: 3px;
+
+                /* The little X button */
+                .soundClassFilterInput__listRemove {
+                    width: .8em;
+                    margin-left: .5em;
+
+                    font-size: .8em;
+                    font-weight: bold;
+                    text-align: center;
+
+                    @include palette.interactable;
+                }
+            }
+        }
+    }
 }
+
+

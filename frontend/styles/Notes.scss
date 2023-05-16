@@ -30,7 +30,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: stretch;
+        align-items: center;
 
         padding-right: 20px;
 
@@ -46,6 +46,7 @@
         .notes__newnote_time {
             display: flex;
             justify-content: flex-end;
+            align-items: center;
 
             label {
                 margin-right: 5px;

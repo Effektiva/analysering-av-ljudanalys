@@ -144,33 +144,31 @@ const SoundAnalysisPage = (props: Props) => {
           </div>
         </div>
 
-        <div className={Style.SoundchainList}>
-          <SoundClassFilterInput
-            filters={filters}
-            setFilters={setFilters}
+        <SoundClassFilterInput
+          filters={filters}
+          setFilters={setFilters}
+        />
+
+        <div className={Style.Filtered}>
+          <SoundfileList
+            clipSelected={clipSelected}
+            header="Filtrerade ljudklipp"
+            soundfiles={filteredFiles}
+            appState={props.appState}
+            setAppState={props.updateAppState}
+            forceUpdate={updateLists}
           />
+        </div>
 
-          <div className={Style.Filtered}>
-            <SoundfileList
-              clipSelected={clipSelected}
-              header="Filtrerade ljudklipp"
-              soundfiles={filteredFiles}
-              appState={props.appState}
-              setAppState={props.updateAppState}
-              forceUpdate={updateLists}
-            />
-          </div>
-
-          <div className={Style.All}>
-            <SoundfileList
-              clipSelected={clipSelected}
-              header="Samtliga ljudklipp"
-              soundfiles={props.soundchain.soundClips}
-              appState={props.appState}
-              setAppState={props.updateAppState}
-              forceUpdate={updateLists}
-            />
-          </div>
+        <div className={Style.All}>
+          <SoundfileList
+            clipSelected={clipSelected}
+            header="Samtliga ljudklipp"
+            soundfiles={props.soundchain.soundClips}
+            appState={props.appState}
+            setAppState={props.updateAppState}
+            forceUpdate={updateLists}
+          />
         </div>
       </div>
 
