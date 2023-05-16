@@ -5,6 +5,10 @@ import APIService from '@/models/APIService';
 const STYLE_NAMESPACE = "graph__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
+  Tooltip = STYLE_NAMESPACE + "tooltip",
+  TooltipTop = STYLE_NAMESPACE + "tooltipTop",
+  TooltipContent = STYLE_NAMESPACE + "tooltipContent",
+  TooltipRow = STYLE_NAMESPACE + "tooltipRow",
 }
 
 const data = [
@@ -305,6 +309,31 @@ const Graph = (props: Props) => {
     return str;
   }
 
+  /* Tooltip for the graph
+  Solution got from: https://stackoverflow.com/a/72964329 */
+  const GraphTooltip = ({active, payload, label}: any) => {
+
+    if( active && payload && payload.length ) {
+      return (
+        <div className={Style.Tooltip}>
+          <div className={Style.TooltipTop}>
+            {secondsToTimeString(label)}
+          </div>
+          <div className={Style.TooltipContent}>
+            {payload.map((pld: any) => (
+              <div className={Style.TooltipRow} style={{ backgroundColor: pld.color, color: 'black'}}>
+                {pld.dataKey} : {pld.value}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+
   return (
     <div className={Style.Container}>
       {/*Math.round(props.mediaPlayerTime)*/}
@@ -317,7 +346,7 @@ const Graph = (props: Props) => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" orientation="top" type="number" domain={[0, props.duration]} />
           <YAxis hide="true" />
-          <Tooltip />
+          <Tooltip content={<GraphTooltip />} />
           {props.filters.map(elem => {
             return <Area
               key={elem.name}
