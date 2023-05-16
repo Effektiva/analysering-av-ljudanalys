@@ -32,14 +32,30 @@
                 }
             }
 
-.soundClassFilterInput__popup {
-    background: white;
-    position: fixed;
-    height: auto;
-    max-height: 25%;
-    overflow: scroll;
-}
+            /* The popup that appears with input selected */
+            .soundClassFilterInput__popup {
+                display: none;
+
+                position: absolute;
+                overflow-y: auto;
+                z-index: 1;
+
+                width: 100%;
+                height: auto;
+                max-height: 12em;
+                border: 1px solid black;
+
+                @include palette.popup;
+
+                .soundClassFilterInput__popupChoice {
+                    padding: 1px 3px;
+
                     @include palette.interactable;
+                    @include palette.popup-button;
+                }
+            }
+        }
+    }
 
     /* The container for the list of active filters. Including some text */
     .soundClassFilterInput__listContainer {
