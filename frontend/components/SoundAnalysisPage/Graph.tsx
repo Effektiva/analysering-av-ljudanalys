@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, Component } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import APIService from '@/models/APIService';
 
 const STYLE_NAMESPACE = "graph__";
 enum Style {
@@ -268,30 +269,30 @@ type Props = {
 }
 
 const Graph = (props: Props) => {
-  const [clipId, setClipId] = useState<number>(-1)
-  let filters = props.filters;
+  // const [clipId, setClipId] = useState<number>(-1)
+  // let filters = props.filters;
 
-  if (props.clipZoom && clipId === -1) {
-    let id = DUMMY_SOUNDFILES_DATA.filter(file => {
-      return props.mediaPlayerTime >= file.startTime && props.mediaPlayerTime <= file.endTime;
-    })[0].id;
+  // if (props.clipZoom && clipId === -1) {
+  //   let id = DUMMY_SOUNDFILES_DATA.filter(file => {
+  //     return props.mediaPlayerTime >= file.startTime && props.mediaPlayerTime <= file.endTime;
+  //   })[0].id;
 
-    const [file] = DUMMY_SOUNDFILES_DATA.filter(x => {
-      return x.id === id;
-    });
+  //   const [file] = DUMMY_SOUNDFILES_DATA.filter(x => {
+  //     return x.id === id;
+  //   });
 
-    filters = filters.filter(x => {
-      return x.name >= file.startTime && x.name <= file.endTime;
-    });
+  //   filters = filters.filter(x => {
+  //     return x.name >= file.startTime && x.name <= file.endTime;
+  //   });
 
-    filters = filters.map(x => {
-      return { ...x, name: x.name - file.startTime };
-    });
+  //   filters = filters.map(x => {
+  //     return { ...x, name: x.name - file.startTime };
+  //   });
 
-    setClipId(id);
-  } else if (!props.clipZoom) {
-    setClipId(-1);
-  }
+  //   setClipId(id);
+  // } else if (!props.clipZoom) {
+  //   setClipId(-1);
+  // }
 
 
   const secondsToTimeString = (seconds: number): string => {
@@ -317,7 +318,7 @@ const Graph = (props: Props) => {
           <XAxis dataKey="name" orientation="top" type="number" domain={[0, props.duration]} />
           <YAxis hide="true" />
           <Tooltip />
-          {filters.map(elem => {
+          {props.filters.map(elem => {
             return <Area
               key={elem.name}
               type="monotone"
