@@ -99,7 +99,7 @@ def npy_to_database(sound_file_id:int, npy_file_path:str):
     for row in data:
         interval_id = sorted_data[time][0] # Intervall id
         for type in list(Soundclass):
-            session.execute(insert(models.Sound).values(trust_value = row[type.value], sound_class = type.name, sound_interval_id = interval_id))
+            session.execute(insert(models.Sound).values(trust_value = float(row[type.value]), sound_class = type.name, sound_interval_id = interval_id))
         time += 1
 
 #def input_soundclass():

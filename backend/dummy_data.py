@@ -91,8 +91,8 @@ def insert_dummy(session):
     session.execute(insert(models.SoundClass).values(name = "Boom", color = "yellow"))
     session.execute(insert(models.SoundClass).values(name = "Door", color = "brown"))
 
-    for column in list(Soundclass):
-        session.execute(insert(models.SoundClass).values(name = column.name))
+    # for column in list(Soundclass):
+    #     session.execute(insert(models.SoundClass).values(name = column.name))
 
 
     ######## CREATE SOUNDCHAINS ########

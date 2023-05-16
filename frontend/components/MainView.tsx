@@ -87,7 +87,7 @@ const MainView = (props: Props) => {
             chain.soundClips[0].id!);
           setAppState(newState);
           setPage(
-            <SoundanalysisPage
+            <SoundAnalysisPage
               key={investigationId}
               soundchain={appState.selectedSoundChain!}
               appState={newState}
