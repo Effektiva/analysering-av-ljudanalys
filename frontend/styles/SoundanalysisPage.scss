@@ -15,23 +15,18 @@
     .soundAnalysisPage__col {
         display: flex;
         flex-direction: column;
+        gap: 10px 10px;
 
         width: 100%;
         padding: 10px;
 
-        // Left column of the soundAnalysisPage
+        /* Left column of the soundAnalysisPage */
         &:first-child {
             max-width: 30%;
         }
 
-
-        // Right column of the soundAnalysisPage
-        &:last-child {
-            /* Keep spacing between children */
-            >*:not(:last-child) {
-                margin-bottom: 5px;
-            }
-        }
+        /* Right column of the soundAnalysisPage */
+        &:last-child {}
     }
 
 
@@ -67,7 +62,6 @@
     /* All lists in soundAnalysisPage */
     .soundAnalysisPage__filtered, .soundAnalysisPage__all {
         padding: 10px;
-        margin-bottom: 10px;
 
         @include palette.soundchain-list;
 

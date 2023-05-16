@@ -12,7 +12,9 @@ type Props = {
 const STYLE_NAMESPACE = "soundClassFilterInput__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
+  Top = STYLE_NAMESPACE + "top",
   Header = STYLE_NAMESPACE + "header",
+  InputWrapper = STYLE_NAMESPACE + "inputWrapper",
   Input = STYLE_NAMESPACE + "input",
   List = STYLE_NAMESPACE + "list",
   ListContainer = STYLE_NAMESPACE + "listContainer",
@@ -27,7 +29,6 @@ const SoundClassFilterInput = (props: Props) => {
   const { ref: popupRef,
     isComponentVisible: popupVisible,
     setIsComponentVisible: setPopupVisible } = useComponentVisible(false);
-  const [popupPosition, setPopupPosition] = useState<[number, number, number, number]>([0, 0, 0, 0]);
   const [useInputFilter, setUseInputFilter] = useState<boolean>(false);
   const [inputFilteredClasses, setInputFilteredClasses] = useState<Fuzzysort.KeyResults<any>>();
   const [choosableClasses, setChoosableClasses] = useState<any[]>([]);
@@ -40,8 +41,6 @@ const SoundClassFilterInput = (props: Props) => {
     }).catch((error) => {
       log.warning("Couldn't fetch all soundclasses:", error);
     });
-    const rect = inputRef.current!.getBoundingClientRect();
-    setPopupPosition([rect.x, rect.y + rect.height, rect.height, rect.width]);
   }, []);
 
   /*
@@ -96,68 +95,88 @@ const SoundClassFilterInput = (props: Props) => {
     inputHandler();
   }
 
+  const colorContrast = (color: any) => {
+    let saturation = color.red + color.green + color.blue;
+
+    let isWhiter = saturation > 255*3 / 2;
+    let rgb = 0;
+    if( isWhiter ) {
+      rgb = 255;
+    }
+
+    return {red: rgb, green: rgb, blue: rgb, alpha: 1};//new SassColor({red: rgb, green: rgb, blue: rgb, alpha:1});
+  }
+
   return (
     <>
       <div className={Style.Container}>
-        <div className={Style.Header}>Filtrering</div>
-        <input
-          ref={inputRef}
-          onFocus={() => {
-            setPopupVisible(true)
-          }}
-          onChange={inputHandler}
-          className={Style.Input}
-          placeholder="Välj ljudklasser att filtrera på"
-        />
-        <div className={Style.ListContainer}>
-          <div className={Style.ListHeader}>Aktiva filter</div>
-          <div className={Style.List}>
-            <ul>
-              {props.filters.length != 0 ?
-                props.filters.map(elem => {
-                  return <li key={elem.id}>
-                    {elem.name}
-                    <div
-                      onClick={() => { removeHandler(elem.id) }}
-                      className={Style.ListRemove}
-                    >X</div>
-                  </li>;
+        <div className={Style.Top}>
+          <div className={Style.Header}>Filtrering</div>
+          <div className={Style.InputWrapper}>
+            <input
+              ref={inputRef}
+              onFocus={() => {
+                setPopupVisible(true)
+              }}
+              onChange={inputHandler}
+              className={Style.Input}
+              placeholder="Välj ljudklasser att filtrera på"
+
+              role="combobox"
+              aria-controls="filter-popup"
+              aria-expanded={popupVisible}
+              aria-autocomplete="inline"
+            />
+            <div
+              id="filter-popup"
+              ref={popupRef}
+              className={Style.Popup}
+              style={{
+                display: popupVisible ? "block" : "none",
+              }}
+              role="listbox"
+            >
+              {useInputFilter ?
+                inputFilteredClasses!.map((aClass: any) => {
+                  return <div
+                    key={aClass.obj.id}
+                    id={aClass.obj.id}
+                    className={Style.PopupChoice}
+                    onClick={() => { clickHandler(aClass.obj.id) }}
+                    role="option"
+                  >{aClass.obj.name}</div>;
                 })
-                : "Inga filter valda."
+                :
+                choosableClasses.map((aClass) => {
+                  return <div
+                    key={aClass.id}
+                    id={aClass.id}
+                    className={Style.PopupChoice}
+                    onClick={() => { clickHandler(aClass.id) }}
+                    role="option"
+                  >{aClass.name}</div>;
+                })
               }
-            </ul>
+            </div>
           </div>
         </div>
-      </div>
-      <div
-        ref={popupRef}
-        className={Style.Popup}
-        style={{
-          display: popupVisible ? "block" : "none",
-          top: popupPosition[1],
-          left: popupPosition[0],
-          width: popupPosition[3],
-        }}
-      >
-        {useInputFilter ?
-          inputFilteredClasses!.map((aClass: any) => {
-            return <div
-              key={aClass.obj.id}
-              id={aClass.obj.id}
-              className={Style.PopupChoice}
-              onClick={() => { clickHandler(aClass.obj.id) }}
-            >{aClass.obj.name}</div>;
-          })
-          :
-          choosableClasses.map((aClass) => {
-            return <div
-              key={aClass.id}
-              id={aClass.id}
-              className={Style.PopupChoice}
-              onClick={() => { clickHandler(aClass.id) }}
-            >{aClass.name}</div>;
-          })
-        }
+        <div className={Style.ListContainer}>
+          <div className={Style.ListHeader}>Aktiva filter</div>
+          <ul className={Style.List}>
+            {props.filters.length != 0 ?
+              props.filters.map(elem => {
+                return <li key={elem.id} style={{backgroundColor: elem.color, color: colorContrast(elem.color).toString()}}>
+                  {elem.name}
+                  <div
+                    onClick={() => { removeHandler(elem.id) }}
+                    className={Style.ListRemove}
+                  >X</div>
+                </li>;
+              })
+              : "Inga filter valda."
+            }
+          </ul>
+        </div>
       </div>
     </>
   );
