@@ -95,6 +95,8 @@ const SoundAnalysisPage = (props: Props) => {
       props.updateAppState(newState);
       updateCommentsByZoom();
       setForceRerender(prev => !prev);
+
+      log.debug("SoundClasses: ", newState.selectedSoundChain?.soundClasses);
     } else {
       log.debug("Already playing clip:", newClipId);
     }
