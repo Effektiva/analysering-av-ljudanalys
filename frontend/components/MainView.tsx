@@ -87,13 +87,16 @@ const MainView = (props: Props) => {
             chain.soundClips[0].id!);
           setAppState(newState);
           setPage(
-            <SoundAnalysisPage
+            <SoundanalysisPage
               key={investigationId}
               soundchain={appState.selectedSoundChain!}
               appState={newState}
               updateAppState={updateApp}
             />);
-        });
+        })
+          .catch((error) => {
+            log.warning(error);
+          });
         break;
       case Type.DOSSIER:
         log.debug("Selected soundclip:", id);
@@ -116,8 +119,14 @@ const MainView = (props: Props) => {
                 appState={newState}
                 updateAppState={updateApp}
               />);
+          })
+            .catch((error) => {
+              log.warning(error);
+            });
+        })
+          .catch((error) => {
+            log.warning("Couldn't get soundfile info:", error);
           });
-        });
         break;
       default:
         setPage(<FrontPage />);

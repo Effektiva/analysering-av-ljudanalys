@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import models
 from database import SessionLocal, engine
-from Endpoints.helpers import session, makeList
+from Endpoints.helpers import session, makeList, Soundclass
 from Endpoints.investigations import router1
 from Endpoints.dossier import router2
 from Endpoints.soundChains import router3
@@ -90,6 +90,10 @@ def insert_dummy(session):
     session.execute(insert(models.SoundClass).values(name = "Gunshot", color = "yellow"))
     session.execute(insert(models.SoundClass).values(name = "Boom", color = "yellow"))
     session.execute(insert(models.SoundClass).values(name = "Door", color = "brown"))
+
+    for column in list(Soundclass):
+        session.execute(insert(models.SoundClass).values(name = column.name))
+
 
     ######## CREATE SOUNDCHAINS ########
     print("-------- creating soundchains --------")

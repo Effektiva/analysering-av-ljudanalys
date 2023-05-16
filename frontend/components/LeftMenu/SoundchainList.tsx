@@ -31,22 +31,27 @@ const SoundchainList = (props: Props) => {
         props.soundChainSelected(response.id);
         break;
       case ListEvent.ContextDelete:
-        {
-          let newState = props.appState;
-          newState.soundChains = [...props.appState.soundChains];
-          let index = newState.soundChains.findIndex((elem: SoundChain) => elem.id == response.id);
-          let chain = await APIService.getFullSoundChain(props.appState.selectedInvestigation?.id!, response.id);
-          newState.dossiers = DossiersHelper.removeSoundfiles(props.appState.dossiers,
-                                                              chain?.soundClips!);
-          newState.soundChains.splice(index, 1);
-          APIService.deleteSoundchain(props.appState.selectedInvestigation?.id!, response.id);
-          props.setAppState(newState);
-          props.forceUpdate();
-        }
+        deleteSoundchain(response.id);
         break;
       default:
         log.error("Bad event: ", response.event)
         break;
+    }
+  }
+
+  const deleteSoundchain = async (id: number) => {
+    let newState = props.appState;
+    newState.soundChains = [...props.appState.soundChains];
+    let index = newState.soundChains.findIndex((elem: SoundChain) => elem.id == id);
+    try {
+      let chain = await APIService.getFullSoundChain(props.appState.selectedInvestigation?.id!, id);
+      newState.dossiers = DossiersHelper.removeSoundfiles(props.appState.dossiers, chain?.soundClips!);
+      newState.soundChains.splice(index, 1);
+      APIService.deleteSoundchain(props.appState.selectedInvestigation?.id!, id);
+      props.setAppState(newState);
+      props.forceUpdate();
+    } catch (error) {
+      log.error(error);
     }
   }
 

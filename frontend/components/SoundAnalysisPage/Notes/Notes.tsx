@@ -77,9 +77,13 @@ const Notes = (props: Props) => {
       return note.id !== noteId
     });
     props.setNotes(newNotes);
-    APIService.deleteComment(props.appState.selectedInvestigation!.id!,
-                             props.appState.selectedSoundChain!.id!,
-                             noteId!);
+    APIService.deleteComment(
+      props.appState.selectedInvestigation!.id!,
+      props.appState.selectedSoundChain!.id!,
+      noteId!
+    ).catch((error) => {
+      log.warning("Couldn't delete comment with id", noteId, ":", error);
+    });
   };
 
   /**
@@ -101,10 +105,14 @@ const Notes = (props: Props) => {
     });
     let sortedNotes = [...newNotes, note].sort((a, b) => a.timeInClip - b.timeInClip);
     props.setNotes(sortedNotes);
-    APIService.updateComment(props.appState.selectedInvestigation!.id!,
-                             props.appState.selectedSoundChain!.id!,
-                             noteId!,
-                             text);
+    APIService.updateComment(
+      props.appState.selectedInvestigation!.id!,
+      props.appState.selectedSoundChain!.id!,
+      noteId!,
+      text
+    ).catch((error) => {
+      log.warning("Couldn't update comment with id", noteId, ":", error);
+    });
   }
 
   return (

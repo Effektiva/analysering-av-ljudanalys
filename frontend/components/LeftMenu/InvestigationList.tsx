@@ -38,33 +38,13 @@ const InvestigationList = (props: Props) => {
         break;
       case ListEvent.ChangeTextOfRoot:
         if (response.value != undefined) {
-          APIService.changeInvestigationName(response.id, response.value);
-          let newInvestigations = [...investigations];
-          let index = investigations.findIndex((elem: Investigation) => elem.id == response.id);
-          newInvestigations[index].name = response.value;
-          setInvestigations(newInvestigations);
+          changeInvestigationName(response.id, response.value);
         } else {
           log.warning("Couldn't change name of investigation, undefined value from input:", response);
         }
         break;
       case ListEvent.ContextDelete: {
-        {
-          let newState = props.appState;
-          let newDossiers = newState.dossiers;
-          let chains = await APIService.getSoundChainsForInvestigation(response.id);
-          for (let i = 0; i < chains.length; i++) {
-            let chain = chains.at(i);
-            let fullChain = await APIService.getFullSoundChain(response.id, chain?.id!);
-            newDossiers = DossiersHelper.removeSoundfiles(newDossiers, fullChain?.soundClips!)
-          }
-          newState.dossiers = newDossiers;
-          props.setAppState(newState);
-          let newInvestigations = [...investigations];
-          let index = investigations.findIndex((elem: Investigation) => elem.id == response.id);
-          newInvestigations.splice(index, 1);
-          APIService.deleteInvestigation(response.id);
-          setInvestigations(newInvestigations);
-        }
+        deleteInvestigation(response.id);
         break;
       }
       default:
@@ -73,10 +53,47 @@ const InvestigationList = (props: Props) => {
     }
   }
 
+  const changeInvestigationName = async (id: number, name: string) => {
+    try {
+      APIService.changeInvestigationName(id, name);
+      let newInvestigations = [...investigations];
+      let index = investigations.findIndex((elem: Investigation) => elem.id == id);
+      newInvestigations[index].name = name;
+      setInvestigations(newInvestigations);
+    } catch (error) {
+      log.error(error);
+    }
+  }
+
+  const deleteInvestigation = async (id: number) => {
+    let newState = props.appState;
+    let newDossiers = newState.dossiers;
+    let chains = await APIService.getSoundChainsForInvestigation(id);
+    for (let i = 0; i < chains.length; i++) {
+      let chain = chains.at(i);
+      try {
+        let fullChain = await APIService.getFullSoundChain(id, chain?.id!)
+        newDossiers = DossiersHelper.removeSoundfiles(newDossiers, fullChain?.soundClips!)
+      } catch (error) {
+        log.warning(error);
+      }
+    }
+    newState.dossiers = newDossiers;
+    props.setAppState(newState);
+    let newInvestigations = [...investigations];
+    let index = investigations.findIndex((elem: Investigation) => elem.id == id);
+    newInvestigations.splice(index, 1);
+    APIService.deleteInvestigation(id);
+    setInvestigations(newInvestigations);
+  }
+
   const addNewItem = async () => {
     let name = "Ny utredning " + investigations.length;
-    let id = await APIService.createInvestigation(name);
-    if (id != -1) {
+    let id = await APIService.createInvestigation(name).catch((err) => {
+      log.error("Couldn't create investigation: ", err);
+      return undefined;
+    });
+    if (id !== undefined) {
       setInvestigations(prev => [...prev, new Investigation(id, name)]);
     }
   }
