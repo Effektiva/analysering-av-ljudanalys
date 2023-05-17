@@ -9,6 +9,7 @@ import { LOG as log } from "@/pages/_app";
 import ProgressBar from "./ProgressBar";
 import VolumeBar from "./VolumeBar";
 import AppState from "@/state/AppState";
+import SoundInterval from "@/models/General/SoundInterval";
 import Graph from "../Graph";
 
 type Props = {
@@ -65,6 +66,7 @@ const MediaControl = (props: Props) => {
   const [playable, setPlayable] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [newClipSeek, setNewClipSeek] = useState<number>(0);
+  const [soundIntervals, setSoundIntervals] = useState<Array<SoundInterval>>([]);
 
   // Run when soundclip changes (e.g. new clip is chosen/seeked to).
   useEffect(() => {
@@ -78,6 +80,10 @@ const MediaControl = (props: Props) => {
       log.warning("soundclip change in MediaControl: audioElement is undefined");
     } else {
       updateTimes();
+
+      log.debug("media controller selected soundclip: ", props.appState?.selectedSoundclip);
+      setSoundIntervals(props.appState?.selectedSoundclip?.soundIntervals!);
+
       soundclip.audioElement.volume = props.volumePercentage;
       soundclip.audioElement.muted = props.muted;
 
@@ -347,6 +353,7 @@ const MediaControl = (props: Props) => {
         mediaPlayerTime={props.currentTime}
         mediaDuration={duration}
         clipZoom={props.clipZoom}
+        soundIntervals={soundIntervals}
       />
 
       <div className={Style.Container}>

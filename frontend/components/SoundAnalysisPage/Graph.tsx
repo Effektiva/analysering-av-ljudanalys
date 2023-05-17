@@ -1,7 +1,10 @@
 import { useRef, useEffect, useState, Component } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, AreaChart, Area } from 'recharts';
 import APIService from '@/models/APIService';
 import { data } from './DUMMY'; //remove later
+import AppState from '@/state/AppState';
+import { LOG as log } from "@/pages/_app";
+import SoundInterval, { GraphData } from '@/models/General/SoundInterval';
 
 const STYLE_NAMESPACE = "graph__";
 enum Style {
@@ -48,11 +51,34 @@ const DUMMY_SOUNDFILES_DATA = [
 type Props = {
   filters: any[]
   mediaPlayerTime: number,
-  duration: number,
-  clipZoom: boolean
+  mediaDuration: number,
+  clipZoom: boolean,
+  soundIntervals: Array<SoundInterval>
 }
 
 const Graph = (props: Props) => {
+  const [data, setData] = useState<Array<GraphData>>([]);
+
+  // Run when soundIntervals changes.
+  useEffect(() => {
+    let newData : Array<GraphData> = [];
+    props.soundIntervals.forEach(interval => {
+      newData.push(interval.asGraphData());
+    });
+    setData(newData);
+  }, [props.soundIntervals]);
+
+  
+
+
+
+
+
+
+
+
+
+
   // const [clipId, setClipId] = useState<number>(-1)
   // let filters = props.filters;
 
@@ -117,23 +143,33 @@ const Graph = (props: Props) => {
   return (
     <div className={Style.Container}>
       {/*Math.round(props.mediaPlayerTime)*/}
-      {props.duration}
+      {props.mediaDuration}
       <ResponsiveContainer>
         <AreaChart
           data={data}
           margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
         >
+          <defs>
+            {props.filters.map(elem => {
+              return (
+                <linearGradient key={elem.name} id={elem.name} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={elem.color} stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor={elem.color} stopOpacity={0}/>
+                </linearGradient>
+              );
+            })}
+          </defs>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" orientation="top" type="number" domain={[0, props.duration]} />
           <YAxis hide="true" />
-          <Tooltip content={<GraphTooltip />} />
+          <Tooltip itemSorter={item => (item.value as number) * -1} />
           {props.filters.map(elem => {
             return <Area
               key={elem.name}
               type="monotone"
               dataKey={elem.name}
-              stackId="1"
               stroke={elem.color}
+              strokeWidth={3}
               fill={elem.color}
             />;
           })}

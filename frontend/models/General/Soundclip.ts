@@ -1,6 +1,7 @@
 import { ItemStatus, ListItemType } from "@/components/ListMenu/ListItemType";
 import Metadata from "../SoundAnalysis/Metadata";
 import ListItemRepresentable from "../ListItemRepresentable";
+import SoundInterval from "./SoundInterval";
 
 /**
  * Soundclip is a soundfile with some extra data
@@ -14,7 +15,7 @@ class Soundclip implements ListItemRepresentable {
   duration: number;
   state: string;
   soundClasses: Array<any>;
-  soundIntervals: Array<any>;
+  soundIntervals: Array<SoundInterval>;
 
   constructor(
     id: number | undefined,
@@ -23,7 +24,7 @@ class Soundclip implements ListItemRepresentable {
     endTime: Date,
     state: string,
     soundClasses: Array<any>,
-    soundIntervals: Array<any>
+    soundIntervals: Array<SoundInterval>
   ) {
     this.id = id;
     this.metadata = metadata;
@@ -67,18 +68,25 @@ class Soundclip implements ListItemRepresentable {
     this.audioElement = elem;
   }
 
-  static fromJson(json: any) {
+  static fromJson(json: any) : Soundclip {
+    let soundIntervals = [] as Array<SoundInterval>;
+    if (json.soundIntervals != undefined) {
+      json.soundIntervals.forEach((interval: any) => {
+        soundIntervals.push(SoundInterval.fromJson(interval));
+      });
+    }
+
     if (json.id === undefined ||
         json.startTime === undefined ||
         json.endTime === undefined ||
         json.fileName === undefined ||
         json.state === undefined ||
         json.soundClasses === undefined ||
-        json.soundIntervals === undefined) {
+        soundIntervals === undefined) {
       throw new Error("Invalid json object");
     }
     let meta = new Metadata(json.fileName);
-    return new Soundclip(json.id, meta, new Date(json.startTime*1000), new Date(json.endTime*1000), json.state, json.soundClasses, json.soundIntervals);
+    return new Soundclip(json.id, meta, new Date(json.startTime*1000), new Date(json.endTime*1000), json.state, json.soundClasses, soundIntervals);
   }
 }
 

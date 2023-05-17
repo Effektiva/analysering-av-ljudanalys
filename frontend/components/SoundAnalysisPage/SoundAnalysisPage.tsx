@@ -44,10 +44,10 @@ const SoundAnalysisPage = (props: Props) => {
   const [muted, setMuted] = useState<boolean>(false);
   const [clipZoom, setClipZoom] = useState<boolean>(false);
   const [_, setForceRerender] = useState<boolean>(false);
-  const [filters, setFilters] = useState<any[]>([]);
   const [filteredFiles, setFilteredFiles] = useState<any[]>([]);
   const [notes, setNotes] = useState(props.appState.selectedSoundChain?.comments);
   const [mediaPlayerTime, setMediaPlayerTime] = useState<number>(0);
+  const [filters, setFilters] = useState<any[]>([]);
 
   useEffect(() => {
     updateCommentsByZoom();
