@@ -45,7 +45,7 @@ class SoundInterval {
   }
 
   asGraphData(): GraphData {
-    let graphData : GraphData = {name: this.startTime};
+    let graphData : GraphData = {name: this.startTime + (this.endTime - this.startTime) / 2};
     this.sounds.forEach(sound => {
         graphData[sound.soundClass] = sound.trustValue;
     });

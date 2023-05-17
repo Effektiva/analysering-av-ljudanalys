@@ -6,6 +6,8 @@ import base64
 import os
 import shutil
 import dummy_data
+import json
+import math
 
 
 from typing import Union
@@ -140,17 +142,24 @@ def main():
     if DEV:
         cleanUp()
         dummy_data.insert_dummy(session)
-        id = makeList(session.execute(insert(models.SoundFile).values(start_time = 0,
-                                                                                 end_time = 210,
-                                                                                 file_name = "Test",
-                                                                                 file_state = "0",
-                                                                                 sound_chain_id = 1)
-                                                                         .returning(models.SoundFile.id)).fetchall())[0]
 
-        for i in range(21):
-            session.execute(insert(models.SoundInterval).values(start_time = i * 10, end_time = i * 10 + 10, highest_volume = 10, sound_file_id = id))
+        with open("./uploads/1/1/files/fileInfo.json", "r") as file:
+            data = file.read()
+        json_data = json.JSONDecoder().decode(data)
 
-        npy_to_database(id, "./testNPYfiles/test.npy")
+        for info in json_data:
+            id = makeList(session.execute(insert(models.SoundFile).values(
+                start_time = info["start_time"],
+                end_time = info["end_time"],
+                file_name = "uploads/1/1/files/" + info["id"] + ".wav",
+                file_state = info["file_state"],
+                sound_chain_id = info["sound_chain_id"]
+            ).returning(models.SoundFile.id)).fetchall())[0]
+
+            for i in range(math.floor((info["end_time"] - info["start_time"]) / 10)):
+                session.execute(insert(models.SoundInterval).values(start_time = i * 10, end_time = i * 10 + 10, highest_volume = 10, sound_file_id = id))
+
+            npy_to_database(id, "./testNPYfiles/" + info["id"] + ".npy")
 
     origins = [
         "http://localhost:3000",

@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState, Component } from 'react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, AreaChart, Area } from 'recharts';
 import APIService from '@/models/APIService';
-import { data } from './DUMMY'; //remove later
 import AppState from '@/state/AppState';
 import { LOG as log } from "@/pages/_app";
 import SoundInterval, { GraphData } from '@/models/General/SoundInterval';
@@ -160,7 +159,13 @@ const Graph = (props: Props) => {
             })}
           </defs>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" orientation="top" type="number" domain={[0, props.duration]} />
+          <XAxis 
+            dataKey="name" 
+            tickFormatter={tickItem => secondsToTimeString(tickItem)}
+            orientation="top" 
+            type="number" 
+            domain={[0, props.mediaDuration]} 
+          />
           <YAxis hide="true" />
           <Tooltip itemSorter={item => (item.value as number) * -1} />
           {props.filters.map(elem => {
@@ -180,7 +185,8 @@ const Graph = (props: Props) => {
               stroke={"black"}
             />;
           })}
-          <ReferenceLine x={Math.round(props.mediaPlayerTime)} stroke={"red"} />
+          <ReferenceLine x={Math.round(props.mediaPlayerTime / 10) * 10} stroke={"red"} />
+          <ReferenceLine y={0.71} stroke={"blue"} label='71%' />
         </AreaChart>
       </ResponsiveContainer >
     </div>
