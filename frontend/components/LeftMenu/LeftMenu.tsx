@@ -13,6 +13,15 @@ type Props = {
   forceUpdate: boolean
 }
 
+const STYLE_NAMESPACE = "leftMenu__";
+enum Style {
+  Container = STYLE_NAMESPACE + "container",
+  Header = STYLE_NAMESPACE + "header",
+  Top = STYLE_NAMESPACE + "top",
+  Button = STYLE_NAMESPACE + "button",
+  Icon = STYLE_NAMESPACE + "icon",
+}
+
 export enum Type {
   INVESTIGATION,
   SOUNDCHAIN,
@@ -41,13 +50,13 @@ const LeftMenu = (props: Props) => {
   }
 
   return (
-    <div className="left-menu">
-      <div className="left-menu__top">
-        <div className="left-menu__button">
+    <div className={Style.Container}>
+      <div className={Style.Top}>
+        <div className={Style.Button}>
           <p>
             Utredningsassistansprogram
           </p>
-          <div className="left-menu__icon">
+          <div className={Style.Icon}>
             <FaCommentDots/>
           </div>
         </div>

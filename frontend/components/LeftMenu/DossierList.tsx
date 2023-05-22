@@ -99,7 +99,7 @@ const DossierList = (props: Props) => {
 
   return (
     <>
-      <div className="dossier_listmenu">
+      <div className="dossierListMenu">
         <div
           className={"listMenuHeader listItemCollapsable" + ( !menuVisible ? " collapsed" : "")}
         >

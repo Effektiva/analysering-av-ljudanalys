@@ -85,7 +85,7 @@ const MainView = (props: Props) => {
           newState.selectedSoundChain = chain;
           newState.selectedSoundclip = chain?.getSoundclipAndSetAudioElement(investigationId!,
             chain.soundClips[4].id!);
-          
+
           // TEMPORARY
           // log.debug("soundClips: ", chain.soundClips);
           // log.debug("selectedSoundclip: ", newState.selectedSoundclip);
@@ -140,7 +140,7 @@ const MainView = (props: Props) => {
   }
 
   return (
-    <div className="main-view">
+    <div className="mainView">
       <LeftMenu
         forceUpdate={forceUpdateLeftMenu}
         selected={selectedHandler}

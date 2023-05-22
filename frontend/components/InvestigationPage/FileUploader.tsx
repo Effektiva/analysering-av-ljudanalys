@@ -9,7 +9,7 @@ type Props = {
   forceUpdate: Function
 }
 
-const STYLE_NAMESPACE = "investigationPage__fileUploader__";
+const STYLE_NAMESPACE = "fileUploader__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
   Header = STYLE_NAMESPACE + "header",
@@ -43,7 +43,6 @@ const FileUploader = (props: Props) => {
     <div className={Style.Container}>
       <div className={Style.Header}>Skapa ny ljudkedja</div>
       <input type="file" onChange={handleFileChange} multiple />
-      <br/><br/>
       <button onClick={handleUpload}>Ladda upp filer</button>
     </div>
   );

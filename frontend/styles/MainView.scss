@@ -1,6 +1,10 @@
 @use "palette.scss";
 
-.main-view {
+/*
+The wrapper that surronds all content and makes out the content of the page
+*/
+
+.mainView {
     display: flex;
 
     width: 100%;
@@ -9,7 +13,7 @@
     @include palette.page;
 }
 
-.main-view__description {
+.mainView__description {
     display: flex;
     align-items: center;
     justify-content: center;

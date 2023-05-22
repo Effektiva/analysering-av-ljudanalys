@@ -13,7 +13,7 @@ type Props = {
   setNoteText: (noteId: number | undefined, text: string) => void
 }
 
-const STYLE_NAMESPACE = "notes__list__";
+const STYLE_NAMESPACE = "noteList__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
   Header = STYLE_NAMESPACE + "header",

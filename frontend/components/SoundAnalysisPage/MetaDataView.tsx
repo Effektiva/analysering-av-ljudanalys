@@ -8,11 +8,11 @@ const STYLE_NAMESPACE = "metadata__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
   Header = STYLE_NAMESPACE + "header",
-  MetadataName = STYLE_NAMESPACE + "metadata-name",
-  MetadataDate = STYLE_NAMESPACE + "metadata-date",
-  MetadataFormat = STYLE_NAMESPACE + "metadata-format",
-  MetadataDossiers = STYLE_NAMESPACE + "metadata-dossiers",
-  MetadataDossiersDiv = STYLE_NAMESPACE + "metadata-dossiers-div",
+  MetadataName = STYLE_NAMESPACE + "name",
+  MetadataDate = STYLE_NAMESPACE + "date",
+  MetadataFormat = STYLE_NAMESPACE + "format",
+  MetadataDossiers = STYLE_NAMESPACE + "dossiers",
+  MetadataDossiersDiv = STYLE_NAMESPACE + "dossiersDiv",
 }
 
 /**

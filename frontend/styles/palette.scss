@@ -120,6 +120,11 @@ $left-menu-text: color-contrast($left-menu-bg);
 }
 
 
+@mixin file-uploader {
+    @extend %component;
+}
+
+
 @mixin media-player {
     @extend %component;
 }
@@ -130,13 +135,16 @@ $left-menu-text: color-contrast($left-menu-bg);
     @extend %bar;
 }
 
+
 @mixin graph {
     background-color: white;
 }
 
+
 @mixin zoom-panel {
     @extend %component;
 }
+
 
 @mixin notes {
     @extend %component;

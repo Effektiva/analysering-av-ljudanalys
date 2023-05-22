@@ -104,7 +104,7 @@ const InvestigationList = (props: Props) => {
 
   return (
     <>
-      <div className="investigation_listmenu">
+      <div className="investigationListMenu">
         <div
           className={"listMenuHeader listItemCollapsable" + ( !menuVisible ? " collapsed" : "")}
         >

@@ -1,53 +1,48 @@
 @use "palette.scss";
 
+/*
+The investigation page.
+*/
+
+/* Wrapper of the whole investigation page */
 .investigationPage__container {
     display: flex;
+    gap: 25px;
 
+    padding: 25px 40px;
+
+    /* The columns of content on the page */
     .investigationPage__column {
-        padding: 15px;
-    }
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
 
-    /* First column */
-    .investigationPage__column:first-child {
-
-        .investigationPage__header {
-            font-size: 24px;
-        }
-
-        .investigationPage__leftButtons {
-
-            button {
-                padding: 4px 10px;
-            }
-
-            /* Keep spacing between children */
-            >*:not(:last-child) {
-                margin-right: 10px;
-            }
-        }
-    }
-
-    /* Second column */
-    .investigationPage__column:last-child {
-
-        .investigationPage__filtered, .investigationPage__all {
-            min-width: 20em;
-            padding: 10px;
-            @include palette.soundchain-list;
-
-            /* All interactable list items in the lists */
-            .listItemButton {
-                @include palette.soundchain-list-button;
-            }
-        }
-
-        /* Keep spacing between children */
-        >*:not(:last-child) {
-            margin-bottom: 10px;
-        }
-
-
+        min-width: 25em;
     }
 }
 
+/* Header of the page */
+.investigationPage__header {
+    font-size: 24px;
+}
 
+/* The group of buttons on the page */
+.investigationPage__leftButtons {
+
+    /* The actual button */
+    button {
+        padding: 4px 10px;
+    }
+}
+
+/* The list of found soundchains */
+.investigationPage__filtered, .investigationPage__all {
+    min-width: 20em;
+    padding: 10px;
+    @include palette.soundchain-list;
+
+    /* All interactable list items in the lists */
+    .listItemButton {
+        @include palette.soundchain-list-button;
+    }
+}

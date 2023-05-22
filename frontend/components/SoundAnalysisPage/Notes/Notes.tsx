@@ -15,9 +15,9 @@ const STYLE_NAMESPACE = "notes__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
   Header = STYLE_NAMESPACE + "header",
-  NewNote = STYLE_NAMESPACE + "newnote",
-  NewNoteTime = STYLE_NAMESPACE + "newnote_time",
-  NewNoteText = STYLE_NAMESPACE + "newnote_text",
+  NewNote = STYLE_NAMESPACE + "newNote",
+  NewNoteTime = STYLE_NAMESPACE + "newNoteTime",
+  NewNoteText = STYLE_NAMESPACE + "newNoteText",
 }
 
 /**

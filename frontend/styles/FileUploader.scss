@@ -1,3 +1,29 @@
-.investigationPage__fileUploader__header {
-    font-size: 20px;
+@use "palette.scss";
+
+/*
+The input group for uploading files
+*/
+
+/* The container that wraps all file uploader content */
+.fileUploader__container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 10px 15px;
+
+    @include palette.file-uploader;
+    border-radius: 5px;
+
+    /* The header of the file uploader */
+    .fileUploader__header {
+        font-size: 20px;
+    }
+
+    /* The upload button */
+    button {
+        padding: 4px 10px;
+        align-self: center;
+    }
 }
+

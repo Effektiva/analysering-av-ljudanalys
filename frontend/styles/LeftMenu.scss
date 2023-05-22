@@ -1,8 +1,11 @@
 @use "palette.scss";
-@use "ListMenu.scss";
 
-/* The left-menu component */
-.left-menu {
+/*
+The left menu that is on all the pages
+*/
+
+/* The left menu component */
+.leftMenu__container {
     display: flex;
     flex-direction: column;
 
@@ -13,7 +16,7 @@
 
     @include palette.left-menu;
 
-    /* Space and border inbetween elements */
+    /* Space and border inbetween sections of the left menu */
     > :not(:last-child) {
         @include palette.left-menu-borders;
 
@@ -22,8 +25,12 @@
         margin-bottom: 15px;
     }
 
-    .left-menu__top {
-        .left-menu__button {
+    /* The top section of left menu
+    This element should not be stylized as it represents a section of the left menu*/
+    .leftMenu__top {
+
+        /* The button (or title but will have an action) */
+        .leftMenu__button {
             display: flex;
             justify-content: center;
             flex-wrap: nowrap;
@@ -38,30 +45,32 @@
             @include palette.interactable;
             @include palette.left-menu-button;
 
+            /* The text */
             p {
                 margin: 0;
             }
 
-            .left-menu__icon {
+            /* The icon */
+            .leftMenu__icon {
                 transform: rotate(20deg) translate(1px, -7px);
             }
         }
     }
 
-    /* The lists of left-menu */
-    .dossier_listmenu, .investigation_listmenu {
+    /* The lists of left menu. Represents seperate sections as well */
+    .dossierListMenu, .investigationListMenu {
         display: flex;
         flex-direction: column;
         align-items: center;
 
         margin-bottom: 15px;
-    }
 
-    /* All interactable list items in left-menu */
-    .listItemCollapsable, .listItemAction {
-        .listItemButton {
-            @include palette.interactable;
-            @include palette.left-menu-button;
+        /* All interactable list items in left menu */
+        .listItemCollapsable, .listItemAction {
+            .listItemButton {
+                @include palette.interactable;
+                @include palette.left-menu-button;
+            }
         }
     }
 }

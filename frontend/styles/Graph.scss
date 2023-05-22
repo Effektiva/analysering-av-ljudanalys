@@ -1,5 +1,10 @@
 @use "palette.scss";
 
+/*
+The graph which graphically shows data relative to one another
+*/
+
+/* The container of the graph (surronding all graph content) */
 .graph__container {
 
     @include palette.graph;
@@ -8,6 +13,7 @@
     width: 100%;
 }
 
+/* The tooltip of the graph. Shown when mouse is hovering over it */
 .graph__tooltip {
     display: flex;
     flex-direction: column;
@@ -20,6 +26,7 @@
 
     @include palette.popup;
 
+    /* Header of tooltip. Assumed to be text, but must not be */
     .graph__tooltipTop {
         width: 100%;
         padding-bottom: 2px;
@@ -28,6 +35,7 @@
         text-align: center;
     }
 
+    /* Tooltip content beneath header */
     .graph__tooltipContent {
         display: flex;
         flex-direction: column;
@@ -35,6 +43,7 @@
 
         padding-top: 2px;
 
+        /* Row of content on tooltip. Assumed to be text, but must not be */
         .graph__tooltipRow {
             padding: 0 4px;
         }

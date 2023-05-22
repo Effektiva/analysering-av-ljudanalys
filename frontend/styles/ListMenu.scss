@@ -1,6 +1,10 @@
 @use "palette.scss";
 
-/* Each list should have a describing header with this class */
+/*
+The standard list
+*/
+
+/* Header describing content of list */
 .listMenuHeader {
     width: 100%;
     padding: 10px 0;

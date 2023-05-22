@@ -22,7 +22,7 @@
 }
 
 /* The controls for adding a new note */
-.notes__newnote {
+.notes__newNote {
     display: flex;
 
     /* The first column  */
@@ -43,7 +43,7 @@
         }
 
         /* Styling of the time input */
-        .notes__newnote_time {
+        .notes__newNoteTime {
             display: flex;
             justify-content: flex-end;
             align-items: center;
@@ -71,7 +71,7 @@
 
         width: 100%;
 
-        .notes__newnote_text {
+        .notes__newNoteText {
             display: flex;
             flex-direction: column;
 
@@ -95,20 +95,20 @@
 
 
 /* The list of notes */
-.notes__list__container {
+.noteList__container {
     width: 100%;
     max-height: max(50vh, 200px);
 
     overflow-y: auto;
 
     /* Keep a distance between notes */
-    .notes__list__note:not(:last-child) {
+    .noteList__note:not(:last-child) {
         margin-bottom: 8px;
     }
 }
 
 /* A single note */
-.notes__list__note {
+.noteList__note {
     padding: 3px;
 
     border-radius: 5px;
@@ -118,7 +118,7 @@
 
 
 /* Top part of note, the information */
-.notes__list__header {
+.noteList__header {
     display: flex;
     justify-content: space-between;
 
@@ -130,7 +130,7 @@
 
 
 /* Bottom part of note, the text */
-.notes__list__text {
+.noteList__text {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -146,7 +146,7 @@
         margin-bottom: 5px;
     }
 
-    .notes__list__buttons {
+    .noteList__buttons {
         @include palette.note-button;
 
         padding-left: 60px;
