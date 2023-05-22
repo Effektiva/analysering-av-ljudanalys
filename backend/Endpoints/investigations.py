@@ -2,7 +2,8 @@ from sqlalchemy import select, insert, update, delete
 from fastapi import APIRouter, Request, Response
 import models
 
-from .helpers import makeList, session
+
+from .helpers import delete_sound_chains, makeList, session
 
 router1 = APIRouter()
 
@@ -69,6 +70,11 @@ async def remove_investigations(request: Request, response: Response):
     if not check:
         response.status_code = 410
         return "The item does not exist"
+
+    # Ta bort alla ljudkedjor som finns i utredningen
+    # Hämta alla ljudkedjor
+    sound_chains = makeList(session.execute(select(models.SoundChain.id).where(models.SoundChain.investigations_id == data["id"])).fetchall())
+    delete_sound_chains(sound_chains)
 
     # Den ger inget fel ifall man ger den ett id som inte finns, är det ok?
     return session.execute(delete(models.Investigations).where(models.Investigations.id == data["id"]))

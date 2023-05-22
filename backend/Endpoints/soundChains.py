@@ -10,7 +10,7 @@ import pathlib
 from pydub import AudioSegment
 from config import Paths
 
-from .helpers import makeList, session
+from .helpers import makeList, session, delete_sound_files
 
 router3 = APIRouter()
 
@@ -249,6 +249,9 @@ async def remove_investigationsSoundChains(request: Request):
     if data.get("id") is None:
         return "'id' Saknas"
 
+    # Ta bort ljudfilerna i ljudkedjan och folders (dossier kopplat till ljudfil)
+    sound_files = makeList(session.execute(select(models.SoundFile.id).where(models.SoundFile.sound_chain_id == data["id"])).fetchall())
+    delete_sound_files(sound_files)
     return session.execute(delete(models.SoundChain).where(models.SoundChain.id == data["id"]))
 
 # Ändra state på en ljudkedja
