@@ -1,21 +1,22 @@
 from sqlalchemy import select, insert, update, delete
 from fastapi import APIRouter, Request, Response
+from .helpers import delete_sound_chains, make_list, session
 import models
-
-
-from .helpers import delete_sound_chains, makeList, session
 
 router1 = APIRouter()
 
-# Hämtar all ivestigations
+""" Hämtar all ivestigations """
 @router1.get("/investigations")
 async def read_investigations():
     response = session.execute(select(models.Investigations)).fetchall()
-    response = makeList(response)
+    response = make_list(response)
     return response
 
 
-# Skapar en ny investigation med namn "name"
+"""
+Skapar en ny investigation.
+Input {"name": "namn på nya investigationen"}
+"""
 @router1.post("/investigations")
 async def create_investigations(request: Request):
     try:
@@ -26,15 +27,17 @@ async def create_investigations(request: Request):
     if data.get("name") is None:
         return "'name' saknas"
 
-    # Fråga om vi ska returna hela objectet eller bara id, otydligt med bara id enligt mig
-    response = makeList(session.execute(insert(models.Investigations).values(name = data["name"]).returning(models.Investigations)).fetchall())
-
-
+    response = make_list(session.execute(insert(models.Investigations).values(name = data["name"]).returning(models.Investigations)).fetchall())
     return {"id": response[0].id}
 
-# Updatera namn på en investigation med ett viss id (id: int, name: str)
+
+"""
+Updatera namn på en investigation med ett viss id.
+Input {"id": "id:t på investigation",
+       "name": "nya namnet på investigation"}
+"""
 @router1.put("/investigations")
-async def insert_investigations(request: Request, response: Response):
+async def change_investigations(request: Request, response: Response):
     try:
         data = await request.json()
     except:
@@ -48,13 +51,17 @@ async def insert_investigations(request: Request, response: Response):
 
     result = session.execute(update(models.Investigations).where(models.Investigations.id == data["id"]).values(name = data["name"]))
 
-    if not result.rowcount: # inte false här
-        response.status_code = 406
+    if not result.rowcount:
+        response.status_code = 410
         return "Error code: givet id finns inte"
 
     return result
 
-# Ta bort en investigation med ett viss id (id: int)
+
+"""
+Ta bort en investigation med ett viss id.
+Input {"id": "id:t på inestigationen som ska tas bort"}
+"""
 @router1.delete("/investigations")
 async def remove_investigations(request: Request, response: Response):
     try:
@@ -65,16 +72,15 @@ async def remove_investigations(request: Request, response: Response):
     if data.get("id") is None:
         return "'id' saknas"
 
-    check = makeList(session.execute(select(models.Investigations).where(models.Investigations.id == data["id"])).fetchall())
+    check = make_list(session.execute(select(models.Investigations).where(models.Investigations.id == data["id"])).fetchall())
 
     if not check:
         response.status_code = 410
-        return "The item does not exist"
+        return "Error code: givet id finns inte"
 
+    # Hämta alla ljudkedjor till utredningen
+    sound_chains = make_list(session.execute(select(models.SoundChain.id).where(models.SoundChain.investigations_id == data["id"])).fetchall())
     # Ta bort alla ljudkedjor som finns i utredningen
-    # Hämta alla ljudkedjor
-    sound_chains = makeList(session.execute(select(models.SoundChain.id).where(models.SoundChain.investigations_id == data["id"])).fetchall())
     delete_sound_chains(sound_chains)
 
-    # Den ger inget fel ifall man ger den ett id som inte finns, är det ok?
     return session.execute(delete(models.Investigations).where(models.Investigations.id == data["id"]))
