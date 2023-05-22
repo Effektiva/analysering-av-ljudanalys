@@ -138,6 +138,7 @@ def main():
     models.Base.metadata.create_all(bind=engine)
 
     if DEV:
+
         cleanUp()
         dummy_data.insert_dummy(session)
 
