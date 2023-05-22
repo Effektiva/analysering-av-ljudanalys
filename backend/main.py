@@ -1,28 +1,17 @@
-
 import models
-import datetime
-import time
-import base64
 import os
 import shutil
 import dummy_data
 
-
-from typing import Union
-from fastapi import FastAPI, Response, Request
-from sqlalchemy import select, insert, update, delete
+from fastapi import FastAPI
+from sqlalchemy import select, insert
 from fastapi.middleware.cors import CORSMiddleware
 
 
 from database import SessionLocal, engine
-
-import datetime
-import time
-import base64
-
 from database import SessionLocal, engine
 
-from Endpoints.helpers import session, makeList, Soundclass
+from Endpoints.helpers import session, make_list, Soundclass
 from Endpoints.investigations import router1
 from Endpoints.dossier import router2
 from Endpoints.soundChains import router3
@@ -36,12 +25,6 @@ from config import Paths
 import numpy as np
 from pathlib import Path
 
-"""
-To run: python3 -m uvicorn main:app --reload
-To add on items on webb: http://127.0.0.1:8000/docs
-DB browser for sql-lite: app to se database
-sql_app.db local database
-"""
 
 # Sätt till true under utveckling för just nu rensas databasen efter varje omstart
 DEV = True
@@ -55,17 +38,8 @@ app.include_router(router4)
 models.Base.metadata.create_all(bind=engine)
 
 
-
-"""
-To run: python3 -m uvicorn main:app --reload
-To add on items on webb: http://127.0.0.1:8000/docs
-DB browser for sql-lite: app to se database
-sql_app.db local database
-"""
-
 # Dependency
 def get_db():
-    print("HEJ")
     db = SessionLocal()
     try:
         yield db
@@ -102,9 +76,6 @@ def npy_to_database(sound_file_id:int, npy_file_path:str):
             session.execute(insert(models.Sound).values(trust_value = row[type.value], sound_class = type.name, sound_interval_id = interval_id))
         time += 1
 
-#def input_soundclass():
-   # for column in list(Soundclass):
-    #    session.execute(insert(models.SoundClass).values(name = column.name))
 
 
 
@@ -121,6 +92,7 @@ def cleanUp():
                     shutil.rmtree(file_path)
                 except:
                     print("Something went wrong when removing old files")
+
 
 def runTests():
     testDossiers.run();
