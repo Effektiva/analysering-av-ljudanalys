@@ -107,68 +107,67 @@
     }
 }
 
-/* A single note */
+/* A single note. As presented in the lists of notes */
 .noteList__note {
     padding: 3px;
 
     border-radius: 5px;
 
     @include palette.note;
-}
 
+    /* Top part of note. The information */
+    .noteList__header {
+        display: flex;
+        justify-content: space-between;
 
-/* Top part of note, the information */
-.noteList__header {
-    display: flex;
-    justify-content: space-between;
-
-    width: 100%;
-    padding: 0 10px 0.1rem;
-
-    font-size: 0.75rem;
-}
-
-
-/* Bottom part of note, the text */
-.noteList__text {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-
-    padding: 5px 10px;
-
-    border-radius: 5px;
-
-    @include palette.note-foreground;
-
-    textarea {
         width: 100%;
-        margin-bottom: 5px;
+        padding: 0 10px 0.1rem;
+
+        font-size: 0.75rem;
     }
 
-    .noteList__buttons {
-        @include palette.note-button;
+    /* Bottom part of note. The text */
+    .noteList__text {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
 
-        padding-left: 60px;
-        margin-left: auto;
+        padding: 5px 10px;
 
-        /* The buttons of the note */
-        button {
-            padding: 0;
-            margin: 0;
+        border-radius: 5px;
 
-            line-height: 0;
+        @include palette.note-foreground;
 
-            /* Should be image (could be svg, img or other) */
-            >* {
-                height: 1.2em;
-                width: 1.2em;
+        textarea {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .noteList__buttons {
+            @include palette.note-button;
+
+            padding-left: 60px;
+            margin-left: auto;
+
+            /* The buttons of the note */
+            button {
+                padding: 0;
+                margin: 0;
+
+                line-height: 0;
+
+                /* Should be image (could be svg, img or other) */
+                >* {
+                    height: 1.2em;
+                    width: 1.2em;
+                }
+            }
+
+            /* Keep space inbetween buttons */
+            button:not(:last-child) {
+                margin-right: 10px;
             }
         }
-
-        /* Keep space inbetween buttons */
-        button:not(:last-child) {
-            margin-right: 10px;
-        }
     }
 }
+

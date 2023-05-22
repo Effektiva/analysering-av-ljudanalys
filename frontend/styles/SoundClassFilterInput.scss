@@ -1,5 +1,9 @@
 @use "palette.scss";
 
+/*
+The filter that filters content of lists using different classes
+*/
+
 /* The filter section. Includes searchbar and list of active filters */
 .soundClassFilterInput__container {
     display: flex;

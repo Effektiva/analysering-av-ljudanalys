@@ -9,6 +9,12 @@ type Props = {
   cursor: number[],
 }
 
+const STYLE_NAMESPACE = "contextMenu__";
+enum Style {
+  Container = STYLE_NAMESPACE + "container",
+  Body = STYLE_NAMESPACE + "body",
+}
+
 /**
  * ContextMenu is a right-click menu. You feed it with the choices that should be available in the items props
  * (see ContextItem), it will then send what ID was pressed to the clickHandler on a click. The ID could be a number
@@ -22,9 +28,9 @@ type Props = {
  */
 const ContextMenu = (props: Props) => {
   return (
-    <div className="contextMenuContainer">
+    <div className={Style.Container}>
       <div
-        className="contextMenu"
+        className={Style.Body}
         ref={props.reference}
         style={{ left: props.cursor[0], top: props.cursor[1]}}
       >

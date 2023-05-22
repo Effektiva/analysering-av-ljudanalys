@@ -5,12 +5,12 @@ The context menu that can be shown when right-clicking some components
 */
 
 /* The container that is covering the context menu */
-.contextMenuContainer {
+.contextMenu__container {
     position: relative;
 }
 
 /* The context menu (visual) */
-.contextMenu {
+.contextMenu__body {
     box-sizing: border-box;
 
     position: fixed;
