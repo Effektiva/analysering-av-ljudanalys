@@ -6,7 +6,7 @@ import models
 import os
 
 
-from .helpers import makeList, session
+from .helpers import makeList, session, delete_folders_dossier
 
 router2 = APIRouter()
 
@@ -105,7 +105,15 @@ async def delete_dossier(request: Request):
     if data.get("id") is None:
         return "'id' saknas"
 
-    session.execute(delete(models.Dossier).where(models.Dossier.parent_folder_id == data["id"]))
+    # Ta bort underdossier
+    under_dossier = makeList(session.execute(delete(models.Dossier).where(models.Dossier.parent_folder_id == data["id"]).returning(models.Dossier.id)).fetchall())
+    under_dossier.append(data["id"])
+
+    for dossier in under_dossier:
+        session.execute(delete(models.Folder).where(models.Folder.dossier_id == dossier))
+
+    # Ta bort folder (ljudfil kopplat till dossier)
+    delete_folders_dossier(under_dossier)
     return session.execute(delete(models.Dossier).where(models.Dossier.id == data["id"]))
 
 # Skapa en underdossier till en dossier med ett viss id. Ge underdossiern namnet "name" (name: str ,parent_id : int)
@@ -202,11 +210,11 @@ async def read_exportDossier(id: int):
 
             # Om ljdfilen inte har något kommentar kopplat till sig
             if not comments:
-                csvwriter.writerow(['---'] + ['---'] + [file.file_name])
+                csvwriter.writerow(['----'] + ['----'] + [file.file_name])
 
             else:
                 for comment in comments:
-                    csvwriter.writerow([comment.text] + [comment.time - file.start_time] + [file.file_name])
+                    csvwriter.writerow([comment.text] + [comment.time_file] + [file.file_name])
 
     print(csvfile)
     return FileResponse(dossier_csv)

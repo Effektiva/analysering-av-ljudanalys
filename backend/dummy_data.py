@@ -264,10 +264,3 @@ def insert_dummy(session):
 
 
     return 200
-
-
-
-
-
-
-
