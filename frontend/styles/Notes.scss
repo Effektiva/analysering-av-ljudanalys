@@ -103,7 +103,6 @@
                 box-sizing: content-box;
 
                 width: 5ch;
-                min-height: 5em;
                 padding: 3px;
                 margin-left: 5px;
             }
@@ -123,7 +122,7 @@
             width: 100%;
 
             textarea {
-                min-height: 2em;
+                min-height: 5em;
                 max-height: 20em;
                 padding: 10px;
             }
