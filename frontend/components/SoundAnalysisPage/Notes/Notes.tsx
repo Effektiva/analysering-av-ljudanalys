@@ -126,12 +126,12 @@ const Notes = (props: Props) => {
     <div className={Style.Container}>
       <div className={Style.Top}>
         <h2 className={Style.Header}>Anteckningar</h2>
-        <div
+        <button
           className={Style.NewButton}
           onClick={() => {setShowNewNote(!showNewNote)}}
         >
           {showNewNote ? "Stäng ny anteckning" : "Skapa ny anteckning"}
-        </div>
+        </button>
       </div>
       <div className={Style.NewNote + (showNewNote ? "" : " collapsed")} aria-describedby="newNoteHead">
         <div className={Style.NewNoteTop}>

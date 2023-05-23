@@ -26,10 +26,6 @@
         /* The button that collapses the new note part */
         .notes__newButton {
             padding: 6px 10px;
-            border-radius: 5px;
-
-            @include palette.note-new-button;
-            @include palette.interactable;
         }
     }
 
@@ -107,7 +103,7 @@
                 box-sizing: content-box;
 
                 width: 5ch;
-                min-height: 2em;
+                min-height: 5em;
                 padding: 3px;
                 margin-left: 5px;
             }
