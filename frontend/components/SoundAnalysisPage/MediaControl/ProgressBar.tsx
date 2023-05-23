@@ -10,10 +10,8 @@ type Props = {
 const STYLE_NAMESPACE = "progressBar__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
-  CurrentTime = STYLE_NAMESPACE + "currentTime",
   Bar = STYLE_NAMESPACE + "bar",
   Progress = STYLE_NAMESPACE + "progress",
-  EndTime = STYLE_NAMESPACE + "endTime",
 }
 
 /*
@@ -41,22 +39,8 @@ const ProgressBar = (props: Props) => {
     props.progressEventHandler(Event.ProgressBar, procentual);
   }
 
-  /*
-   * Takes seconds and returns a HH:MM:SS string from it.
-   */
-  const secondsToTimeString = (seconds: number): string => {
-    if (isNaN(seconds) || seconds < 0) {
-      return "--:--:--";
-    }
-
-    // date takes a time in ms
-    let str = new Date(seconds*1000).toISOString().slice(11,19);
-    return str;
-  }
-
   return (
       <div className={Style.Container}>
-        <div className={Style.CurrentTime}>{secondsToTimeString(props.currentTime)}</div>
         <div
           className={Style.Bar}
           onClick={progressBarClick}
@@ -69,7 +53,6 @@ const ProgressBar = (props: Props) => {
             }}
           ></div>
         </div>
-        <div className={Style.EndTime}>{secondsToTimeString(props.duration)}</div>
       </div>
   );
 }

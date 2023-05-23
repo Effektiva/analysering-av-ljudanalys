@@ -1,5 +1,42 @@
+@use "palette.scss";
+
 .graph__container {
-    background: white;
-    height: 30%;
+
+    @include palette.graph;
+
+    height: 400px;
     width: 100%;
+}
+
+.graph__tooltip {
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+
+    min-width: 8em;
+    max-width: 20em;
+    padding: 3px;
+    border: 1px solid black;
+
+    @include palette.popup;
+
+    .graph__tooltipTop {
+        width: 100%;
+        padding-bottom: 2px;
+        border-bottom: solid 2px rgba(0,0,0,0.5);
+
+        text-align: center;
+    }
+
+    .graph__tooltipContent {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        padding-top: 2px;
+
+        .graph__tooltipRow {
+            padding: 0 4px;
+        }
+    }
 }

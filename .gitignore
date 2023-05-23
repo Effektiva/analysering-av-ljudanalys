@@ -4,3 +4,4 @@ package-lock.json
 .next
 backend/sql_app.db-journal
 backend/sql_app.db
+.DS_Store

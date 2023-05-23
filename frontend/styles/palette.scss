@@ -12,7 +12,11 @@
     color: color-contrast($bg-color);
 }
 
-/* General components */
+
+/*
+    Colors of templates
+*/
+
 %component {
     @include background-and-contrast-text(#d3d3d3);
 }
@@ -48,13 +52,33 @@
     }
 }
 
-@mixin popup {
+%pane-on-screen {
     @include background-and-contrast-text(#ffffff);
 }
+%pane-on-screen-button {
+    &:hover {
+        background-color: lightblue;
+    }
+}
+
+/*
+    Colors of general components
+*/
+
+@mixin popup {
+    @extend %pane-on-screen;
+}
 @mixin popup-button {
+    @extend %pane-on-screen-button;
+}
+@mixin popup-icon-button {
     @extend %icon-button;
 }
 
+
+/*
+    Colors of specific components
+*/
 
 @mixin page {
     @include background-and-contrast-text(#b2b2b2);
@@ -79,6 +103,7 @@ $left-menu-text: color-contrast($left-menu-bg);
     }
 }
 
+
 @mixin list-lines {
     font-family: ('Courier New', Courier, monospace);
 }
@@ -94,7 +119,8 @@ $left-menu-text: color-contrast($left-menu-bg);
     }
 }
 
-@mixin media-control {
+
+@mixin media-player {
     @extend %component;
 }
 @mixin media-control-button {
@@ -102,6 +128,10 @@ $left-menu-text: color-contrast($left-menu-bg);
 }
 @mixin media-control-bar {
     @extend %bar;
+}
+
+@mixin graph {
+    background-color: white;
 }
 
 @mixin zoom-panel {

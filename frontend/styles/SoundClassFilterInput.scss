@@ -1,46 +1,104 @@
+@use "palette.scss";
+
+/* The filter section. Includes searchbar and list of active filters */
 .soundClassFilterInput__container {
-    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    /* Top of filter section. Title and searchbar. */
+    .soundClassFilterInput__top {
+        display: flex;
+
+        /* The title */
+        .soundClassFilterInput__header {
+            font-size: 1.2em;
+            padding-right: .5em;
+        }
+
+        /* The input and its wrapper */
+        .soundClassFilterInput__inputWrapper {
+            position: relative;
+
+            width: 100%;
+
+            /* The searchbar */
+            .soundClassFilterInput__input {
+                width: 100%;
+                padding: 3px;
+
+                &::placeholder {
+                    font-style: italic;
+                }
+            }
+
+            /* The popup that appears with input selected */
+            .soundClassFilterInput__popup {
+                display: none;
+
+                position: absolute;
+                overflow-y: auto;
+                z-index: 1;
+
+                width: 100%;
+                height: auto;
+                max-height: 12em;
+                border: 1px solid black;
+
+                @include palette.popup;
+
+                .soundClassFilterInput__popupChoice {
+                    padding: 1px 3px;
+
+                    @include palette.interactable;
+                    @include palette.popup-button;
+                }
+            }
+        }
+    }
+
+    /* The container for the list of active filters. Including some text */
+    .soundClassFilterInput__listContainer {
+
+        /* Title for container */
+        .soundClassFilterInput__listHeader {
+            font-size: 1.1em;
+        }
+
+        /* Actual list of active filters */
+        ul.soundClassFilterInput__list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+
+            padding: 0;
+            margin: 0;
+
+            list-style: none;
+
+            /* The filter boxes that is choosen as active filters */
+            li {
+                display: flex;
+                align-items: flex-start;
+
+                padding: 4px 8px;
+
+                border-radius: 3px;
+
+                /* The little X button */
+                .soundClassFilterInput__listRemove {
+                    width: .8em;
+                    margin-left: .5em;
+
+                    font-size: .8em;
+                    font-weight: bold;
+                    text-align: center;
+
+                    @include palette.interactable;
+                }
+            }
+        }
+    }
 }
 
-.soundClassFilterInput__header {
-    font-size: 20px;
-}
 
-.soundClassFilterInput__input {
-    padding: 3px;
-}
-
-.soundClassFilterInput__input::placeholder {
-    font-style: italic;
-}
-
-.soundClassFilterInput__listContainer {
-}
-
-.soundClassFilterInput__listHeader {
-    padding-top: 5px;
-    font-size: 17px;
-}
-
-.soundClassFilterInput__list {
-
-}
-
-.soundClassFilterInput__listRemove {
-    font-weight: bold;
-    float: right;
-    margin-right: 30%;
-}
-
-.soundClassFilterInput__popup {
-    background: white;
-    border: 1px solid black;
-    position: fixed;
-    height: auto;
-    max-height: 25%;
-    overflow: scroll;
-}
-
-.soundClassFilterInput__popupChoice:hover {
-    background: lightblue;
-}
