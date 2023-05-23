@@ -3,6 +3,7 @@ import APIService from "@/models/APIService";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import fuzzysort from "fuzzysort"
 import { LOG as log } from '@/pages/_app';
+import { debug } from "util";
 
 type Props = {
   filters: any[],
@@ -22,6 +23,35 @@ enum Style {
   ListRemove = STYLE_NAMESPACE + "listRemove",
   Popup = STYLE_NAMESPACE + "popup",
   PopupChoice = STYLE_NAMESPACE + "popupChoice",
+}
+
+
+const colorContrast = (color: any) : string => {
+
+  if(
+    ( typeof color == 'string' || color instanceof String )
+    && color.length == 7 && color[0] == '#'
+  ) {
+
+    let r = Number("0x" + color.substring(1,3));
+    let g = Number("0x" + color.substring(3,5));
+    let b = Number("0x" + color.substring(5,7));
+
+    // Luminance [0,1] from RGB and contrast [1,21] from luminance. Formulas (but simplified) from: https://www.w3.org/TR/WCAG20/
+    let luminance = (0.2126*r + 0.7152*g + 0.0722*b)/255;
+    let luminanceContrast = (20*luminance) + 1;
+    let whiteContrast = 21 / luminanceContrast;   // white has luminance (#fff) 1
+    let blackContrast = luminanceContrast;          // black has luminance (#000) 0
+
+    if( whiteContrast > blackContrast ) {
+      return "#ffffff";
+    }
+    else {
+      return "#000000";
+    }
+  }
+
+  return "#000000";
 }
 
 const SoundClassFilterInput = (props: Props) => {
@@ -95,18 +125,6 @@ const SoundClassFilterInput = (props: Props) => {
     inputHandler();
   }
 
-  const colorContrast = (color: any) => {
-    let saturation = color.red + color.green + color.blue;
-
-    let isWhiter = saturation > 255*3 / 2;
-    let rgb = 0;
-    if( isWhiter ) {
-      rgb = 255;
-    }
-
-    return {red: rgb, green: rgb, blue: rgb, alpha: 1};//new SassColor({red: rgb, green: rgb, blue: rgb, alpha:1});
-  }
-
   return (
     <>
       <div className={Style.Container}>
@@ -120,7 +138,9 @@ const SoundClassFilterInput = (props: Props) => {
               }}
               onChange={inputHandler}
               className={Style.Input}
-              placeholder="Välj ljudklasser att filtrera på"
+
+              placeholder={(useInputFilter && !inputFilteredClasses.length) || (!useInputFilter && !choosableClasses.length) ? "Alla ljudklasser är valda" : "Välj ljudklasser att filtrera på" }
+              disabled={(useInputFilter && !inputFilteredClasses.length) || (!useInputFilter && !choosableClasses.length)}
 
               role="combobox"
               aria-controls="filter-popup"
@@ -132,7 +152,7 @@ const SoundClassFilterInput = (props: Props) => {
               ref={popupRef}
               className={Style.Popup}
               style={{
-                display: popupVisible ? "block" : "none",
+                display: (popupVisible && ((useInputFilter && inputFilteredClasses.length) || (!useInputFilter && choosableClasses.length))) ? "block" : "none",
               }}
               role="listbox"
             >
@@ -165,7 +185,7 @@ const SoundClassFilterInput = (props: Props) => {
           <ul className={Style.List}>
             {props.filters.length != 0 ?
               props.filters.map(elem => {
-                return <li key={elem.id} style={{backgroundColor: elem.color, color: colorContrast(elem.color).toString()}}>
+                return <li key={elem.id} style={{backgroundColor: elem.color, color: colorContrast(elem.color)}}>
                   {elem.name}
                   <div
                     onClick={() => { removeHandler(elem.id) }}

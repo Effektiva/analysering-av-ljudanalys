@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, Component } from 'react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, AreaChart, Area } from 'recharts';
+import colorContrast from '@/components/SoundClassFilterInput';
 import APIService from '@/models/APIService';
 import AppState from '@/state/AppState';
 import { LOG as log } from "@/pages/_app";
@@ -67,7 +68,7 @@ const Graph = (props: Props) => {
     setData(newData);
   }, [props.soundIntervals]);
 
-  
+
 
 
 
@@ -118,15 +119,20 @@ const Graph = (props: Props) => {
   Solution got from: https://stackoverflow.com/a/72964329 */
   const GraphTooltip = ({active, payload, label}: any) => {
 
+
     if( active && payload && payload.length ) {
+      let largest = payload.sort((pld1: any, pld2: any) => { return ( pld2.value as number)-( pld1.value as number) });
+
+      log.debug(largest + " : " + typeof(largest) + " : " + payload.length);
+
       return (
         <div className={Style.Tooltip}>
           <div className={Style.TooltipTop}>
             {secondsToTimeString(label)}
           </div>
           <div className={Style.TooltipContent}>
-            {payload.map((pld: any) => (
-              <div className={Style.TooltipRow} style={{ backgroundColor: pld.color, color: 'black'}}>
+            {largest.map((pld: any) => (
+              <div className={Style.TooltipRow}> {/*style={{ backgroundColor: pld.color, color: colorContrast(pld.color)}}>*/}
                 {pld.dataKey} : {pld.value}
               </div>
             ))}
@@ -142,7 +148,7 @@ const Graph = (props: Props) => {
   return (
     <div className={Style.Container}>
       {/*Math.round(props.mediaPlayerTime)*/}
-      {props.mediaDuration}
+      {/*props.mediaDuration*/}
       <ResponsiveContainer>
         <AreaChart
           data={data}
@@ -159,12 +165,12 @@ const Graph = (props: Props) => {
             })}
           </defs>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-            dataKey="name" 
+          <XAxis
+            dataKey="name"
             tickFormatter={tickItem => secondsToTimeString(tickItem)}
-            orientation="top" 
-            type="number" 
-            domain={[0, props.mediaDuration]} 
+            orientation="top"
+            type="number"
+            domain={[0, props.mediaDuration]}
           />
           <YAxis hide="true" />
           <Tooltip itemSorter={item => (item.value as number) * -1} />
