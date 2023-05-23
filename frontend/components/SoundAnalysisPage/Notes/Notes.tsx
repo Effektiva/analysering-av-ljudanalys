@@ -1,3 +1,4 @@
+import { useState } from "react";
 import NotesList from "./NoteList";
 import { LOG as log } from "@/pages/_app";
 import Note from "@/models/SoundAnalysis/Note";
@@ -14,8 +15,12 @@ type Props = {
 const STYLE_NAMESPACE = "notes__";
 enum Style {
   Container = STYLE_NAMESPACE + "container",
+  Top = STYLE_NAMESPACE + "top",
   Header = STYLE_NAMESPACE + "header",
+  NewButton = STYLE_NAMESPACE + "newButton",
   NewNote = STYLE_NAMESPACE + "newNote",
+  NewNoteTop = STYLE_NAMESPACE + "newNoteTop",
+  NewNoteBody = STYLE_NAMESPACE + "newNoteBody",
   NewNoteTime = STYLE_NAMESPACE + "newNoteTime",
   NewNoteText = STYLE_NAMESPACE + "newNoteText",
 }
@@ -25,6 +30,8 @@ enum Style {
  * @returns A list of notes and a form for adding new notes.
  */
 const Notes = (props: Props) => {
+  const [showNewNote, setShowNewNote] = useState<boolean>(false);
+
   /**
    * Adds a new note to the list of notes. The note is created from the values in the form and then sent to the backend.
    */
@@ -117,22 +124,32 @@ const Notes = (props: Props) => {
 
   return (
     <div className={Style.Container}>
-      <h2 className={Style.Header}>Anteckningar</h2>
-      <div className={Style.NewNote} aria-describedby="newNoteHead">
-        <div>
-          <h3 id="newNoteHead">Skapa ny anteckning</h3>
-          <div className={Style.NewNoteTime}>
-            <label htmlFor="newNoteTime">Tidpunkt i klipp:<br />(tomt innebär nuvarande tid)</label>
-            <input
-              id="newNoteTime"
-              placeholder="00:00"
-            />
-          </div>
+      <div className={Style.Top}>
+        <h2 className={Style.Header}>Anteckningar</h2>
+        <div
+          className={Style.NewButton}
+          onClick={() => {setShowNewNote(!showNewNote)}}
+        >
+          {showNewNote ? "Stäng ny anteckning" : "Skapa ny anteckning"}
         </div>
-        <div>
+      </div>
+      <div className={Style.NewNote + (showNewNote ? "" : " collapsed")} aria-describedby="newNoteHead">
+        <div className={Style.NewNoteTop}>
+          <h3 id="newNoteHead">Skapa ny anteckning</h3>
+        </div>
+        <div className={Style.NewNoteBody}>
+          <div className={Style.NewNoteTime}>
+            <div>
+              <label htmlFor="newNoteTime">Tidpunkt i klipp</label>:
+              <input
+                id="newNoteTime"
+                placeholder="00:00"
+              />
+            </div>
+            <p>(tomt innebär nuvarande tid)</p>
+          </div>
           <div className={Style.NewNoteText}>
-            <label htmlFor="newNoteText">Anteckning:</label>
-            <textarea id="newNoteText" placeholder="Anteckningar" />
+            <textarea id="newNoteText" placeholder="Skriv här" aria-label="Anteckningar"/>
           </div>
           <button onClick={addNewNote}>Lägg till</button>
         </div>

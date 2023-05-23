@@ -12,8 +12,12 @@ Basic styling that is reoccuring throughout the webpage. Mostly color.
     color: #000;
 }
 %button {
-    background-color: #c9c9c9;
-    color: #000;
+
+    &:hover {
+        transition: background-color 0.1s;
+        background-color: #c5c5c5;
+    }
+
 }
 %icon-button {
     color: #000;
@@ -109,10 +113,7 @@ $left-menu-text: #fff;
     color: #000;
 }
 @mixin soundchain-list-button {
-    &:hover {
-        transition: background-color 0.1s;
-        background-color: #c5c5c5;
-    }
+    @extend %button;
 }
 @mixin sound-class-input-filter {
     @extend %component;
@@ -146,6 +147,12 @@ $left-menu-text: #fff;
 @mixin note {
     background-color: #656565;
     color: #fff;
+}
+@mixin note-new-button {
+    background-color: #ffffff;
+    color: #000;
+
+    @extend %button;
 }
 @mixin note-foreground {
     background-color: #fff;

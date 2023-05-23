@@ -42,7 +42,9 @@ The investigation page.
     @include palette.soundchain-list;
 
     /* All interactable list items in the lists */
-    .listItemButton {
-        @include palette.soundchain-list-button;
+    .listItemRoot, .listItemChild, .listItemSubroot {
+        .listItemButton {
+            @include palette.soundchain-list-button;
+        }
     }
 }

@@ -7,13 +7,33 @@
 
     @include palette.notes;
 
-    /* Header of the note component */
-    .notes__header {
-        margin: 0;
+    /* Top part of the note component */
+    .notes__top {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
 
-        font-weight: bold;
-        font-size: larger;
+        /* The title for the component */
+        .notes__header {
+            display: flex;
+            align-items: center;
+            margin: 0;
+
+            font-weight: bold;
+            font-size: larger;
+        }
+
+        /* The button that collapses the new note part */
+        .notes__newButton {
+            padding: 6px 10px;
+            border-radius: 5px;
+
+            @include palette.note-new-button;
+            @include palette.interactable;
+        }
     }
+
+
 
     /* Direct childs of note */
     > * {
@@ -24,9 +44,19 @@
 /* The controls for adding a new note */
 .notes__newNote {
     display: flex;
+    flex-direction: column;
+
+    padding: 10px 0;
+    border-top: solid 2px rgba(0, 0, 0, 0.5);
+    border-bottom: solid 2px rgba(0, 0, 0, 0.5);
+
+    /* Hide if collapsed */
+    &.collapsed {
+        display: none;
+    }
 
     /* The first column  */
-    > :first-child {
+    > .notes__newNoteTop {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -42,35 +72,54 @@
             padding-right: 10px;
         }
 
+    }
+
+    /* The actual content of the new note part. */
+    .notes__newNoteBody {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: flex-end;
+        gap: 8px;
+
+        width: 100%;
+
+
         /* Styling of the time input */
         .notes__newNoteTime {
             display: flex;
-            justify-content: flex-end;
+            flex-direction: column;
+            justify-content: stretch;
             align-items: center;
+            gap: 5px;
 
-            label {
-                margin-right: 5px;
+            align-self: flex-start;
+            flex-shrink: 0;
+
+            /* The first row */
+            &>*:first-child {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
             }
 
             input {
                 box-sizing: content-box;
 
                 width: 5ch;
+                min-height: 2em;
                 padding: 3px;
+                margin-left: 5px;
+            }
+
+            p {
+                margin: 0;
+
+                font-size: 0.75em;
             }
         }
 
-
-    }
-
-    /* The second column */
-    > :last-child {
-        display: flex;
-        justify-content: flex-end;
-        align-items: flex-end;
-
-        width: 100%;
-
+        /* The input field for text of the note */
         .notes__newNoteText {
             display: flex;
             flex-direction: column;
@@ -84,9 +133,9 @@
             }
         }
 
+        /* The add button */
         button {
             padding: 4px 6px;
-            margin: 0 20px;
 
             white-space: nowrap;
         }
@@ -98,6 +147,7 @@
 .noteList__container {
     width: 100%;
     max-height: max(50vh, 200px);
+    margin-top: 5px;
 
     overflow-y: auto;
 
@@ -125,6 +175,7 @@
 
         font-size: 0.75rem;
     }
+
 
     /* Bottom part of note. The text */
     .noteList__text {
