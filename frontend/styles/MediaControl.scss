@@ -2,9 +2,6 @@
 
 .mediaControl__container {
     width: 100%;
-    padding: 3px;
-
-    @include palette.media-control;
 
     border-radius: 5px;
 }
@@ -13,38 +10,55 @@
 /* Buttons */
 .mediaControl__buttonsContainer {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 
     padding: 0 15px;
 
-    .mediaControl__backwardsButton, .mediaControl__forwardButton, .mediaControl__stopPlayButton {
-        @include palette.media-control-button;
+    /* Keep the same spacing on left side to have buttons be centered */
+    $width-of-volumeBar: 30%;
 
-        font-size: 18px;
+    .mediaControl__timeStamps {
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-        /* Active buttons */
-        &:not([disabled]) {
-            @include palette.interactable;
+        width: $width-of-volumeBar;
+
+        white-space: pre;
+
+        /* The time stamps at the beginning and end. */
+        .progressBar__currentTime, .progressBar__endTime {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 15px;
         }
     }
 
-    .mediaControl__stopPlayButton {
-        margin: 0 14px;
+    .mediaControl__controller {
+        display: flex;
+        align-items: center;
 
-        font-size: 22px;
+        .mediaControl__backwardsButton, .mediaControl__forwardButton, .mediaControl__stopPlayButton {
+            @include palette.media-control-button;
+
+            font-size: 18px;
+
+            /* Active buttons */
+            &:not([disabled]) {
+                @include palette.interactable;
+            }
+        }
+
+        .mediaControl__stopPlayButton {
+            margin: 0 14px;
+
+            font-size: 22px;
+        }
     }
 
-
-    /* Keep the same spacing on left side to have buttons be centered */
-    $width-of-volumeBar: 30%;
-    &::before {
-        content: "";
-
-        width: 100%;
-        max-width: $width-of-volumeBar;
-        margin-right: auto;
-    }
     /* The volumne bar. Shares flexbox with mediacontroler so shares file. */
     .volumeBar__container {
         display: flex;
@@ -52,7 +66,6 @@
         flex-wrap: nowrap;
 
         width: $width-of-volumeBar;
-        margin-left: auto;
 
         /* The volume button */
         .volumeBar__button {

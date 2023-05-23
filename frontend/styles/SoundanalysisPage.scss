@@ -15,23 +15,18 @@
     .soundAnalysisPage__col {
         display: flex;
         flex-direction: column;
+        gap: 10px 10px;
 
         width: 100%;
         padding: 10px;
 
-        // Left column of the soundAnalysisPage
+        /* Left column of the soundAnalysisPage */
         &:first-child {
             max-width: 30%;
         }
 
-
-        // Right column of the soundAnalysisPage
-        &:last-child {
-            /* Keep spacing between children */
-            >*:not(:last-child) {
-                margin-bottom: 5px;
-            }
-        }
+        /* Right column of the soundAnalysisPage */
+        &:last-child {}
     }
 
 
@@ -67,16 +62,27 @@
     /* All lists in soundAnalysisPage */
     .soundAnalysisPage__filtered, .soundAnalysisPage__all {
         padding: 10px;
-        margin-bottom: 10px;
 
         @include palette.soundchain-list;
 
 
         /* All interactable list items in the lists */
-        .listItemButton {
-            @include palette.soundchain-list-button;
+        .listItemAction, .listItemCollapsable {
+            .listItemButton {
+                @include palette.soundchain-list-button;
+            }
         }
     }
+
+    /* The container of the graph and player. */
+    .soundAnalysisPage__player {
+        @include palette.media-player;
+
+        padding: 5px;
+
+        border-radius: 3px;
+    }
+
 
     /* Buttons under the graph */
     .soundAnalysisPage__buttons {

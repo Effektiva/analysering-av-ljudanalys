@@ -25,7 +25,20 @@
 
 /* All inner elements of listItems */
 .listItemButton {
-    padding-left: 5px;
+    display: flex;
+    align-items: center;
+
+    padding: 0 5px;
+
+    /* Target all non-text direct content (well paragraphs to so technically direct non-text) */
+    >* {
+        // Add spacing towards text
+        &:nth-child(1) {
+            margin-left: auto;
+        }
+
+        float: right;
+    }
 }
 
 /* All interactable items in a .listMenu */
@@ -83,7 +96,7 @@
         white-space: pre;
         line-height: 1;
         letter-spacing: -1px;
-        font-size: 1.4em;
+        font-size: 1.5em;
 
         overflow-y: hidden;
     }

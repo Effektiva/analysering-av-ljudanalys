@@ -7,6 +7,7 @@ class SoundClass(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, index=True)
+    color = Column(String, index=True)
 
 
 class Investigations(Base):

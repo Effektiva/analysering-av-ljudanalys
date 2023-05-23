@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import LeftMenu, { Type } from "./LeftMenu/LeftMenu";
-import SoundanalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
+import SoundAnalysisPage from "./SoundAnalysisPage/SoundAnalysisPage";
 import InvestigationPage from "./InvestigationPage/InvestigationPage";
 import AppState from "@/state/AppState";
 import Investigation from "@/models/General/Investigation";
@@ -21,7 +21,7 @@ type Props = {
  */
 const MainView = (props: Props) => {
   const [appState, setAppState] = useState<AppState>(props.appState);
-  const [page, setPage] = useState(<FrontPage/>);
+  const [page, setPage] = useState(<FrontPage />);
   const [forceUpdateLeftMenu, setForceUpdateLeftMenu] = useState<boolean>(false);
 
   // For debugging purposes, to see how often the whole app rerenders.
@@ -80,20 +80,22 @@ const MainView = (props: Props) => {
       case Type.SOUNDCHAIN:
         log.debug("Selected soundChain with id: " + id);
         let investigationId = appState.selectedInvestigation?.id;
-          APIService.getFullSoundChain(investigationId!, id).then((chain) => {
-            var newState = appState;
-            newState.selectedSoundChain = chain;
-            newState.selectedSoundclip = chain?.getSoundclipAndSetAudioElement(investigationId!,
-                                                                               chain.soundClips[0].id!);
-            setAppState(newState);
-            setPage(
-              <SoundanalysisPage
-                key={investigationId}
-                soundchain={appState.selectedSoundChain!}
-                appState={newState}
-                updateAppState={updateApp}
-              />);
-          })
+        APIService.getFullSoundChain(investigationId!, id).then((chain) => {
+          var newState = appState;
+          newState.selectedSoundChain = chain;
+
+          newState.selectedSoundclip = chain?.getSoundclipAndSetAudioElement(investigationId!,
+            chain.soundClips[0].id!);
+
+          setAppState(newState);
+          setPage(
+            <SoundAnalysisPage
+              key={investigationId}
+              soundchain={appState.selectedSoundChain!}
+              appState={newState}
+              updateAppState={updateApp}
+            />);
+        })
           .catch((error) => {
             log.warning(error);
           });
@@ -113,23 +115,23 @@ const MainView = (props: Props) => {
             newState.selectedSoundclip = clip;
             setAppState(newState);
             setPage(
-              <SoundanalysisPage
+              <SoundAnalysisPage
                 key={newState.selectedSoundChain?.id}
                 soundchain={newState.selectedSoundChain!}
                 appState={newState}
                 updateAppState={updateApp}
               />);
           })
-          .catch((error) => {
-            log.warning(error);
-          });
+            .catch((error) => {
+              log.warning(error);
+            });
         })
-        .catch((error) => {
-          log.warning("Couldn't get soundfile info:", error);
-        });
+          .catch((error) => {
+            log.warning("Couldn't get soundfile info:", error);
+          });
         break;
       default:
-        setPage(<FrontPage/>);
+        setPage(<FrontPage />);
         break;
     }
   }
