@@ -125,18 +125,6 @@ const SoundClassFilterInput = (props: Props) => {
     inputHandler();
   }
 
-  const colorContrast = (color: any) => {
-    let saturation = color.red + color.green + color.blue;
-
-    let isWhiter = saturation > 255*3 / 2;
-    let rgb = 0;
-    if( isWhiter ) {
-      rgb = 255;
-    }
-
-    return {red: rgb, green: rgb, blue: rgb, alpha: 1};//new SassColor({red: rgb, green: rgb, blue: rgb, alpha:1});
-  }
-
   return (
     <>
       <div className={Style.Container}>

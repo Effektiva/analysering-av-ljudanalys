@@ -181,7 +181,7 @@ def main():
         json_data = json.JSONDecoder().decode(data)
 
         for info in json_data:
-            id = makeList(session.execute(insert(models.SoundFile).values(
+            id = make_list(session.execute(insert(models.SoundFile).values(
                 start_time = info["start_time"],
                 end_time = info["end_time"],
                 file_name = "uploads/1/1/files/" + info["id"] + ".wav",
