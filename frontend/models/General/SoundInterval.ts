@@ -6,7 +6,7 @@ export type GraphData = {
 }
 
 /**
- * SoundInterval is a interval of a soundfile 
+ * SoundInterval is a interval of a soundfile
  * containing soundClass data
  */
 class SoundInterval {
@@ -44,8 +44,8 @@ class SoundInterval {
     return new SoundInterval(json.start_time, json.end_time, json.highest_volume, sounds);
   }
 
-  asGraphData(): GraphData {
-    let graphData : GraphData = {name: this.startTime + (this.endTime - this.startTime) / 2};
+  asGraphData(offset: number = 0): GraphData {
+    let graphData : GraphData = {name: this.startTime + (this.endTime - this.startTime) / 2 + offset};
     this.sounds.forEach(sound => {
         graphData[sound.soundClass] = sound.trustValue;
     });

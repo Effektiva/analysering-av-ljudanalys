@@ -1,10 +1,7 @@
 import { useRef, useEffect, useState, Component } from 'react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, AreaChart, Area } from 'recharts';
-import colorContrast from '@/components/SoundClassFilterInput';
-import APIService from '@/models/APIService';
 import AppState from '@/state/AppState';
-import { LOG as log } from "@/pages/_app";
-import SoundInterval, { GraphData } from '@/models/General/SoundInterval';
+import { GraphData } from '@/models/General/SoundInterval';
 
 const STYLE_NAMESPACE = "graph__";
 enum Style {
@@ -15,124 +12,71 @@ enum Style {
   TooltipRow = STYLE_NAMESPACE + "tooltipRow",
 }
 
-const DUMMY_SOUNDFILES_DATA = [
-  {
-    id: 0,
-    startTime: 0,
-    endTime: 59
-  },
-  {
-    id: 1,
-    startTime: 60,
-    endTime: 119
-  },
-  {
-    id: 3,
-    startTime: 120,
-    endTime: 179
-  },
-  {
-    id: 4,
-    startTime: 180,
-    endTime: 239
-  },
-  {
-    id: 5,
-    startTime: 240,
-    endTime: 299
-  },
-  {
-    id: 6,
-    startTime: 300,
-    endTime: 350
-  }
-];
-
 type Props = {
   filters: any[]
   mediaPlayerTime: number,
   mediaDuration: number,
   clipZoom: boolean,
-  soundIntervals: Array<SoundInterval>
+  appState: AppState
+}
+
+/**
+ * Helper function to convert seconds to a digital clock convention.
+ */
+export const secondsToTimeString = (seconds: number): string => {
+  if (isNaN(seconds) || seconds < 0) {
+    return "--:--:--";
+  }
+
+  // date takes a time in ms
+  let str = new Date(seconds * 1000).toISOString().slice(11, 19);
+  return str;
 }
 
 const Graph = (props: Props) => {
   const [data, setData] = useState<Array<GraphData>>([]);
+  const [clipBrakes, setClipBrakes] = useState<Array<number>>([]);
 
-  // Run when soundIntervals changes.
+  /**
+   * Runs when a new clip is selected or the zoom option changes.
+   * Here the graph data is fetched tepending on the zoom option and
+   * the clip brakes are determined.
+   */
   useEffect(() => {
     let newData : Array<GraphData> = [];
-    props.soundIntervals.forEach(interval => {
-      newData.push(interval.asGraphData());
-    });
-    setData(newData);
-  }, [props.soundIntervals]);
-
-
-
-
-
-
-
-
-
-
-
-
-  // const [clipId, setClipId] = useState<number>(-1)
-  // let filters = props.filters;
-
-  // if (props.clipZoom && clipId === -1) {
-  //   let id = DUMMY_SOUNDFILES_DATA.filter(file => {
-  //     return props.mediaPlayerTime >= file.startTime && props.mediaPlayerTime <= file.endTime;
-  //   })[0].id;
-
-  //   const [file] = DUMMY_SOUNDFILES_DATA.filter(x => {
-  //     return x.id === id;
-  //   });
-
-  //   filters = filters.filter(x => {
-  //     return x.name >= file.startTime && x.name <= file.endTime;
-  //   });
-
-  //   filters = filters.map(x => {
-  //     return { ...x, name: x.name - file.startTime };
-  //   });
-
-  //   setClipId(id);
-  // } else if (!props.clipZoom) {
-  //   setClipId(-1);
-  // }
-
-
-  const secondsToTimeString = (seconds: number): string => {
-    if (isNaN(seconds) || seconds < 0) {
-      return "--:--:--";
+    if (props.clipZoom === true) {
+      props.appState?.selectedSoundclip?.soundIntervals.forEach(interval => {
+        newData.push(interval.asGraphData());
+      });
+      setClipBrakes([]);
+    } else {
+      let newClipBrakes : Array<number> = [];
+      let duration = 0
+      props.appState?.selectedSoundChain?.soundClips.forEach(clip => {
+        clip.soundIntervals.forEach(interval => {
+          newData.push(interval.asGraphData(duration));
+        });
+        duration += clip.duration
+        newClipBrakes.push(duration);
+      });
+      setClipBrakes(newClipBrakes.slice(0, -1));
     }
-
-    // date takes a time in ms
-    let str = new Date(seconds * 1000).toISOString().slice(11, 19);
-    return str;
-  }
+    setData(newData);
+  }, [props.appState?.selectedSoundclip, props.clipZoom]);
 
   /* Tooltip for the graph
   Solution got from: https://stackoverflow.com/a/72964329 */
   const GraphTooltip = ({active, payload, label}: any) => {
 
-
     if( active && payload && payload.length ) {
-      let largest = payload.sort((pld1: any, pld2: any) => { return ( pld2.value as number)-( pld1.value as number) });
-
-      log.debug(largest + " : " + typeof(largest) + " : " + payload.length);
-
       return (
         <div className={Style.Tooltip}>
           <div className={Style.TooltipTop}>
             {secondsToTimeString(label)}
           </div>
           <div className={Style.TooltipContent}>
-            {largest.map((pld: any) => (
-              <div className={Style.TooltipRow}> {/*style={{ backgroundColor: pld.color, color: colorContrast(pld.color)}}>*/}
+            {payload.map((pld: any) => (
+              <div className={Style.TooltipRow} style={{ backgroundColor: pld.color, color: 'black'}}>
                 {pld.dataKey} : {pld.value}
               </div>
             ))}
@@ -147,8 +91,6 @@ const Graph = (props: Props) => {
 
   return (
     <div className={Style.Container}>
-      {/*Math.round(props.mediaPlayerTime)*/}
-      {/*props.mediaDuration*/}
       <ResponsiveContainer>
         <AreaChart
           data={data}
@@ -184,14 +126,10 @@ const Graph = (props: Props) => {
               fill={elem.color}
             />;
           })}
-          {!props.clipZoom && DUMMY_SOUNDFILES_DATA.slice(1).map(file => {
-            return <ReferenceLine
-              key={file.id}
-              x={file.startTime}
-              stroke={"black"}
-            />;
+          {clipBrakes.map(brake => {
+            return <ReferenceLine key={brake} x={brake} stroke={"black"} />
           })}
-          <ReferenceLine x={Math.round(props.mediaPlayerTime / 10) * 10} stroke={"red"} />
+          <ReferenceLine x={props.mediaPlayerTime} stroke={"red"} />
           <ReferenceLine y={0.71} stroke={"blue"} label='71%' />
         </AreaChart>
       </ResponsiveContainer >

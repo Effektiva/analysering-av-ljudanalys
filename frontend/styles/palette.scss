@@ -64,6 +64,19 @@ Basic styling that is reoccuring throughout the webpage. Mostly color.
 @mixin popup {
     @extend %pane-on-screen;
 }
+%pane-on-screen-button {
+    &:hover {
+        background-color: lightblue;
+    }
+}
+
+/*
+    Colors of general components
+*/
+
+@mixin popup {
+    @extend %pane-on-screen;
+}
 @mixin popup-button {
     @extend %pane-on-screen-button;
 }
@@ -104,6 +117,7 @@ $left-menu-text: #fff;
         background-color: #38A9FF;
     }
 }
+
 
 @mixin list-lines {
     font-family: ('Courier New', Courier, monospace);

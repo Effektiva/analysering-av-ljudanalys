@@ -10,7 +10,7 @@ import ProgressBar from "./ProgressBar";
 import VolumeBar from "./VolumeBar";
 import AppState from "@/state/AppState";
 import SoundInterval from "@/models/General/SoundInterval";
-import Graph from "../Graph";
+import Graph, { secondsToTimeString } from "../Graph";
 
 type Props = {
   playing: boolean,
@@ -80,9 +80,6 @@ const MediaControl = (props: Props) => {
       log.warning("soundclip change in MediaControl: audioElement is undefined");
     } else {
       updateTimes();
-
-      log.debug("media controller selected soundclip: ", props.appState?.selectedSoundclip);
-      setSoundIntervals(props.appState?.selectedSoundclip?.soundIntervals!);
 
       soundclip.audioElement.volume = props.volumePercentage;
       soundclip.audioElement.muted = props.muted;
@@ -257,10 +254,10 @@ const MediaControl = (props: Props) => {
     if (props.clipZoom) {
       switch (event) {
         case Event.Forward:
-          seekTo = soundchain.getSecondsToStartOfClip(soundclip) + currentTime + 30;
+          seekTo = soundchain.getSecondsToStartOfClip(soundclip) + props.currentTime + 30;
           break;
         case Event.Backward:
-          seekTo = soundchain.getSecondsToStartOfClip(soundclip) + currentTime - 30;
+          seekTo = soundchain.getSecondsToStartOfClip(soundclip) + props.currentTime - 30;
           break;
         case Event.ProgressBar:
           seekTo = duration * (perc / 100);
@@ -353,7 +350,7 @@ const MediaControl = (props: Props) => {
         mediaPlayerTime={props.currentTime}
         mediaDuration={duration}
         clipZoom={props.clipZoom}
-        soundIntervals={soundIntervals}
+        appState={props.appState}
       />
 
       <div className={Style.Container}>

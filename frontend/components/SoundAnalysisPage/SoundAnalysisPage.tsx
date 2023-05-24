@@ -66,7 +66,6 @@ const SoundAnalysisPage = (props: Props) => {
     let newFiltered: any[] = [];
     props.appState.selectedSoundChain?.soundClips.forEach((clip: Soundclip) => {
       let include = true;
-
       filters.forEach((filter) => {
         if (clip.soundClasses.find((aClass) => filter.name == aClass) == undefined) {
           include = false;
