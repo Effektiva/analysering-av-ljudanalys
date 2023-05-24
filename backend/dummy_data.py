@@ -1,20 +1,9 @@
-import sqlalchemy
-from sqlalchemy import select, insert, update, delete
-from fastapi import FastAPI, Response, Request
-from typing import Union
-from fastapi.middleware.cors import CORSMiddleware
-
+from sqlalchemy import insert, update
+from Endpoints.helpers import Soundclass
 import models
-from database import SessionLocal, engine
-from Endpoints.helpers import session, makeList, Soundclass
-from Endpoints.investigations import router1
-from Endpoints.dossier import router2
-from Endpoints.soundChains import router3
-from Endpoints.misc import router4
-
 import datetime
 import time
-import base64
+
 
 
 def insert_dummy(session):
@@ -54,7 +43,7 @@ def insert_dummy(session):
     time12 = time.mktime(datum12.timetuple())
 
     timelist= [time1, time2, time3, time4, time5, time6, time7, time8, time9, time10, time11, time12]
-    ######## CREATE INVESTIGATIONS ########
+
     ######## CREATE INVESTIGATIONS ########
     print("-------- creating inestigations --------")
     session.execute(insert(models.Investigations).values(name = "Case-A24"))
