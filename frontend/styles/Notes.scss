@@ -7,13 +7,29 @@
 
     @include palette.notes;
 
-    /* Header of the note component */
-    .notes__header {
-        margin: 0;
+    /* Top part of the note component */
+    .notes__top {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
 
-        font-weight: bold;
-        font-size: larger;
+        /* The title for the component */
+        .notes__header {
+            display: flex;
+            align-items: center;
+            margin: 0;
+
+            font-weight: bold;
+            font-size: larger;
+        }
+
+        /* The button that collapses the new note part */
+        .notes__newButton {
+            padding: 6px 10px;
+        }
     }
+
+
 
     /* Direct childs of note */
     > * {
@@ -22,11 +38,21 @@
 }
 
 /* The controls for adding a new note */
-.notes__newnote {
+.notes__newNote {
     display: flex;
+    flex-direction: column;
+
+    padding: 10px 0;
+    border-top: solid 2px rgba(0, 0, 0, 0.5);
+    border-bottom: solid 2px rgba(0, 0, 0, 0.5);
+
+    /* Hide if collapsed */
+    &.collapsed {
+        display: none;
+    }
 
     /* The first column  */
-    > :first-child {
+    > .notes__newNoteTop {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -42,14 +68,35 @@
             padding-right: 10px;
         }
 
-        /* Styling of the time input */
-        .notes__newnote_time {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
+    }
 
-            label {
-                margin-right: 5px;
+    /* The actual content of the new note part. */
+    .notes__newNoteBody {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: flex-end;
+        gap: 8px;
+
+        width: 100%;
+
+
+        /* Styling of the time input */
+        .notes__newNoteTime {
+            display: flex;
+            flex-direction: column;
+            justify-content: stretch;
+            align-items: center;
+            gap: 5px;
+
+            align-self: flex-start;
+            flex-shrink: 0;
+
+            /* The first row */
+            &>*:first-child {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
             }
 
             input {
@@ -57,36 +104,33 @@
 
                 width: 5ch;
                 padding: 3px;
+                margin-left: 5px;
+            }
+
+            p {
+                margin: 0;
+
+                font-size: 0.75em;
             }
         }
 
-
-    }
-
-    /* The second column */
-    > :last-child {
-        display: flex;
-        justify-content: flex-end;
-        align-items: flex-end;
-
-        width: 100%;
-
-        .notes__newnote_text {
+        /* The input field for text of the note */
+        .notes__newNoteText {
             display: flex;
             flex-direction: column;
 
             width: 100%;
 
             textarea {
-                min-height: 2em;
+                min-height: 5em;
                 max-height: 20em;
                 padding: 10px;
             }
         }
 
+        /* The add button */
         button {
             padding: 4px 6px;
-            margin: 0 20px;
 
             white-space: nowrap;
         }
@@ -95,80 +139,81 @@
 
 
 /* The list of notes */
-.notes__list__container {
+.noteList__container {
     width: 100%;
     max-height: max(50vh, 200px);
+    margin-top: 5px;
 
     overflow-y: auto;
 
     /* Keep a distance between notes */
-    .notes__list__note:not(:last-child) {
+    .noteList__note:not(:last-child) {
         margin-bottom: 8px;
     }
 }
 
-/* A single note */
-.notes__list__note {
+/* A single note. As presented in the lists of notes */
+.noteList__note {
     padding: 3px;
 
     border-radius: 5px;
 
     @include palette.note;
-}
 
+    /* Top part of note. The information */
+    .noteList__header {
+        display: flex;
+        justify-content: space-between;
 
-/* Top part of note, the information */
-.notes__list__header {
-    display: flex;
-    justify-content: space-between;
-
-    width: 100%;
-    padding: 0 10px 0.1rem;
-
-    font-size: 0.75rem;
-}
-
-
-/* Bottom part of note, the text */
-.notes__list__text {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-
-    padding: 5px 10px;
-
-    border-radius: 5px;
-
-    @include palette.note-foreground;
-
-    textarea {
         width: 100%;
-        margin-bottom: 5px;
+        padding: 0 10px 0.1rem;
+
+        font-size: 0.75rem;
     }
 
-    .notes__list__buttons {
-        @include palette.note-button;
 
-        padding-left: 60px;
-        margin-left: auto;
+    /* Bottom part of note. The text */
+    .noteList__text {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
 
-        /* The buttons of the note */
-        button {
-            padding: 0;
-            margin: 0;
+        padding: 5px 10px;
 
-            line-height: 0;
+        border-radius: 5px;
 
-            /* Should be image (could be svg, img or other) */
-            >* {
-                height: 1.2em;
-                width: 1.2em;
+        @include palette.note-foreground;
+
+        textarea {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .noteList__buttons {
+            @include palette.note-button;
+
+            padding-left: 60px;
+            margin-left: auto;
+
+            /* The buttons of the note */
+            button {
+                padding: 0;
+                margin: 0;
+
+                line-height: 0;
+
+                /* Should be image (could be svg, img or other) */
+                >* {
+                    height: 1.2em;
+                    width: 1.2em;
+                }
+            }
+
+            /* Keep space inbetween buttons */
+            button:not(:last-child) {
+                margin-right: 10px;
             }
         }
-
-        /* Keep space inbetween buttons */
-        button:not(:last-child) {
-            margin-right: 10px;
-        }
     }
 }
+

@@ -66,6 +66,7 @@ const MediaControl = (props: Props) => {
   const [playable, setPlayable] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [newClipSeek, setNewClipSeek] = useState<number>(0);
+  const [soundIntervals, setSoundIntervals] = useState<Array<SoundInterval>>([]);
 
   // Run when soundclip changes (e.g. new clip is chosen/seeked to).
   useEffect(() => {
@@ -327,6 +328,19 @@ const MediaControl = (props: Props) => {
     } else {
       log.error("newClipID is undefined");
     }
+  }
+
+  /*
+  * Takes seconds and returns a HH:MM:SS string from it.
+  */
+  const secondsToTimeString = (seconds: number): string => {
+    if (isNaN(seconds) || seconds < 0) {
+      return "--:--:--";
+    }
+
+    // date takes a time in ms
+    let str = new Date(seconds * 1000).toISOString().slice(11, 19);
+    return str;
   }
 
   return (

@@ -1,10 +1,16 @@
 @use "palette.scss";
 
-.contextMenuContainer {
+/*
+The context menu that can be shown when right-clicking some components
+*/
+
+/* The container that is covering the context menu */
+.contextMenu__container {
     position: relative;
 }
 
-.contextMenu {
+/* The context menu (visual) */
+.contextMenu__body {
     box-sizing: border-box;
 
     position: fixed;
@@ -14,11 +20,13 @@
 
     @include palette.popup;
 
+    /* The list of the context menu */
     ul {
         padding: 0;
         margin: 0;
         list-style: none;
 
+        /* Content of the list */
         li {
             padding: 2px 10px 2px 10px;
             text-decoration: none;

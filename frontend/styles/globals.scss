@@ -1,10 +1,17 @@
 @use "palette.scss";
 
-* {
+/*
+Single elements that can be found throughout the app
+*/
+
+/* All elements of the page */
+*, ::after, ::before {
+    box-sizing: border-box;
     padding: 0;
     margin: 0;
 }
 
+/* The body and main element (wraps visual page content) */
 body, main {
     box-sizing: border-box;
 

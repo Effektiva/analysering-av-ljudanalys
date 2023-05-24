@@ -1,7 +1,10 @@
 @use "palette.scss";
 
+/*
+The page that is used for analyzing an actual soundfile or soundchain
+*/
 
-/* The div that contains the whole soundAnalysisPage (meaning all content of this file) */
+/* The container that contains the whole soundAnalysisPage (meaning all content of this file) */
 .soundAnalysisPage__container {
     display: flex;
 
@@ -24,9 +27,6 @@
         &:first-child {
             max-width: 30%;
         }
-
-        /* Right column of the soundAnalysisPage */
-        &:last-child {}
     }
 
 
@@ -80,7 +80,7 @@
 
         padding: 5px;
 
-        border-radius: 3px;
+        border-radius: 5px;
     }
 
 
@@ -89,11 +89,7 @@
         display: flex;
         justify-content: flex-start;
         align-items: center;
-
-        /* Space beteen children */
-        > :not(:last-child) {
-            margin-right: 10px;
-        }
+        gap: 10px;
 
         /* The zoom buttonpanel */
         .soundAnalysisPage__zoom {
@@ -107,10 +103,6 @@
             button {
                 padding: 5px;
                 margin-left: 5px;
-
-                // TODO: Coloring the button will ruin states! Fix!
-                //background-color: palette.$zoom-button-bg;
-                //color: palette.$zoom-button-text;
             }
         }
 

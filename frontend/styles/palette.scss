@@ -1,27 +1,23 @@
-@use "sass:map";
-@import "bootstrap/scss/bootstrap-utilities.scss";
-
-
-/***********************************************
- All colors of the website
- **********************************************/
-
-/* Create background and color that has contrast to the background. */
-@mixin background-and-contrast-text($bg-color) {
-    background-color: $bg-color;
-    color: color-contrast($bg-color);
-}
+/*
+Basic styling that is reoccuring throughout the webpage. Mostly color.
+*/
 
 
 /*
-    Colors of templates
+    Template colors
 */
 
 %component {
-    @include background-and-contrast-text(#d3d3d3);
+    background-color: #d3d3d3;
+    color: #000;
 }
 %button {
-    @include background-and-contrast-text(#c9c9c9);
+
+    &:hover {
+        transition: background-color 0.1s;
+        background-color: #c5c5c5;
+    }
+
 }
 %icon-button {
     color: #000;
@@ -37,12 +33,12 @@
 %bar {
     background-color: #888888;
 
-    // Assumed that direct child of bar is its fill
+    /* Assumed that direct child of bar is its fill */
     >* {
         background-color: #000;
     }
 
-    // If bar is disabled
+    /* If bar is disabled */
     &[disabled] {
         background-color: #b7b7b7;
 
@@ -53,7 +49,20 @@
 }
 
 %pane-on-screen {
-    @include background-and-contrast-text(#ffffff);
+    background-color: #fff;
+    color: #000;
+}
+%pane-on-screen-button {
+    &:hover {
+        background-color: lightblue;
+    }
+}
+
+/*
+    Colors of general components
+*/
+@mixin popup {
+    @extend %pane-on-screen;
 }
 %pane-on-screen-button {
     &:hover {
@@ -79,14 +88,20 @@
 /*
     Colors of specific components
 */
-
 @mixin page {
-    @include background-and-contrast-text(#b2b2b2);
+    background-color: #b2b2b2;
+    color: #000;
+
+    // This will be inherited for all children if not overwritten later in the hiererchy
     font-family: (Helvetica, Arial, sans-serif);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
 }
 
 $left-menu-bg: #005596;
-$left-menu-text: color-contrast($left-menu-bg);
+$left-menu-text: #fff;
 @mixin left-menu {
     background: $left-menu-bg;
     color: $left-menu-text;
@@ -107,18 +122,20 @@ $left-menu-text: color-contrast($left-menu-bg);
 @mixin list-lines {
     font-family: ('Courier New', Courier, monospace);
 }
-
 @mixin soundchain-list {
-    @include background-and-contrast-text(#fff);
+    background-color: #fff;
+    color: #000;
 }
-
 @mixin soundchain-list-button {
-    &:hover {
-        transition: background-color 0.1s;
-        background-color: #c5c5c5;
-    }
+    @extend %button;
+}
+@mixin sound-class-input-filter {
+    @extend %component;
 }
 
+@mixin file-uploader {
+    @extend %component;
+}
 
 @mixin media-player {
     @extend %component;
@@ -142,15 +159,27 @@ $left-menu-text: color-contrast($left-menu-bg);
     @extend %component;
 }
 @mixin note {
-    @include background-and-contrast-text(#656565);
+    background-color: #656565;
+    color: #fff;
+}
+@mixin note-new-button {
+    background-color: #ffffff;
+    color: #000;
+
+    @extend %button;
 }
 @mixin note-foreground {
-    @include background-and-contrast-text(#fff);
+    background-color: #fff;
+    color: #000;
+
 }
 @mixin note-button {
     @extend %icon-button;
 }
 
+/*
+    General behaviour that is reused often
+*/
 
 /* I made a class for this since it can be further developed easily. */
 @mixin not-selectable {

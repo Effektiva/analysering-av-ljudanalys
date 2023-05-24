@@ -1,12 +1,17 @@
 @use "palette.scss";
 
+/*
+A progress bar that shows progression. Main use is time tracking
+*/
+
+/* The progress bar container that wraps all progress bar content */
 .progressBar__container {
     width: 100%;
     margin-top: 5px;
     display: flex;
     align-items: center;
 
-    /* The progressBar */
+    /* The progress bar component */
     .progressBar__bar {
         overflow: hidden;
 
@@ -16,12 +21,13 @@
         @include palette.media-control-bar;
         border-radius: 5px;
 
-        /* The color that fills the progressBar */
+        /* The color that fills the progress bar */
         .progressBar__progress {
             height: 100%;
             width: 0%;
         }
 
+        /* If it is enabled */
         &:not([disabled]) {
             @include palette.interactable;
         }

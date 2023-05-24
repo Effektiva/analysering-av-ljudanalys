@@ -1,5 +1,10 @@
 @use "palette.scss";
 
+/*
+The controller of the audio playback.
+*/
+
+/* The container that wraps all content of the media control. */
 .mediaControl__container {
     width: 100%;
 
@@ -7,7 +12,7 @@
 }
 
 
-/* Buttons */
+/* All the buttons of the media control */
 .mediaControl__buttonsContainer {
     display: flex;
     justify-content: space-between;
@@ -18,6 +23,7 @@
     /* Keep the same spacing on left side to have buttons be centered */
     $width-of-volumeBar: 30%;
 
+    /* The timestamps that show the player time */
     .mediaControl__timeStamps {
         display: flex;
         justify-content: center;
@@ -27,7 +33,7 @@
 
         white-space: pre;
 
-        /* The time stamps at the beginning and end. */
+        /* The actual time stamps */
         .progressBar__currentTime, .progressBar__endTime {
             display: flex;
             align-items: center;
@@ -37,21 +43,24 @@
         }
     }
 
+    /* The playback controller */
     .mediaControl__controller {
         display: flex;
         align-items: center;
 
+        /* All the buttons of the playback controller */
         .mediaControl__backwardsButton, .mediaControl__forwardButton, .mediaControl__stopPlayButton {
             @include palette.media-control-button;
 
             font-size: 18px;
 
-            /* Active buttons */
+            /* If it is enabled */
             &:not([disabled]) {
                 @include palette.interactable;
             }
         }
 
+        /* Only the stop and playback button (inbetween the other two buttons) */
         .mediaControl__stopPlayButton {
             margin: 0 14px;
 
@@ -59,7 +68,7 @@
         }
     }
 
-    /* The volumne bar. Shares flexbox with mediacontroler so shares file. */
+    /* The volume bar that controls the playback volume */
     .volumeBar__container {
         display: flex;
         align-items: center;
@@ -67,7 +76,7 @@
 
         width: $width-of-volumeBar;
 
-        /* The volume button */
+        /* The mute button */
         .volumeBar__button {
             display: flex;
 
@@ -77,25 +86,28 @@
 
             @include palette.media-control-button;
 
+            /* If it is enabled */
             &:not([disabled]) {
                 @include palette.interactable;
             }
         }
 
-        /* The bar for volume control */
+        /* The bar of the volume control. Assumed direct child is fill */
         .volumeBar__bar {
             width: 100%;
             height: 15px;
 
             @include palette.media-control-bar;
 
+            /* If it is enabled */
             &:not([disabled]) {
                 @include palette.interactable;
             }
-        }
 
-        .volumeBar__barFill {
-            height: 100%;
+            /* The bar fill that shows the value of the bar */
+            .volumeBar__barFill {
+                height: 100%;
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ export type GraphData = {
 }
 
 /**
- * SoundInterval is a interval of a soundfile 
+ * SoundInterval is a interval of a soundfile
  * containing soundClass data
  */
 class SoundInterval {

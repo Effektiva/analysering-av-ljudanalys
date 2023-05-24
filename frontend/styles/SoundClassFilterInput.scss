@@ -1,10 +1,19 @@
 @use "palette.scss";
 
+/*
+The filter that filters content of lists using different classes
+*/
+
 /* The filter section. Includes searchbar and list of active filters */
 .soundClassFilterInput__container {
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    padding: 10px 8px;
+
+    @include palette.sound-class-input-filter;
+    border-radius: 5px;
 
     /* Top of filter section. Title and searchbar. */
     .soundClassFilterInput__top {

@@ -1,6 +1,10 @@
 @use "palette.scss";
 
-/* Each list should have a describing header with this class */
+/*
+The standard list
+*/
+
+/* Header describing content of list */
 .listMenuHeader {
     width: 100%;
     padding: 10px 0;
@@ -23,14 +27,15 @@
     }
 }
 
-/* All inner elements of listItems */
+/* All inner elements of list items (list items without the lines) */
 .listItemButton {
     display: flex;
     align-items: center;
 
     padding: 0 5px;
 
-    /* Target all non-text direct content (well paragraphs to so technically direct non-text) */
+    /* Have text on left side and other content on right side */
+    // Target all non-text direct content (well paragraphs too so technically direct non-text)
     >* {
         // Add spacing towards text
         &:nth-child(1) {
@@ -41,7 +46,7 @@
     }
 }
 
-/* All interactable items in a .listMenu */
+/* All interactable items in a list menu */
 .listItemCollapsable, .listItemAction {
     & .listItemButton {
         width: 100%;
@@ -50,6 +55,7 @@
     }
 }
 
+/* All list items of a list menu */
 .listItemRoot, .listItemChild, .listItemSubroot {
     display: flex;
 
@@ -57,13 +63,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
+    /* Mark if selected */
     &.selected .listItemButton {
         text-decoration: underline;
         font-weight: bold;
     }
 
-
-    /* Creating the lines in the list */
+    /*
+    Creating the lines in the list
+    */
     li li li &::before {
         content: "│  ├─";
     }
@@ -103,7 +111,7 @@
 }
 
 
-/* When a ListItem is collapsed */
+/* A collapseable list item */
 .listItemCollapsable {
 
     .listItemButton {
@@ -120,32 +128,34 @@
         }
     }
 
+    /* If collapsed */
     &.collapsed .listItemButton {
         &::after {
             content: "+";
         }
     }
 
-    // If in a popup, prevent the collapseable icon to appear
+    /* If in a popup, prevent the collapseable icon to appear */
     .popup & .listItemButton::after {
         content: "" !important;
     }
+
+    /* If not collapsed, show content after (prepare for beeing collapsed) */
+    &+* {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        overflow: hidden;
+
+        width: 100%;
+    }
+
+    /* If collapsed, hide content */
+    &.collapsed+* {
+        display: none;
+    }
 }
-
-.listItemCollapsable+* {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-
-    overflow: hidden;
-
-    width: 100%;
-}
-
-.listItemCollapsable.collapsed+* {
-    display: none;
-}
-
 
 
 /* Button to add to list */

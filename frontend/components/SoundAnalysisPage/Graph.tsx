@@ -41,7 +41,7 @@ const Graph = (props: Props) => {
    * Runs when a new clip is selected or the zoom option changes.
    * Here the graph data is fetched tepending on the zoom option and
    * the clip brakes are determined.
-   */ 
+   */
   useEffect(() => {
     let newData : Array<GraphData> = [];
     if (props.clipZoom === true) {
@@ -107,12 +107,12 @@ const Graph = (props: Props) => {
             })}
           </defs>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-            dataKey="name" 
+          <XAxis
+            dataKey="name"
             tickFormatter={tickItem => secondsToTimeString(tickItem)}
-            orientation="top" 
-            type="number" 
-            domain={[0, props.mediaDuration]} 
+            orientation="top"
+            type="number"
+            domain={[0, props.mediaDuration]}
           />
           <YAxis hide="true" />
           <Tooltip itemSorter={item => (item.value as number) * -1} />

@@ -1,6 +1,11 @@
 @use "palette.scss";
 
-.popupOverlay {
+/*
+Popups that covers the whole screen to take focus from other components
+*/
+
+/* The box that covers the whole page */
+.popup__overlay {
     height: 100%;
     width: 100%;
     top: 0;
@@ -10,12 +15,13 @@
     z-index: 1;
 }
 
-/* The window that covers the screen */
-.popupContainer {
+/* The container of the actual popup */
+.popup__container {
     position: relative;
 }
 
-.popup {
+/* The visual popup component */
+.popup__popup {
     // Place on center of screen
     top: 50%;
     left: 50%;
@@ -34,20 +40,23 @@
 
     box-shadow: 3px 4px 3px 0 rgba(0,0,0,0.75);
 
-    .popupTop {
+    /* Top part of the poup */
+    .popup__top {
         display: flex;
 
         padding-bottom: 15px;
         border-bottom: lightgray 2px solid;
 
-        .popupTitle {
+        /* The title text of the popup */
+        .popup__title {
             width: 100%;
             padding-right: 15px;
 
             font-weight: bold;
         }
 
-        .popupCloseButton {
+        /* The close button for the popup */
+        .popup__closeButton {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -59,7 +68,8 @@
         }
     }
 
-    .popupContent {
+    /* The actual content of the popup. Should be allowed to have almost anything */
+    .popup__content {
         padding-top: 15px;
     }
 }

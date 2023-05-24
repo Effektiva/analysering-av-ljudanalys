@@ -137,7 +137,7 @@ const MainView = (props: Props) => {
   }
 
   return (
-    <div className="main-view">
+    <div className="mainView">
       <LeftMenu
         forceUpdate={forceUpdateLeftMenu}
         selected={selectedHandler}
