@@ -39,10 +39,12 @@ async def read_soundClass():
 
 
 """ Analysera ljudkedjor (EJ IMPLEMENTERAD) """
-@router4.get("/investigations/{id}/soundchains/analyze")
-async def analyze_investigationSoundchains():
-    # Doesnt work yet (❁´◡`❁)
-    return 0
+@router4.get("/investigations/{id}/analyze")
+async def analyze_investigation_soundchains(id: int):
+    print("analyzing...............")
+    print("########### ID: " + str(id) + "############")
+    response = "success"
+    return response
 
 
 

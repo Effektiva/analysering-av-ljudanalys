@@ -42,7 +42,7 @@ class APIService {
   }
 
   static changeInvestigationName = async (id: number, name: string) => {
-    await axios.put(this.apiURL + "/investigationss", { "id": id, "name": name })
+    await axios.put(this.apiURL + "/investigations", { "id": id, "name": name })
       .then((response: any) => {
         if (response.status !== 200) {
           log.warning("Couldn't change investigation name:", response);
@@ -291,6 +291,15 @@ class APIService {
       } else {
         return Promise.reject(response.status);
       }
+    });
+  }
+
+  static analyzeInvestigationSoundChains = async (id: number) => {
+    log.debug("Analyzing investigation ", id);
+    await axios.get(
+      this.apiURL + "/investigations/" + id + "/analyze"
+    ).then((response: any) => {
+      log.debug("Response is: ", response);
     });
   }
 }
