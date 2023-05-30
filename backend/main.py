@@ -95,12 +95,12 @@ def cleanUp():
                 continue
             elif investigations == "5" and soundchains == "5":
                 continue
-            else:
-                file_path = os.path.join(Paths.uploads, investigations, soundchains)
-                try:
-                    shutil.rmtree(file_path)
-                except:
-                    print("Something went wrong when removing old files")
+            # else:
+            #     file_path = os.path.join(Paths.uploads, investigations, soundchains)
+            #     try:
+            #         shutil.rmtree(file_path)
+            #     except:
+            #         print("Something went wrong when removing old files")
 
 
 def runTests():
@@ -169,12 +169,12 @@ def main():
 
         cleanUp()
         dummy_data.insert_dummy(session)
-        createDummyInvestigation(
-            session=session,
-            timestep=10,
-            investigation_name="Case-C01",
-            investigation_id=5
-        )
+        # createDummyInvestigation(
+        #     session=session,
+        #     timestep=10,
+        #     investigation_name="Case-C01",
+        #     investigation_id=5
+        # )
 
         with open("./uploads/1/1/files/fileInfo.json", "r") as file:
             data = file.read()
