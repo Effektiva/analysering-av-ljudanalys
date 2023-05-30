@@ -70,7 +70,7 @@ const NotesList = (props: Props) => {
         props.notes.map(note => {
           return  <div key={note.id} className={Style.Note}>
                     <div className={Style.Header}>
-                      <span className={Style.Date}>Skriven {note.getLocalDate()}</span>
+                      <span className={Style.Date}>Skriven: {note.getLocalDate()}</span>
                       { props.clipZoom ?
                         <span className={Style.Time}>Tid i klipp: {formatSeconds(note.timeInClip)}</span>
                         :
