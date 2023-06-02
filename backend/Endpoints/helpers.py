@@ -1,5 +1,5 @@
 from database import SessionLocal
-from sqlalchemy import select, delete, insert
+from sqlalchemy import select, delete, insert, update
 from enum import Enum
 import models
 import itertools
@@ -132,7 +132,7 @@ def npy_to_database(sound_file_id: int, data):
     # Hämtar alla ljudintervall som hör till en ljudfil
     result = session.execute(select(
         models.SoundInterval.id, models.SoundInterval.start_time
-    )).where(models.SoundInterval.sound_file_id == sound_file_id)
+    ).where(models.SoundInterval.sound_file_id == sound_file_id))
     interval_list = []
     for row in result:
         interval_list.append(row)
@@ -151,8 +151,10 @@ def npy_to_database(sound_file_id: int, data):
             ))
         time += 1
 
+    session.execute(update(models.SoundFile).where(models.SoundFile.id == sound_file_id).values(file_state = "1"))
+
 # Dummy ML-model
 def dummy_model(sound_file_id: int):
-    npy_file_path = "../DummyData/testNPYfiles" + str(sound_file_id)
+    npy_file_path = "./DummyData/testNPYfiles/" + str(sound_file_id) + ".npy"
     data = np.load(Path(npy_file_path), allow_pickle=True)
     return data

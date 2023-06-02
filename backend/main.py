@@ -149,7 +149,7 @@ def createDummyInvestigation(session: any, timestep: int, investigation_name: st
                 sound_file_id = id
             ))
 
-        npy_to_database(id, "./DummyData/testNPYfiles/" + info["id"] + ".npy")
+        npy_to_database(id, "./testNPYfiles/" + info["id"] + ".npy")
 
     session.execute(insert(models.Investigations).values(name = investigation_name))
     session.execute(insert(models.SoundChain).values(

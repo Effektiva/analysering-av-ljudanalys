@@ -1,7 +1,8 @@
 import { ItemStatus, ListItemType } from "@/components/ListMenu/ListItemType";
 import Metadata from "../SoundAnalysis/Metadata";
 import ListItemRepresentable from "../ListItemRepresentable";
-import SoundInterval from "./SoundInterval";
+import SoundInterval, { GraphData } from "./SoundInterval";
+
 
 /**
  * Soundclip is a soundfile with some extra data
@@ -87,6 +88,14 @@ class Soundclip implements ListItemRepresentable {
     }
     let meta = new Metadata(json.fileName);
     return new Soundclip(json.id, meta, new Date(json.startTime*1000), new Date(json.endTime*1000), json.state, json.soundClasses, soundIntervals);
+  }
+
+  asGraphData(clipOffset: number = 0): Array<GraphData> {
+    let data : Array<GraphData> = [];
+    this.soundIntervals.forEach(interval => {
+      data.push(interval.asGraphData(Math.floor(this.startTime.getTime() / 1000), clipOffset));
+    })
+    return data;
   }
 }
 

@@ -1,7 +1,7 @@
 from sqlalchemy import select, insert, update, delete
 from fastapi import APIRouter, Request, Response
 from config import Paths
-from .helpers import make_list, session
+from .helpers import make_list, session, dummy_model, npy_to_database
 import models
 import datetime
 import os
@@ -38,11 +38,27 @@ async def read_soundClass():
 
 
 
+# TODO: Need to send to frontend when analysis is done!
 """ Analysera ljudkedjor (EJ IMPLEMENTERAD) """
 @router4.get("/investigations/{id}/analyze")
 async def analyze_investigation_soundchains(id: int):
-    print("analyzing...............")
-    print("########### ID: " + str(id) + "############")
+    sound_chains = make_list(session.execute(select(models.SoundChain).where(models.SoundChain.investigations_id == id)).fetchall())
+
+    for sound_chain in sound_chains:
+        state = sound_chain.chain_state
+        if state == "0":
+            sound_files = make_list(session.execute(select(models.SoundFile).where(models.SoundFile.sound_chain_id == sound_chain.id)).fetchall())
+            for file in sound_files:
+
+                ###### INSERT ML-FUNKTION HERE ######
+                # The function should take a file id and return the corresponding analysed numpy data.
+                data = dummy_model(file.id) # Fake analysis!
+
+                # Send the analysed data to the database.
+                # TODO: This is when analysis is done and should not happen in the background
+                # not in this api request.
+                npy_to_database(file.id, data)
+
     response = "success"
     return response
 

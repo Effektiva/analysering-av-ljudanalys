@@ -44,8 +44,8 @@ class SoundInterval {
     return new SoundInterval(json.start_time, json.end_time, json.highest_volume, sounds);
   }
 
-  asGraphData(offset: number = 0): GraphData {
-    let graphData : GraphData = {name: this.startTime + (this.endTime - this.startTime) / 2 + offset};
+  asGraphData(clip_start: number = 0, offset: number = 0): GraphData {
+    let graphData : GraphData = {name: this.startTime - clip_start + (this.endTime - this.startTime) / 2 + offset};
     this.sounds.forEach(sound => {
         graphData[sound.soundClass] = sound.trustValue;
     });
