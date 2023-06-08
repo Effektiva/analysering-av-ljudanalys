@@ -1,4 +1,5 @@
 import Metadata from "@/models/SoundAnalysis/Metadata";
+import { LOG as log } from "@/pages/_app"
 
 type Props = {
   metaData: Metadata | undefined;
@@ -9,6 +10,7 @@ enum Style {
   Container = STYLE_NAMESPACE + "container",
   Header = STYLE_NAMESPACE + "header",
   MetadataName = STYLE_NAMESPACE + "name",
+  MetadataStatus = STYLE_NAMESPACE + "status",
   MetadataDate = STYLE_NAMESPACE + "date",
   MetadataFormat = STYLE_NAMESPACE + "format",
   MetadataDossiers = STYLE_NAMESPACE + "dossiers",
@@ -25,6 +27,7 @@ const MetadataView = (props: Props) => {
       <div className={Style.Header}>Metadata</div>
         <div>
           <span className={Style.MetadataName}> <b>Filnamn:</b> {props.metaData?.getFileName()}</span>
+          <span className={Style.MetadataStatus}> <b>Analys status:</b> {props.metaData?.getAnalysisStatus()}</span>
           <span className={Style.MetadataDate}> <b>Datum:</b> {props.metaData?.getDate()}</span>
           <span className={Style.MetadataDate}> <b>Filformat:</b> {props.metaData?.getFileFormat()}</span>
         </div>

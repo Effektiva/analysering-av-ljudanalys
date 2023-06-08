@@ -28,6 +28,14 @@ const InvestigationPage = (props: Props) => {
   const [filters, setFilters] = useState<any[]>([]);
   const [filteredChains, setFilteredChains] = useState<SoundChain[]>(props.appState.soundChains);
 
+  const socket = new WebSocket(
+    "ws://localhost:8000/investigation/" + props.appState.selectedInvestigation?.id! + "/analyze"
+  );
+
+  socket.addEventListener("message", (event) => {
+    log.debug("Message from server ", event.data);
+  });
+
   /*
    * When the chosen filters are updated, then we'll have to update
    * what chains we'll show in the filtered list. Only chains that have
@@ -59,6 +67,10 @@ const InvestigationPage = (props: Props) => {
     APIService.analyzeInvestigationSoundChains(props.appState.selectedInvestigation?.id!);
   };
 
+  const statusFiles = () => {
+    APIService.analyzeStatus(props.appState.selectedInvestigation?.id!);
+  }
+
   return <>
     <div className={Style.Container}>
       {/* Left column */}
@@ -67,6 +79,10 @@ const InvestigationPage = (props: Props) => {
           className={Style.LeftButtons}
           onClick={analyseFiles}
         ><button>Analysera filer</button></div>
+        <div
+          className={Style.LeftButtons}
+          onClick={statusFiles}
+        ><button>Status filer</button></div>
         <SoundClassFilterInput
           filters={filters}
           setFilters={setFilters}

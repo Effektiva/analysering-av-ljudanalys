@@ -5,6 +5,7 @@ import models
 import itertools
 import numpy as np
 from pathlib import Path
+import time
 
 session = SessionLocal()
 
@@ -157,4 +158,13 @@ def npy_to_database(sound_file_id: int, data):
 def dummy_model(sound_file_id: int):
     npy_file_path = "./DummyData/testNPYfiles/" + str(sound_file_id) + ".npy"
     data = np.load(Path(npy_file_path), allow_pickle=True)
+    start = time.time()
+    duration = 0
+    while duration < 5:
+        duration = time.time() - start
+        print("duration: " + str(duration)) if duration % 1 == 0 else None
     return data
+
+def analyse(sound_file_id: int):
+    data = dummy_model(sound_file_id)
+    npy_to_database(sound_file_id, data)

@@ -1,7 +1,8 @@
 from sqlalchemy import select, insert, update, delete
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Request, Response, BackgroundTasks, WebSocket
 from config import Paths
-from .helpers import make_list, session, dummy_model, npy_to_database
+from .helpers import make_list, session, analyse
+from .taskState import Task
 import models
 import datetime
 import os
@@ -40,8 +41,33 @@ async def read_soundClass():
 
 # TODO: Need to send to frontend when analysis is done!
 """ Analysera ljudkedjor (EJ IMPLEMENTERAD) """
-@router4.get("/investigations/{id}/analyze")
-async def analyze_investigation_soundchains(id: int):
+# @router4.get("/investigations/{id}/analyze")
+# async def analyze_investigation_soundchains(id: int, background_tasks: BackgroundTasks):
+#     sound_chains = make_list(session.execute(select(models.SoundChain).where(models.SoundChain.investigations_id == id)).fetchall())
+
+#     for sound_chain in sound_chains:
+#         state = sound_chain.chain_state
+#         if state == "0":
+#             sound_files = make_list(session.execute(select(models.SoundFile).where(models.SoundFile.sound_chain_id == sound_chain.id)).fetchall())
+#             for file in sound_files:
+
+#                 ###### INSERT ML-FUNKTION HERE ######
+#                 # The function should take a file id and return the corresponding analysed numpy data.
+#                 background_tasks.add_task(analyse, file.id)
+#                 # data = dummy_model(file.id) # Fake analysis!
+
+#                 # Send the analysed data to the database.
+#                 # TODO: This is when analysis is done and should not happen in the background
+#                 # not in this api request.
+#                 # npy_to_database(file.id, data)
+
+#     response = "success"
+#     return response
+
+tasks = []
+
+@router4.post("/investigations/{id}/analyze")
+async def analyze_investigation_soundchains(id: int, background_tasks: BackgroundTasks):
     sound_chains = make_list(session.execute(select(models.SoundChain).where(models.SoundChain.investigations_id == id)).fetchall())
 
     for sound_chain in sound_chains:
@@ -49,18 +75,39 @@ async def analyze_investigation_soundchains(id: int):
         if state == "0":
             sound_files = make_list(session.execute(select(models.SoundFile).where(models.SoundFile.sound_chain_id == sound_chain.id)).fetchall())
             for file in sound_files:
+                task = Task(file.id)
+                tasks.append(task)
+                background_tasks.add_task(task.background_work)
 
-                ###### INSERT ML-FUNKTION HERE ######
-                # The function should take a file id and return the corresponding analysed numpy data.
-                data = dummy_model(file.id) # Fake analysis!
-
-                # Send the analysed data to the database.
-                # TODO: This is when analysis is done and should not happen in the background
-                # not in this api request.
-                npy_to_database(file.id, data)
-
-    response = "success"
+    response = "ACCEPTED"
     return response
+
+@router4.get("/investigations/{id}/analyze")
+async def analyze_status(id: int):
+    response = []
+    for task in tasks:
+        response.append({"id": task.get_id(), "percentage": task.get_percentage()})
+
+    return response
+
+@router4.websocket_route("/investigation/{id}/analyze")
+async def hello(websocket: WebSocket):
+    await websocket.accept()
+    response = []
+    for task in tasks:
+        response.append({"id": task.get_id(), "percentage": task.get_percentage()})
+
+    await websocket.send_text(response)
+    await websocket.close()
+
+
+    # await websocket.accept()
+    # await websocket.send_text("Router Hello!")
+    # response = await websocket.receive_text()
+    # print(response)
+    # await websocket.close()
+    # print("Router Closed")
+
 
 
 

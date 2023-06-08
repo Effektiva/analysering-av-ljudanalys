@@ -296,10 +296,20 @@ class APIService {
 
   static analyzeInvestigationSoundChains = async (id: number) => {
     log.debug("Analyzing investigation ", id);
-    await axios.get(
+    await axios.post(
       this.apiURL + "/investigations/" + id + "/analyze"
     ).then((response: any) => {
       log.debug("Response is: ", response);
+    });
+  }
+
+  static analyzeStatus = async (id: number) => {
+    log.debug("Status analysis");
+    await axios.get(
+      this.apiURL + "/investigations/" + id + "/analyze"
+    ).then((response: any) => {
+      log.debug("Response is: ", response.data);
+      return response.data;
     });
   }
 }
