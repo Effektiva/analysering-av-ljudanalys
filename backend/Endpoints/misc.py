@@ -1,12 +1,13 @@
 from sqlalchemy import select, insert, update, delete
 from fastapi import APIRouter, Request, Response, BackgroundTasks, WebSocket
 from config import Paths
-from .helpers import make_list, session, analyse
-from .taskState import Task
+from .helpers import make_list, session, dummy_model
 import models
 import datetime
 import os
 import time
+
+from .analysis import AnalyzeInvestigationTask
 
 
 router4 = APIRouter()
@@ -64,49 +65,44 @@ async def read_soundClass():
 #     response = "success"
 #     return response
 
-tasks = []
+tasks = {}
 
 @router4.post("/investigations/{id}/analyze")
 async def analyze_investigation_soundchains(id: int, background_tasks: BackgroundTasks):
-    sound_chains = make_list(session.execute(select(models.SoundChain).where(models.SoundChain.investigations_id == id)).fetchall())
+    # Create a new AnalyzeInvestigationTask instance for the investigation ID
+    task = AnalyzeInvestigationTask()
+    tasks[id] = task
 
-    for sound_chain in sound_chains:
-        state = sound_chain.chain_state
-        if state == "0":
-            sound_files = make_list(session.execute(select(models.SoundFile).where(models.SoundFile.sound_chain_id == sound_chain.id)).fetchall())
-            for file in sound_files:
-                task = Task(file.id)
-                tasks.append(task)
-                background_tasks.add_task(task.background_work)
+    # Execute the analysis function as a background task
+    background_tasks.add_task(task.analyze, id, dummy_model)
 
-    response = "ACCEPTED"
-    return response
+    return {"message": f"Analysis started for investigation {id}."}
 
-@router4.get("/investigations/{id}/analyze")
-async def analyze_status(id: int):
-    response = []
-    for task in tasks:
-        response.append({"id": task.get_id(), "percentage": task.get_percentage()})
-
-    return response
+@router4.get("/investigations/{id1}/soundchains/{id2}/analyze")
+async def analyze_investigation_progress(id1: int, id2: int):
+    task = tasks[id1]
+    if task:
+        return {"result": task.get_progress(id2)}
+    return {"result": None}
 
 @router4.websocket_route("/investigation/{id}/analyze")
-async def hello(websocket: WebSocket):
+async def hello(websocket: WebSocket, id: int=None):
     await websocket.accept()
-    response = []
-    for task in tasks:
-        response.append({"id": task.get_id(), "percentage": task.get_percentage()})
+    print("investigation id is " + str(id))
+    # response = []
+    # for task in tasks:
+    #     response.append({"id": task.get_id(), "percentage": task.get_percentage()})
 
-    await websocket.send_text(response)
-    await websocket.close()
+    # await websocket.send_text(response)
+    # await websocket.close()
 
 
     # await websocket.accept()
-    # await websocket.send_text("Router Hello!")
-    # response = await websocket.receive_text()
-    # print(response)
-    # await websocket.close()
-    # print("Router Closed")
+    await websocket.send_text("Router Hello!")
+    response = await websocket.receive_text()
+    print(response)
+    await websocket.close()
+    print("Router Closed")
 
 
 

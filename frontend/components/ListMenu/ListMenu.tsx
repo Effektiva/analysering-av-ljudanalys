@@ -14,6 +14,7 @@ import {
   FaExclamationCircle,
 } from "react-icons/fa";
 
+
 type Props = {
   items: Array<ListItemType>,
   eventHandler: Function,
@@ -234,7 +235,11 @@ const iconForItem = (item: ListItemType): ReactNode => {
     case ItemStatus.Untreated:
       return <FaRegCircle/>;
     case ItemStatus.AnalysisOngoing:
-      return <FaRegClock/>;
+      return (
+        <div style={{justifyContent: 'space-between'}}>
+          Analyzing... {item.progress + ' '}
+          <FaRegClock/>
+        </div>);
     case ItemStatus.AnalysisSucceeded:
       return <FaRegCheckCircle/>;
     case ItemStatus.AnalysisFailed:

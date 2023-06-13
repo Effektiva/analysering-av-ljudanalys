@@ -24,7 +24,6 @@ class SoundChain(Base):
     start_time = Column(Integer)
     end_time = Column(Integer)
     chain_state = Column(String, nullable=True)
-
     investigations_id = Column(Integer, ForeignKey("investigations.id"))
 
 
@@ -36,7 +35,6 @@ class SoundFile(Base):
     end_time = Column(Integer)
     file_name = Column(String, index=True)
     file_state = Column(String, nullable=True)
-    analysis_percentage = Column(Integer, nullable=True)
     sound_chain_id = Column(Integer, ForeignKey("sound_chain.id"))
 
 

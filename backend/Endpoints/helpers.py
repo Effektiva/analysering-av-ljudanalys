@@ -158,11 +158,11 @@ def npy_to_database(sound_file_id: int, data):
 def dummy_model(sound_file_id: int):
     npy_file_path = "./DummyData/testNPYfiles/" + str(sound_file_id) + ".npy"
     data = np.load(Path(npy_file_path), allow_pickle=True)
-    start = time.time()
-    duration = 0
-    while duration < 5:
-        duration = time.time() - start
-        print("duration: " + str(duration)) if duration % 1 == 0 else None
+
+    iterations = 100
+    for i in range(iterations):
+        time.sleep(0.1)
+
     return data
 
 def analyse(sound_file_id: int):

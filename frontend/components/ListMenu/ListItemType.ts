@@ -14,5 +14,6 @@ export type ListItemType = {
   collapsable: boolean,
   subroots?: Array<ListItemType>,
   children?: Array<ListItemType>,
-  state?: ItemStatus
+  state?: ItemStatus,
+  progress?: string
 }

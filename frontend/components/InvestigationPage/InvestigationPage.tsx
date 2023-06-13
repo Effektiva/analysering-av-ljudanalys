@@ -1,7 +1,7 @@
 import SoundClassFilterInput from "../SoundClassFilterInput";
 import SoundchainList from "../LeftMenu/SoundchainList";
 import AppState from "@/state/AppState";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import FileUploader from "./FileUploader";
 import { LOG as log } from "@/pages/_app";
 import SoundChain from "@/models/General/SoundChain";
@@ -11,6 +11,12 @@ type Props = {
   appState: AppState,
   setAppState: Function,
   soundChainSelected: (id: number) => void
+}
+
+enum AnalysisStatus{
+  None,
+  Running,
+  Done
 }
 
 const STYLE_NAMESPACE = "investigationPage__";
@@ -27,14 +33,34 @@ const InvestigationPage = (props: Props) => {
   const [_, setForceUpdateLists] = useState<boolean>(false);
   const [filters, setFilters] = useState<any[]>([]);
   const [filteredChains, setFilteredChains] = useState<SoundChain[]>(props.appState.soundChains);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
+  const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus>(AnalysisStatus.None);
 
-  const socket = new WebSocket(
-    "ws://localhost:8000/investigation/" + props.appState.selectedInvestigation?.id! + "/analyze"
-  );
+  // const socket = new WebSocket(
+  //   "ws://localhost:8000/investigation/" + props.appState.selectedInvestigation?.id! + "/analyze"
+  // );
 
-  socket.addEventListener("message", (event) => {
-    log.debug("Message from server ", event.data);
-  });
+  // socket.addEventListener("message", (event) => {
+  //   log.debug("Message from server ", event.data);
+  // });
+
+  const getAnalysisProgress = () => {
+    if (analysisStatus !== AnalysisStatus.Done){
+      const id = setInterval(() => {
+        props.appState.soundChains?.forEach(soundChain => {
+          APIService.analyzeInvestigationProgress(
+            props.appState.selectedInvestigation?.id!,
+            soundChain.id!
+          ).then(result => {
+            soundChain.setProgress(result.progress, result.total);
+          });
+        });
+      }, 10000);
+      setIntervalId(id);
+    } else {
+      clearInterval(intervalId);
+    }
+  }
 
   /*
    * When the chosen filters are updated, then we'll have to update
@@ -65,10 +91,17 @@ const InvestigationPage = (props: Props) => {
 
   const analyseFiles = () => {
     APIService.analyzeInvestigationSoundChains(props.appState.selectedInvestigation?.id!);
+    setAnalysisStatus(AnalysisStatus.Running);
+    // getAnalysisProgress();
   };
 
   const statusFiles = () => {
-    APIService.analyzeStatus(props.appState.selectedInvestigation?.id!);
+    props.appState.soundChains?.forEach(soundChain => {
+      APIService.analyzeInvestigationProgress(
+        props.appState.selectedInvestigation?.id!,
+        soundChain.id!
+      );
+    });
   }
 
   return <>

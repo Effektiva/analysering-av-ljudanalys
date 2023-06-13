@@ -299,17 +299,17 @@ class APIService {
     await axios.post(
       this.apiURL + "/investigations/" + id + "/analyze"
     ).then((response: any) => {
-      log.debug("Response is: ", response);
+      log.debug("Response is: ", response.data.message);
     });
   }
 
-  static analyzeStatus = async (id: number) => {
-    log.debug("Status analysis");
-    await axios.get(
-      this.apiURL + "/investigations/" + id + "/analyze"
+  static analyzeInvestigationProgress = async (investigationId: number, soundchainId: number): Promise<{progress: number, total: number}> => {
+    log.debug("Progress analysis");
+    return await axios.get(
+      this.apiURL + "/investigations/" + investigationId + "/soundchains/" + soundchainId + "/analyze"
     ).then((response: any) => {
-      log.debug("Response is: ", response.data);
-      return response.data;
+      log.debug("Response is: ", response.data.result);
+      return response.data.result;
     });
   }
 }
