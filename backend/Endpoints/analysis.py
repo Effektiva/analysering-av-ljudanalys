@@ -4,13 +4,17 @@ from .helpers import make_list, session
 import models
 from .helpers import npy_to_database
 
+
+# Class for analysing an investigation and tracking that progress.
+# - Analysis_model: ML-Algoritm taking a file.id and analyses the file content returning numpy data.
 class AnalyzeInvestigationTask:
-    def __init__(self):
+    def __init__(self, analysis_model: any):
         self.progress_dict = {}
         self.referens_progress_dict = {}
         self.result = None
+        self.analysis_model = analysis_model
 
-    def analyze(self, id: int, analysis_model: any):
+    def analyze(self, id: int):
         not_analysed_chains = {}
 
         sound_chains = make_list(session.execute(select(models.SoundChain).where(models.SoundChain.investigations_id == id)).fetchall())
@@ -34,7 +38,7 @@ class AnalyzeInvestigationTask:
         print(f"Analyzing investigation {id}...")
         for chain_id, files in not_analysed_chains.items():
             for file in files:
-                data = analysis_model(file.id)
+                data = self.analysis_model(file.id)
                 npy_to_database(file.id, data)
                 self.progress_dict[chain_id] += 1
 

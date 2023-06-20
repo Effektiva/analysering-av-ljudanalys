@@ -70,11 +70,11 @@ tasks = {}
 @router4.post("/investigations/{id}/analyze")
 async def analyze_investigation_soundchains(id: int, background_tasks: BackgroundTasks):
     # Create a new AnalyzeInvestigationTask instance for the investigation ID
-    task = AnalyzeInvestigationTask()
+    task = AnalyzeInvestigationTask(dummy_model) # Switch out dummy_model to real ML-model.
     tasks[id] = task
 
     # Execute the analysis function as a background task
-    background_tasks.add_task(task.analyze, id, dummy_model)
+    background_tasks.add_task(task.analyze, id)
 
     return {"message": f"Analysis started for investigation {id}."}
 
