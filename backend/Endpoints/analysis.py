@@ -31,13 +31,12 @@ class AnalyzeInvestigationTask:
                 not_analysed_chains[sound_chain.id] = not_analysed_files
 
         # Begin analysis
+        print(f"Analyzing investigation {id}...")
         for chain_id, files in not_analysed_chains.items():
             for file in files:
                 data = analysis_model(file.id)
                 npy_to_database(file.id, data)
                 self.progress_dict[chain_id] += 1
-
-        print(f"Analyzing investigation {id}...")
 
     def get_progress(self, sound_chain_id: int):
         print(f"Analyzing soundChain {sound_chain_id} - {self.progress_dict[sound_chain_id]} / {self.referens_progress_dict[sound_chain_id]}")

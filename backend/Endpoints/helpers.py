@@ -154,7 +154,12 @@ def npy_to_database(sound_file_id: int, data):
 
     session.execute(update(models.SoundFile).where(models.SoundFile.id == sound_file_id).values(file_state = "1"))
 
-# Dummy ML-model
+# Dummy Analysis model that only works with corresponding files in a new 5th investigation:
+# - 2023-02-07_10-35-17_Boomer_1.wav
+# - 2023-02-07_10-38-42_Boomer_1.wav
+# - 2023-02-07_10-39-26_Boomer_1.wav
+# - 2023-02-07_10-40-48_Boomer_1.wav
+# - 2023-02-07_10-43-28_Boomer_1.wav
 def dummy_model(sound_file_id: int):
     npy_file_path = "./DummyData/testNPYfiles/" + str(sound_file_id) + ".npy"
     data = np.load(Path(npy_file_path), allow_pickle=True)
@@ -162,6 +167,7 @@ def dummy_model(sound_file_id: int):
     iterations = 100
     for i in range(iterations):
         time.sleep(0.1)
+        print(str(i) + "%")
 
     return data
 

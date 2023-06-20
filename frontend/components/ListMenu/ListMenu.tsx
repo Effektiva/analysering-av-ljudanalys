@@ -235,11 +235,7 @@ const iconForItem = (item: ListItemType): ReactNode => {
     case ItemStatus.Untreated:
       return <FaRegCircle/>;
     case ItemStatus.AnalysisOngoing:
-      return (
-        <div style={{justifyContent: 'space-between'}}>
-          Analyzing... {item.progress + ' '}
-          <FaRegClock/>
-        </div>);
+      return <FaRegClock/>
     case ItemStatus.AnalysisSucceeded:
       return <FaRegCheckCircle/>;
     case ItemStatus.AnalysisFailed:

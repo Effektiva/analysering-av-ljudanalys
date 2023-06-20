@@ -359,7 +359,6 @@ async def read_sound_chain_data(id1: int, id2: int):
                               "endTime": file.end_time,
                               "fileName": file.file_name,
                               "state": file.file_state,
-                              "analysis_percentage" : file.analysis_percentage,
                               "soundClasses": sound_classes_in_file,
                               "soundIntervals" : sound_interval_list})
 

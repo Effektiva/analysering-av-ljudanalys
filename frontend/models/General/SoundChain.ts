@@ -19,10 +19,6 @@ class SoundChain implements ListItemRepresentable {
   soundClips: Array<Soundclip>;
   soundClasses: Array<any>;
 
-  // Fix Structure Later!
-  progress: number = 0;
-  progress_reference: number = 0;
-
   constructor(
     id: number | undefined,
     name: string,
@@ -108,8 +104,7 @@ class SoundChain implements ListItemRepresentable {
       id: this.id ?? -1,
       text: this.name,
       collapsable: false,
-      state: this.getCurrentItemStatus(),
-      progress: this.getProgressAsString()
+      state: this.getCurrentItemStatus()
     }
   }
 
@@ -177,15 +172,6 @@ class SoundChain implements ListItemRepresentable {
       }
     });
     return comments;
-  }
-
-  setProgress(progress: number, reference: number) {
-    this.progress = progress;
-    this.progress_reference = reference;
-  }
-
-  getProgressAsString(): string {
-    return this.progress + "/" + this.progress_reference;
   }
 }
 

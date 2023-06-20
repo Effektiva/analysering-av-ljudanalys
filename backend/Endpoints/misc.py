@@ -1,5 +1,5 @@
 from sqlalchemy import select, insert, update, delete
-from fastapi import APIRouter, Request, Response, BackgroundTasks, WebSocket
+from fastapi import APIRouter, Request, Response, BackgroundTasks
 from config import Paths
 from .helpers import make_list, session, dummy_model
 import models
@@ -84,27 +84,6 @@ async def analyze_investigation_progress(id1: int, id2: int):
     if task:
         return {"result": task.get_progress(id2)}
     return {"result": None}
-
-@router4.websocket_route("/investigation/{id}/analyze")
-async def hello(websocket: WebSocket, id: int=None):
-    await websocket.accept()
-    print("investigation id is " + str(id))
-    # response = []
-    # for task in tasks:
-    #     response.append({"id": task.get_id(), "percentage": task.get_percentage()})
-
-    # await websocket.send_text(response)
-    # await websocket.close()
-
-
-    # await websocket.accept()
-    await websocket.send_text("Router Hello!")
-    response = await websocket.receive_text()
-    print(response)
-    await websocket.close()
-    print("Router Closed")
-
-
 
 
 """
