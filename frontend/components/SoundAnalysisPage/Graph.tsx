@@ -45,24 +45,20 @@ const Graph = (props: Props) => {
   useEffect(() => {
     let newData : Array<GraphData> = [];
     if (props.clipZoom === true) {
-      props.appState?.selectedSoundclip?.soundIntervals.forEach(interval => {
-        newData.push(interval.asGraphData());
-      });
+      newData = props.appState?.selectedSoundclip!.asGraphData();
       setClipBrakes([]);
     } else {
       let newClipBrakes : Array<number> = [];
       let duration = 0
       props.appState?.selectedSoundChain?.soundClips.forEach(clip => {
-        clip.soundIntervals.forEach(interval => {
-          newData.push(interval.asGraphData(duration));
-        });
-        duration += clip.duration
+        newData = [...newData, ...clip.asGraphData(duration)];
+        duration += clip.duration;
         newClipBrakes.push(duration);
       });
       setClipBrakes(newClipBrakes.slice(0, -1));
     }
     setData(newData);
-  }, [props.appState?.selectedSoundclip, props.clipZoom]);
+  }, [props.appState?.selectedSoundclip!, props.clipZoom]);
 
   /* Tooltip for the graph
   Solution got from: https://stackoverflow.com/a/72964329 */
@@ -76,7 +72,7 @@ const Graph = (props: Props) => {
           </div>
           <div className={Style.TooltipContent}>
             {payload.map((pld: any) => (
-              <div className={Style.TooltipRow} style={{ backgroundColor: pld.color, color: 'black'}}>
+              <div className={Style.TooltipRow} key={pld.dataKey} style={{ backgroundColor: pld.color, color: 'black'}}>
                 {pld.dataKey} : {pld.value}
               </div>
             ))}

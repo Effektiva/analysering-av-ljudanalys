@@ -1,8 +1,11 @@
 from database import SessionLocal
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, insert, update
 from enum import Enum
 import models
 import itertools
+import numpy as np
+from pathlib import Path
+import time
 
 session = SessionLocal()
 
@@ -123,3 +126,51 @@ def delete_sounds(interval_list):
 def delete_tags(sound_files):
     for sound_file in sound_files:
         session.execute(delete(models.Tags).where(models.Tags.sound_file_id == sound_file))
+
+
+# Send numpy data to database
+def npy_to_database(sound_file_id: int, data):
+    # Hämtar alla ljudintervall som hör till en ljudfil
+    result = session.execute(select(
+        models.SoundInterval.id, models.SoundInterval.start_time
+    ).where(models.SoundInterval.sound_file_id == sound_file_id))
+    interval_list = []
+    for row in result:
+        interval_list.append(row)
+
+    # Sorterar dem så att de är i rätt ordning efter start_time
+    sorted_data = sorted(interval_list, key=lambda d: d[1])
+
+    time = 0
+    for row in data:
+        interval_id = sorted_data[time][0]
+        for type in list(Soundclass):
+            session.execute(insert(models.Sound).values(
+                trust_value = float(row[type.value]),
+                sound_class = type.name,
+                sound_interval_id = interval_id
+            ))
+        time += 1
+
+    session.execute(update(models.SoundFile).where(models.SoundFile.id == sound_file_id).values(file_state = "1"))
+
+# Dummy Analysis model that only works with corresponding files in a new 5th investigation:
+# - 2023-02-07_10-35-17_Boomer_1.wav
+# - 2023-02-07_10-38-42_Boomer_1.wav
+# - 2023-02-07_10-39-26_Boomer_1.wav
+# - 2023-02-07_10-40-48_Boomer_1.wav
+# - 2023-02-07_10-43-28_Boomer_1.wav
+def dummy_model(sound_file_id: int):
+    npy_file_path = "./DummyData/testNPYfiles/" + str(sound_file_id) + ".npy"
+    data = np.load(Path(npy_file_path), allow_pickle=True)
+
+    iterations = 100
+    for i in range(iterations):
+        time.sleep(0.1)
+        print(str(i) + "%")
+
+    return data
+
+def analyse(sound_file_id: int):
+    data = dummy_model(sound_file_id)
+    npy_to_database(sound_file_id, data)

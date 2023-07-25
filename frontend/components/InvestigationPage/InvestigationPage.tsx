@@ -1,15 +1,22 @@
 import SoundClassFilterInput from "../SoundClassFilterInput";
 import SoundchainList from "../LeftMenu/SoundchainList";
 import AppState from "@/state/AppState";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import FileUploader from "./FileUploader";
 import { LOG as log } from "@/pages/_app";
 import SoundChain from "@/models/General/SoundChain";
+import APIService from "@/models/APIService";
 
 type Props = {
   appState: AppState,
   setAppState: Function,
   soundChainSelected: (id: number) => void
+}
+
+enum AnalysisStatus{
+  None,
+  Running,
+  Done
 }
 
 const STYLE_NAMESPACE = "investigationPage__";
@@ -54,11 +61,18 @@ const InvestigationPage = (props: Props) => {
     setForceUpdateLists(prev => !prev);
   };
 
+  const analyseFiles = () => {
+    APIService.analyzeInvestigationSoundChains(props.appState.selectedInvestigation?.id!);
+  };
+
   return <>
     <div className={Style.Container}>
       {/* Left column */}
       <div className={Style.Column}>
-        <div className={Style.LeftButtons}><button>Analysera filer</button></div>
+        <div
+          className={Style.LeftButtons}
+          onClick={analyseFiles}
+        ><button>Analysera filer</button></div>
         <SoundClassFilterInput
           filters={filters}
           setFilters={setFilters}

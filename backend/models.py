@@ -24,7 +24,6 @@ class SoundChain(Base):
     start_time = Column(Integer)
     end_time = Column(Integer)
     chain_state = Column(String, nullable=True)
-
     investigations_id = Column(Integer, ForeignKey("investigations.id"))
 
 

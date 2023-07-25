@@ -93,8 +93,6 @@ def cleanUp():
         for soundchains in os.listdir(os.path.join(Paths.uploads, investigations)):
             if investigations == "1" and soundchains == "1":
                 continue
-            elif investigations == "5" and soundchains == "5":
-                continue
             else:
                 file_path = os.path.join(Paths.uploads, investigations, soundchains)
                 try:
@@ -112,53 +110,6 @@ def initializeFolders():
     if not os.path.isdir(Paths.uploads):
         os.mkdir(Paths.uploads)
 
-def createDummyInvestigation(session: any, timestep: int, investigation_name: str, investigation_id: int):
-    with open("./DummyData/investigation" + str(investigation_id) + ".json", "r") as file:
-        data = file.read()
-    json_data = json.JSONDecoder().decode(data)
-
-    chain_start_time = None
-    end_time = None
-    for info in json_data:
-        t = info["start_time"]
-        st_date = datetime.datetime(t["year"], t["month"], t["day"], t["hour"], t["minute"], t["second"])
-        d = info["duration"]
-        dd = datetime.timedelta(hours=d["hours"], minutes=d["minutes"], seconds=d["seconds"])
-        et_date = st_date + dd
-
-        start_time = time.mktime(st_date.timetuple())
-        end_time = time.mktime(et_date.timetuple())
-        duration = dd.total_seconds()
-
-        if chain_start_time == None:
-            chain_start_time = start_time
-
-        id = make_list(session.execute(insert(models.SoundFile).values(
-            start_time = start_time,
-            end_time = end_time,
-            file_name = st_date.strftime("%Y-%m-%d_%H-%M-%S") + ".wav",
-            file_state = info["file_state"],
-            sound_chain_id = info["sound_chain_id"]
-        ).returning(models.SoundFile.id)).fetchall())[0]
-
-        for i in range(math.ceil(duration / timestep)):
-            session.execute(insert(models.SoundInterval).values(
-                start_time = i * timestep,
-                end_time = i * timestep + timestep,
-                highest_volume = timestep,
-                sound_file_id = id
-            ))
-
-        npy_to_database(id, "./DummyData/testNPYfiles/" + info["id"] + ".npy")
-
-    session.execute(insert(models.Investigations).values(name = investigation_name))
-    session.execute(insert(models.SoundChain).values(
-        start_time = chain_start_time,
-        end_time =  end_time,
-        investigations_id = investigation_id,
-        chain_state = "1"
-    ))
-
 def main():
     initializeFolders()
     #runTests()
@@ -166,33 +117,8 @@ def main():
     models.Base.metadata.create_all(bind=engine)
 
     if DEV:
-
         cleanUp()
         dummy_data.insert_dummy(session)
-        createDummyInvestigation(
-            session=session,
-            timestep=10,
-            investigation_name="Case-C01",
-            investigation_id=5
-        )
-
-        with open("./uploads/1/1/files/fileInfo.json", "r") as file:
-            data = file.read()
-        json_data = json.JSONDecoder().decode(data)
-
-        for info in json_data:
-            id = make_list(session.execute(insert(models.SoundFile).values(
-                start_time = info["start_time"],
-                end_time = info["end_time"],
-                file_name = "uploads/1/1/files/" + info["id"] + ".wav",
-                file_state = info["file_state"],
-                sound_chain_id = info["sound_chain_id"]
-            ).returning(models.SoundFile.id)).fetchall())[0]
-
-            for i in range(math.floor((info["end_time"] - info["start_time"]) / 10)):
-                session.execute(insert(models.SoundInterval).values(start_time = i * 10, end_time = i * 10 + 10, highest_volume = 10, sound_file_id = id))
-
-            npy_to_database(id, "./testNPYfiles/" + info["id"] + ".npy")
 
     origins = [
         "http://localhost:3000",
